@@ -1,15 +1,15 @@
 package me.anthuony.birbs;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 public class BirbsManager extends AbstractBirbsManager
 {
 	
-	private static ArrayList<Birb> birbsList = new ArrayList<Birb>();
+	private static final ArrayList<Birb> birbsList = new ArrayList<>();
 	private static int birbTotalSpawned;
 	
 	@Override
@@ -26,6 +26,11 @@ public class BirbsManager extends AbstractBirbsManager
 			removeAllBirbs(bc);
 		}
 		
+		if (bc.getInput().isKeyDown(KeyEvent.VK_H))
+		{
+			Birb.toggleHitboxVisible();
+		}
+		
 		if (bc.getInput().isButtonDown(MouseEvent.BUTTON1))
 		{
 			addBirb(bc, bc.getInput().getMousePoint());
@@ -38,12 +43,12 @@ public class BirbsManager extends AbstractBirbsManager
 		
 		if (bc.getInput().isButtonDown(MouseEvent.BUTTON3))
 		{
-			addBirb(bc, bc.getInput().getMousePoint(), 100);
+			addBirb(bc, bc.getInput().getMousePoint(), 10);
 		}
 		
 		if (bc.getInput().isButtonHeld(MouseEvent.BUTTON3))
 		{
-			addBirb(bc, bc.getInput().getMousePoint(), 100);
+			addBirb(bc, bc.getInput().getMousePoint(), 10);
 		}
 		
 		BirbLogic.setBc(bc);
@@ -63,23 +68,22 @@ public class BirbsManager extends AbstractBirbsManager
 		ThreadGroup tg = new ThreadGroup("Update Locations");
 		int np = Runtime.getRuntime().availableProcessors() - 2;
 		
-		ArrayList<ArrayList<Birb>> birbGroups = new ArrayList<ArrayList<Birb>>();
-		ArrayList<BirbLogic> logics = new ArrayList<BirbLogic>();
+		ArrayList<ArrayList<Birb>> birbGroups = new ArrayList<>();
+		ArrayList<BirbLogic> logics = new ArrayList<>();
 		
 		for (int i = 0; i < birbsList.size(); i++)
 		{
 			if (i < np)
 			{
-				birbGroups.add(new ArrayList<Birb>());
+				birbGroups.add(new ArrayList<>());
 			}
 			ArrayList<Birb> current = birbGroups.get(i % np);
 			current.add(birbsList.get(i));
 		}
-//		System.out.println(birbGroups.size());
+		
 		for (int i = 0; i < birbGroups.size(); i++)
 		{
 			logics.add(new BirbLogic(birbGroups.get(i), "BirbLogic" + i, tg));
-//			logics.add(new BirbLogic(bc, birbsList.get(i)));
 		}
 		int i = 0;
 		while (i < logics.size())
@@ -94,18 +98,21 @@ public class BirbsManager extends AbstractBirbsManager
 		}
 	}
 	
-	public void addBirb(BirbsContainer bc, Point p)
+	public void addBirb(BirbsContainer bc, Point2D.Double p)
 	{
 		Birb birb = new Birb("Birb" + birbTotalSpawned++, p);
 		birbsList.add(birb);
 		bc.getWindow().getJLayeredPane().add(birb, JLayeredPane.PALETTE_LAYER);
 	}
 	
-	public void addBirb(BirbsContainer bc, Point p, int multiplier)
+	public void addBirb(BirbsContainer bc, Point2D.Double p, int multiplier)
 	{
 		for (int i = 0; i < multiplier; i++)
 		{
-			addBirb(bc, bc.getInput().getMousePoint());
+			double x = p.getX() + 2 * multiplier * (Math.random() - 0.5);
+			double y = p.getY() + 2 * multiplier * (Math.random() - 0.5);
+			Point2D.Double newPoint = new Point2D.Double(x, y);
+			addBirb(bc, newPoint);
 		}
 	}
 	

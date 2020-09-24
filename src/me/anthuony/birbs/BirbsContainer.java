@@ -3,13 +3,11 @@ package me.anthuony.birbs;
 public class BirbsContainer implements Runnable
 {
 	
-	private Thread thread;
 	private Window window;
 	//	private Renderer renderer;
 	private Input input;
-	private AbstractBirbsManager world;
+	private final AbstractBirbsManager world;
 	
-	private boolean running = false;
 	private final double UPDATE_CAP = 1.0 / 60.0;
 	private int worldWidth = 1920, worldHeight = 1080;
 	private float scale = 1f;
@@ -30,8 +28,8 @@ public class BirbsContainer implements Runnable
 //		renderer = new Renderer(this);
 		input = new Input(this);
 		
-		thread = new Thread(this);
-		thread.run();
+		Thread thread = new Thread(this);
+		thread.start();
 	}
 	
 	public void stop()
@@ -41,7 +39,7 @@ public class BirbsContainer implements Runnable
 	
 	public void run()
 	{
-		running = true;
+		boolean running = true;
 		
 		boolean render = false;
 		double startTime = 0;

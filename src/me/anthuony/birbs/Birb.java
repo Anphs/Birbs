@@ -7,19 +7,19 @@ import java.awt.geom.Point2D;
 public class Birb extends Component
 {
 	private final static int WIDTH = 70, HEIGHT = 70;
-	private final static double maxTurnSpeed = 0.1, turnNoise = 0;
-	private String ID;
+	private final static double maxTurnSpeed = .1, turnNoise = 0;
+	private final String ID;
 	private Vector vel, acc;
 	private Point2D.Double p;
-	private Color birbColor = new Color(254, 105, 3, 255);
+	private Color birbColor;
 	private static boolean hitboxVisible;
 	
-	private static int d = WIDTH / 2;
-	private static int dd = (int) (d / 1.5);
-	private static int ddd = d / 2;
-	private static int[] triangleX = new int[]{dd, -dd, -ddd, -dd};
-	private static int[] triangleY = new int[]{0, ddd, 0, -ddd};
-	private static Polygon birbTriangle = new Polygon(triangleX, triangleY, 4);
+	private static final int d = WIDTH / 2;
+	private static final int dd = (int) (d / 1.5);
+	private static final int ddd = d / 2;
+	private static final int[] triangleX = new int[]{dd, -dd, -ddd, -dd};
+	private static final int[] triangleY = new int[]{0, ddd, 0, -ddd};
+	private static final Polygon birbTriangle = new Polygon(triangleX, triangleY, 4);
 	
 	public Birb(String ID, Point2D.Double p)
 	{
@@ -30,16 +30,16 @@ public class Birb extends Component
 		
 		double velMag = Math.random() * 2 + 4;
 		vel = new Vector(velMag, Math.random() * 2 * Math.PI);
-		birbColor = new Color(254, 105, 3, 50 + 30 * (int) velMag);
-		System.out.println(ID);
+//		vel = new Vector(0, 3 * Math.PI / 2);
+		birbColor = new Color(254, 105, 3, /*50 + 30 * (int) velMag*/ 0);
 	}
 	
 	public void updateLocationCentered()
 	{
-		int x = p.x;
-		int y = p.y;
-		int cX = x - this.getWidth() / 2;
-		int cY = y - this.getHeight() / 2;
+		double x = p.x;
+		double y = p.y;
+		int cX = (int) (x - this.getWidth() / 2);
+		int cY = (int) (y - this.getHeight() / 2);
 		this.setLocation(cX, cY);
 	}
 	
@@ -97,15 +97,15 @@ public class Birb extends Component
 		this.acc = acc;
 	}
 	
-	public Point getPoint()
+	public Point2D.Double getPoint()
 	{
 		return p;
 	}
 	
-	public void setPoint(Point p)
+	public void setPoint(Point2D.Double p)
 	{
 		this.p = p;
-		this.updateLocationCentered(p);
+		this.updateLocationCentered();
 	}
 	
 	public Color getBirbColor()
@@ -116,16 +116,6 @@ public class Birb extends Component
 	public void setBirbColor(Color birbColor)
 	{
 		this.birbColor = birbColor;
-	}
-	
-	public static int getHEIGHT()
-	{
-		return HEIGHT;
-	}
-	
-	public static int getWIDTH()
-	{
-		return WIDTH;
 	}
 	
 	public static double getMaxTurnSpeed()
@@ -141,5 +131,10 @@ public class Birb extends Component
 	public String getID()
 	{
 		return ID;
+	}
+	
+	public static void toggleHitboxVisible()
+	{
+		hitboxVisible = !hitboxVisible;
 	}
 }

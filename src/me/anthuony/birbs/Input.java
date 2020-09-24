@@ -1,23 +1,23 @@
 package me.anthuony.birbs;
 
-import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Point2D;
 
 public class Input implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener
 {
-	private me.anthuony.birbs.BirbsContainer bc;
+	private final me.anthuony.birbs.BirbsContainer bc;
 	
 	private final int NUM_KEYS = 256;
-	private boolean[] keys = new boolean[NUM_KEYS];
-	private boolean[] keysLast = new boolean[NUM_KEYS];
+	private final boolean[] keys = new boolean[NUM_KEYS];
+	private final boolean[] keysLast = new boolean[NUM_KEYS];
 	
 	private final int NUM_BUTTONS = 5;
-	private boolean[] buttons = new boolean[NUM_BUTTONS];
-	private boolean[] buttonsLast = new boolean[NUM_BUTTONS];
-	private int[] buttonsHeldTicks = new int[NUM_BUTTONS];
+	private final boolean[] buttons = new boolean[NUM_BUTTONS];
+	private final boolean[] buttonsLast = new boolean[NUM_BUTTONS];
+	private final int[] buttonsHeldTicks = new int[NUM_BUTTONS];
 	
-	private Point mousePoint;
-	private int mouseX, mouseY;
+	private Point2D.Double mousePoint;
+	private double mouseX, mouseY;
 	private int scroll;
 	
 	public Input(BirbsContainer bc)
@@ -37,15 +37,9 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 	{
 		scroll = 0;
 		
-		for (int i = 0; i < NUM_KEYS; i++)
-		{
-			keysLast[i] = keys[i];
-		}
+		System.arraycopy(keys, 0, keysLast, 0, NUM_KEYS);
 		
-		for (int i = 0; i < NUM_BUTTONS; i++)
-		{
-			buttonsLast[i] = buttons[i];
-		}
+		System.arraycopy(buttons, 0, buttonsLast, 0, NUM_BUTTONS);
 		
 	}
 	
@@ -84,7 +78,6 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 		if (isButtonDown(button))
 		{
 			buttonsHeldTicks[button] = 30;
-			System.out.println(button);
 			return false;
 		} else
 		{
@@ -145,17 +138,17 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 	@Override
 	public void mouseDragged(MouseEvent e)
 	{
-		mouseX = (int) (e.getX() / bc.getScale());
-		mouseY = (int) (e.getY() / bc.getScale());
-		mousePoint = new Point(mouseX, mouseY);
+		mouseX = (e.getX() / bc.getScale());
+		mouseY = (e.getY() / bc.getScale());
+		mousePoint = new Point2D.Double(mouseX, mouseY);
 	}
 	
 	@Override
 	public void mouseMoved(MouseEvent e)
 	{
-		mouseX = (int) (e.getX() / bc.getScale());
-		mouseY = (int) (e.getY() / bc.getScale());
-		mousePoint = new Point(mouseX, mouseY);
+		mouseX = (e.getX() / bc.getScale());
+		mouseY = (e.getY() / bc.getScale());
+		mousePoint = new Point2D.Double(mouseX, mouseY);
 	}
 	
 	@Override
@@ -164,18 +157,19 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 		scroll = e.getWheelRotation();
 	}
 	
-	public int getMouseX()
+	public double getMouseX()
 	{
 		return mouseX;
 	}
 	
-	public int getMouseY()
+	public double getMouseY()
 	{
 		return mouseY;
 	}
 	
-	public Point getMousePoint()
+	public Point2D.Double getMousePoint()
 	{
+		
 		return mousePoint;
 	}
 	

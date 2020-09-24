@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class Window extends JLayeredPane
 {
-	private JFrame frame;
+	private final JFrame frame;
 	private int birbCount;
 	
 	public Window(me.anthuony.birbs.BirbsContainer bc)
