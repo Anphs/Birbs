@@ -1,5 +1,7 @@
 package me.anthuony.birbs;
 
+import java.util.ArrayList;
+
 public class BirbsContainer implements Runnable
 {
 	
@@ -12,6 +14,9 @@ public class BirbsContainer implements Runnable
 	private int worldWidth = 1920, worldHeight = 1080;
 	private float scale = 1f;
 	private String title = "Birbs";
+	
+	private ArrayList<Birb> birbsList = new ArrayList<>();
+	private int birbTotalSpawned;
 	
 	double frameTime = 0;
 	int frames = 0;
@@ -148,5 +153,26 @@ public class BirbsContainer implements Runnable
 	public Input getInput()
 	{
 		return input;
+	}
+	
+	public ArrayList<Birb> getBirbsList()
+	{
+		return birbsList;
+	}
+	
+	public int getBirbTotalSpawned()
+	{
+		return birbTotalSpawned;
+	}
+	
+	public int incrementBirbTotalSpawned()
+	{
+		birbTotalSpawned++;
+		return birbTotalSpawned-1;
+	}
+	
+	public void setBirbTotalSpawned(int birbTotalSpawned)
+	{
+		this.birbTotalSpawned = birbTotalSpawned;
 	}
 }

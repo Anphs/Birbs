@@ -13,6 +13,7 @@ public class Birb extends Component
 	private Point2D.Double p;
 	private Color birbColor;
 	private static boolean hitboxVisible;
+	private double speedMultiplier = 1;
 	
 	private static final int d = WIDTH / 2;
 	private static final int dd = (int) (d / 1.5);
@@ -108,6 +109,11 @@ public class Birb extends Component
 		this.updateLocationCentered();
 	}
 	
+	public double getAvoidRadius()
+	{
+		return (int)vel.getMagnitude()*15+150;
+	}
+	
 	public Color getBirbColor()
 	{
 		return birbColor;
@@ -136,5 +142,15 @@ public class Birb extends Component
 	public static void toggleHitboxVisible()
 	{
 		hitboxVisible = !hitboxVisible;
+	}
+	
+	public double getSpeedMultiplier()
+	{
+		return speedMultiplier;
+	}
+	
+	public void setSpeedMultiplier(double speedMultiplier)
+	{
+		this.speedMultiplier = speedMultiplier;
 	}
 }

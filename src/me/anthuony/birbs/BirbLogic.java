@@ -9,6 +9,7 @@ public class BirbLogic extends Thread
 	private Birb birb;
 	private final ArrayList<Birb> birbsList;
 	private static BirbsContainer bc;
+	private static boolean avoidOthers = true;
 	
 	//Multi-threading
 	public BirbLogic(ArrayList<Birb> birbsList, String name, ThreadGroup tg)
@@ -23,7 +24,14 @@ public class BirbLogic extends Thread
 		{
 			this.birb = birb;
 			updateBirbColor();
-			seekPoint(bc.getInput().getMousePoint(), true);
+			if(avoidOthers)
+			{
+				doAvoidOthers();
+			}
+			else
+			{
+				seekPoint(bc.getInput().getMousePoint(), true);
+			}
 			updateBirbLocation();
 		}
 	}
@@ -69,14 +77,75 @@ public class BirbLogic extends Thread
 		birb.setVel(new Vector(birb.getVel().getMagnitude(), newDirection));
 	}
 	
+	public double getBirbDistance(Birb otherBirb)
+	{
+		double birbX = birb.getPoint().getX();
+		double birbY = birb.getPoint().getY();
+		double otherX = otherBirb.getPoint().getX();
+		double otherY = otherBirb.getPoint().getY();
+		double distance = Point2D.distance(birbX, birbY, otherX, otherY);
+		return distance;
+	}
+	
+	public double getBirbDistance(Birb b1, Birb b2)
+	{
+		double b1X = b1.getPoint().getX();
+		double b1Y = b1.getPoint().getY();
+		double b2X = b2.getPoint().getX();
+		double b2Y = b2.getPoint().getY();
+		double distance = Point2D.distance(b1X, b1Y, b2X, b2Y);
+		return distance;
+	}
+	
+	public ArrayList<Birb> getBirbsInRadius(int radius)
+	{
+		ArrayList<Birb> birbsInRadius = new ArrayList<Birb>();
+		for(Birb otherBirb: bc.getBirbsList())
+		{
+			if(otherBirb != birb)
+			{
+				double distance = getBirbDistance(otherBirb);
+				if(distance <= radius)
+				{
+					birbsInRadius.add(otherBirb);
+				}
+//				System.out.println(distance);
+			}
+		}
+		return birbsInRadius;
+	}
+	
+	public void doAvoidOthers()
+	{
+		int avoidRange = (int)birb.getVel().getMagnitude()*15+50;
+		ArrayList<Birb> birbsInRadius = getBirbsInRadius(avoidRange);
+		Birb closestOther = null;
+		if(birbsInRadius.size() > 0)
+		{
+			closestOther = birbsInRadius.get(0);
+		}
+		for(Birb otherBirb: birbsInRadius)
+		{
+			if(getBirbDistance(closestOther, otherBirb) < getBirbDistance(closestOther, birb))
+			{
+				closestOther = otherBirb;
+			}
+		}
+		if(closestOther != null)
+		{
+			seekPoint(closestOther.getPoint(), false);
+			birb.setSpeedMultiplier(getBirbDistance(closestOther)/(avoidRange*1.5));
+//			System.out.println(getBirbDistance(closestOther));
+		}
+	}
+	
 	public void updateBirbLocation()
 	{
-		double speedMultiplier = 1;
 		double x = birb.getPoint().getX();
 		double y = birb.getPoint().getY();
 		Vector vel = birb.getVel();
-		x = (x + vel.getMagnitude() * speedMultiplier * Math.cos(vel.getDirection()));
-		y = (y + vel.getMagnitude() * speedMultiplier * Math.sin(vel.getDirection()));
+		x = (x + vel.getMagnitude() * birb.getSpeedMultiplier() * Math.cos(vel.getDirection()));
+		y = (y + vel.getMagnitude() * birb.getSpeedMultiplier() * Math.sin(vel.getDirection()));
 		
 		//Adjust for world boundaries and birb boundaries
 		x = (Math.abs((x + bc.getWorldWidth() + birb.getWidth() / 2.0) % bc.getWorldWidth())) - birb.getWidth() / 2.0;
