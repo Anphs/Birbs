@@ -7,51 +7,91 @@ import java.util.ArrayList;
 public class BirbLogic extends Thread
 {
 	private Birb birb;
-	private final ArrayList<Birb> birbsList;
+	private final ArrayList<Birb> logicBirbsList;
 	private static BirbsContainer bc;
 	private static boolean avoidOthers = true;
+	private static boolean doAlignment = true;
+	private static boolean doCohesion = true;
+	private static boolean deleteClose = false;
 	
 	//Multi-threading
 	public BirbLogic(ArrayList<Birb> birbsList, String name, ThreadGroup tg)
 	{
 		super(tg, name);
-		this.birbsList = birbsList;
+		this.logicBirbsList = birbsList;
 	}
 	
 	public void run()
 	{
-		for (Birb birb : birbsList)
+		for (Birb birb : logicBirbsList)
 		{
 			this.birb = birb;
 			updateBirbColor();
+			if(deleteClose)
+			{
+				doDeleteClose();
+			}
 			if(avoidOthers)
 			{
-				doAvoidOthers();
+				if(doAvoidOthers() && doAlignment)
+				{
+					doAlignment();
+				}
 			}
+//			if(avoidOthers)
+//			{
+//				doAvoidOthers();
+//			}
 			else
 			{
-				seekPoint(bc.getInput().getMousePoint(), true);
+				seekPoint(bc.getInput().getScaledMousePoint(), true);
 			}
 			updateBirbLocation();
 		}
 	}
 	
-	public void seekPoint(Point2D.Double desiredPoint, boolean seek)
+	private void doDeleteClose()
 	{
-		double desiredX = desiredPoint.getX();
-		double desiredY = desiredPoint.getY();
-		double currentX = birb.getPoint().getX();
-		double currentY = birb.getPoint().getY();
-		
-		double currentDirection = birb.getVel().getDirection();
-		double desiredDirection = Math.atan2(desiredY - currentY, desiredX - currentX);
-		if(!seek)
+		int deleteRange = 10;
+		ArrayList<Birb> birbsInRadius = getBirbsInRadius(deleteRange);
+		for(Birb otherBirb: birbsInRadius)
 		{
-			desiredDirection += Math.PI;
+			bc.removeBirb(otherBirb);
 		}
-		if(desiredDirection<0) {
-			desiredDirection += 2*Math.PI;
+	}
+	
+	private void doAlignment()
+	{
+		ArrayList<Birb> birbsInRadius = getBirbsInRadius(300);
+		if(birbsInRadius.size() > 0)
+		{
+			double avgMag = 0;
+			double avgDir = 0;
+			double avgX = 0;
+			double avgY = 0;
+			for(Birb otherBirb: birbsInRadius)
+			{
+				avgMag += otherBirb.getVel().getMagnitude();
+				avgDir += otherBirb.getVel().getDirection();
+				avgX += otherBirb.getPoint().getX();
+				avgY += otherBirb.getPoint().getY();
+			}
+			avgMag /= birbsInRadius.size();
+			avgDir /= birbsInRadius.size();
+			avgX /= birbsInRadius.size();
+			avgY /= birbsInRadius.size();
+			Point2D.Double avgPoint = new Point2D.Double(avgX, avgY);
+			
+			double currentDirection = birb.getVel().getDirection();
+			double adjustment = getDirectionAdjustment(currentDirection, avgDir);
+			double newDirection = (adjustment+currentDirection)%(2*Math.PI);
+			birb.setVel(new Vector(avgMag, newDirection));
+			seekPoint(avgPoint, true);
 		}
+	}
+	
+	public double getDirectionAdjustment(double currentDirection, double desiredDirection)
+	{
 		double adjustment = desiredDirection - currentDirection;
 //		System.out.println(desiredDirection+" "+currentDirection+" "+adjustment);
 		double change = adjustment%(2*Math.PI);
@@ -72,8 +112,28 @@ public class BirbLogic extends Thread
 				change = -Birb.getMaxTurnSpeed();
 			}
 		}
+		return change;
+	}
+	public void seekPoint(Point2D.Double desiredPoint, boolean seek)
+	{
+		double desiredX = desiredPoint.getX();
+		double desiredY = desiredPoint.getY();
+		double currentX = birb.getPoint().getX();
+		double currentY = birb.getPoint().getY();
 		
-		double newDirection = (change+currentDirection)%(2*Math.PI);
+		double currentDirection = birb.getVel().getDirection();
+		double desiredDirection = Math.atan2(desiredY - currentY, desiredX - currentX);
+		if(!seek)
+		{
+			desiredDirection += Math.PI;
+		}
+		if(desiredDirection<0) {
+			desiredDirection += 2*Math.PI;
+		}
+		
+		double adjustment = getDirectionAdjustment(currentDirection, desiredDirection);
+		
+		double newDirection = (adjustment+currentDirection)%(2*Math.PI);
 		birb.setVel(new Vector(birb.getVel().getMagnitude(), newDirection));
 	}
 	
@@ -115,9 +175,9 @@ public class BirbLogic extends Thread
 		return birbsInRadius;
 	}
 	
-	public void doAvoidOthers()
+	public boolean doAvoidOthers()
 	{
-		int avoidRange = (int)birb.getVel().getMagnitude()*15+50;
+		int avoidRange = (int)birb.getVel().getMagnitude()*15+25;
 		ArrayList<Birb> birbsInRadius = getBirbsInRadius(avoidRange);
 		Birb closestOther = null;
 		if(birbsInRadius.size() > 0)
@@ -135,8 +195,10 @@ public class BirbLogic extends Thread
 		{
 			seekPoint(closestOther.getPoint(), false);
 			birb.setSpeedMultiplier(getBirbDistance(closestOther)/(avoidRange*1.5));
+			return false;
 //			System.out.println(getBirbDistance(closestOther));
 		}
+		return true;
 	}
 	
 	public void updateBirbLocation()
@@ -153,18 +215,23 @@ public class BirbLogic extends Thread
 		
 		//Update location
 		Point2D.Double newPoint = new Point2D.Double(x, y);
-		birb.setPoint(newPoint);
+		birb.setWorldPoint(newPoint);
 	}
 	
 	public void updateBirbColor()
 	{
-		Color color = birb.getBirbColor();
-		int r = (color.getRed() + 3) % 255;
-		int g = (color.getGreen() + 1) % 255;
-		int bl = (color.getBlue() + 2) % 255;
+//		Color color = birb.getBirbColor();
+//		int r = (color.getRed() + 3) % 255;
+//		int g = (color.getGreen() + 1) % 255;
+//		int bl = (color.getBlue() + 2) % 255;
+		int r = (int)(birb.getPoint().getX() / bc.getWorldWidth() * 255);
+		int g = (int)(birb.getPoint().getY() / bc.getWorldHeight() * 255);
+		int b = 255 - r;
+		
 		Vector vel = birb.getVel();
 		int velMag = (int) vel.getMagnitude();
-		Color newColor = new Color(r, g, bl, 50 + 30 * velMag);
+//		Color newColor = new Color(r, g, b, 50 + 30 * velMag);
+		Color newColor = new Color(r, g, b,255);
 		birb.setBirbColor(newColor);
 	}
 	

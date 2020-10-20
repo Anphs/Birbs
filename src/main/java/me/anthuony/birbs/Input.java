@@ -16,8 +16,9 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 	private final boolean[] buttonsLast = new boolean[NUM_BUTTONS];
 	private final int[] buttonsHeldTicks = new int[NUM_BUTTONS];
 	
-	private Point2D.Double mousePoint;
-	private double mouseX, mouseY;
+	private Point2D.Double mousePoint, mouseDownPoint;
+	private double mouseX, mouseY, changeMouseX, changeMouseY;
+	
 	private int scroll;
 	
 	public Input(BirbsContainer bc)
@@ -26,6 +27,8 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 		mouseX = 0;
 		mouseY = 0;
 		scroll = 0;
+		changeMouseY = 0;
+		changeMouseY = 0;
 		
 		bc.getWindow().getJLayeredPane().addKeyListener(this);
 		bc.getWindow().getJLayeredPane().addMouseMotionListener(this);
@@ -36,6 +39,17 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 	public void update()
 	{
 		scroll = 0;
+		
+		if(isButtonDown(MouseEvent.BUTTON1))
+		{
+			mouseDownPoint = getMousePoint();
+		}
+		
+		if(mouseDownPoint != null)
+		{
+			changeMouseX = getMousePoint().getX() - mouseDownPoint.getX();
+			changeMouseY = getMousePoint().getY() - mouseDownPoint.getY();
+		}
 		
 		System.arraycopy(keys, 0, keysLast, 0, NUM_KEYS);
 		
@@ -73,16 +87,15 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 		return buttons[button] && !buttonsLast[button];
 	}
 	
-	public boolean isButtonHeld(int button)
+	public boolean isButtonHeld(int button, int delay)
 	{
 		if (isButtonDown(button))
 		{
-			buttonsHeldTicks[button] = 30;
+			buttonsHeldTicks[button] = delay;
 			return false;
 		} else
 		{
 			buttonsHeldTicks[button]--;
-//			System.out.println(buttonsHeldTicks[button]);
 		}
 		return buttons[button] && buttonsHeldTicks[button] < 0;
 	}
@@ -146,7 +159,7 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 	@Override
 	public void mouseMoved(MouseEvent e)
 	{
-		mouseX = (e.getX() / bc.getScale());
+		mouseX = ((e.getX() / bc.getScale()));
 		mouseY = (e.getY() / bc.getScale());
 		mousePoint = new Point2D.Double(mouseX, mouseY);
 	}
@@ -169,12 +182,33 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 	
 	public Point2D.Double getMousePoint()
 	{
-		
 		return mousePoint;
+	}
+	
+	public Point2D.Double getScaledMousePoint()
+	{
+		double x = (getMousePoint().getX() - bc.getCameraOffsetX());
+		double y = (getMousePoint().getY() - bc.getCameraOffsetY());
+		return new Point2D.Double(x, y);
+	}
+	
+	public double getChangeMouseX()
+	{
+		return changeMouseX;
+	}
+	
+	public double getChangeMouseY()
+	{
+		return changeMouseY;
 	}
 	
 	public int getScroll()
 	{
 		return scroll;
+	}
+	
+	public Point2D.Double getMouseDownPoint()
+	{
+		return mouseDownPoint;
 	}
 }

@@ -11,11 +11,13 @@ public class BirbsContainer implements Runnable
 	private final AbstractBirbsManager world;
 	
 	private final double UPDATE_CAP = 1.0 / 60.0;
-	private int worldWidth = 1920, worldHeight = 1080;
-	private float scale = 1f;
+	private int windowWidth = 1920, windowHeight = 1080;
+	private int worldWidth = 19200, worldHeight = 10800;
+	private double cameraOffsetX = 0, cameraOffsetY = 0, cameraTempOffsetX = 0, cameraTempOffsetY = 0;
+	private double scale = .1, minScale = .1, maxScale = 1.5;
 	private String title = "Birbs";
 	
-	private ArrayList<Birb> birbsList = new ArrayList<>();
+	private final ArrayList<Birb> birbsList = new ArrayList<>();
 	private int birbTotalSpawned;
 	
 	double frameTime = 0;
@@ -125,14 +127,36 @@ public class BirbsContainer implements Runnable
 		this.worldHeight = worldHeight;
 	}
 	
-	public float getScale()
+	public double getScale()
 	{
 		return scale;
 	}
 	
-	public void setScale(float scale)
+	public void setScale(double scale)
 	{
-		this.scale = scale;
+		if(scale <= minScale)
+		{
+			this.scale = minScale;
+		}
+		else if(scale >= maxScale)
+		{
+			this.scale = maxScale;
+		}
+		else
+		{
+			this.scale = scale;
+		}
+		Birb.setScale(this.scale);
+//		if(getInput().getScroll() < 0 && scale >= minScale && scale <= maxScale)
+//		{
+//			setCameraOffsetX(getCameraOffsetX() - (1920 * (.125)) / getScale());
+//			setCameraOffsetY(getCameraOffsetY() - (1080 * (.125)) / getScale());
+//		}
+//		else if(getInput().getScroll() > 0 && scale >= minScale && scale <= maxScale)
+//		{
+//			setCameraOffsetX(getCameraOffsetX() + (1920 * (.125)) / getScale());
+//			setCameraOffsetY(getCameraOffsetY() + (1080 * (.125)) / getScale());
+//		}
 	}
 	
 	public String getTitle()
@@ -171,8 +195,79 @@ public class BirbsContainer implements Runnable
 		return birbTotalSpawned-1;
 	}
 	
+	public void removeBirb(Birb birb)
+	{
+		birbsList.remove(birb);
+		window.getJLayeredPane().remove(birb);
+	}
+	
+	public void removeAllBirbs()
+	{
+		for (int i = birbsList.size() - 1; i >= 0; i--)
+		{
+			Birb birb = birbsList.get(i);
+			removeBirb(birb);
+		}
+		setBirbTotalSpawned(0);
+	}
+	
 	public void setBirbTotalSpawned(int birbTotalSpawned)
 	{
 		this.birbTotalSpawned = birbTotalSpawned;
+	}
+	
+	public AbstractBirbsManager getWorld()
+	{
+		return world;
+	}
+	
+	public double getCameraOffsetX()
+	{
+		return cameraOffsetX;
+	}
+	
+	public double getCameraOffsetY()
+	{
+		return cameraOffsetY;
+	}
+	
+	public void setCameraOffsetX(double x)
+	{
+		cameraOffsetX = x;
+	}
+	
+	public void setCameraOffsetY(double y)
+	{
+		cameraOffsetY = y;
+	}
+	
+	public double getCameraTempOffsetX()
+	{
+		return cameraTempOffsetX;
+	}
+	
+	public void setCameraTempOffsetX(double cameraTempOffsetX)
+	{
+		this.cameraTempOffsetX = cameraTempOffsetX;
+	}
+	
+	public double getCameraTempOffsetY()
+	{
+		return cameraTempOffsetY;
+	}
+	
+	public void setCameraTempOffsetY(double cameraTempOffsetY)
+	{
+		this.cameraTempOffsetY = cameraTempOffsetY;
+	}
+	
+	public int getWindowWidth()
+	{
+		return windowWidth;
+	}
+	
+	public int getWindowHeight()
+	{
+		return windowHeight;
 	}
 }

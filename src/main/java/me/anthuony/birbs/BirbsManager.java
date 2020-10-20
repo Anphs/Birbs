@@ -12,41 +12,7 @@ public class BirbsManager extends AbstractBirbsManager
 	@Override
 	public void update(BirbsContainer bc, float dt)
 	{
-//		System.out.println(bc.getHeight());
-		
-		if (bc.getInput().isKeyDown(KeyEvent.VK_ESCAPE))
-		{
-			System.exit(0);
-		}
-		if (bc.getInput().isKey(KeyEvent.VK_R))
-		{
-			removeAllBirbs(bc);
-		}
-		
-		if (bc.getInput().isKeyDown(KeyEvent.VK_H))
-		{
-			Birb.toggleHitboxVisible();
-		}
-		
-		if (bc.getInput().isButtonDown(MouseEvent.BUTTON1))
-		{
-			addBirb(bc, bc.getInput().getMousePoint());
-		}
-		
-		if (bc.getInput().isButtonHeld(MouseEvent.BUTTON1))
-		{
-			addBirb(bc, bc.getInput().getMousePoint());
-		}
-		
-		if (bc.getInput().isButtonDown(MouseEvent.BUTTON3))
-		{
-			addBirb(bc, bc.getInput().getMousePoint(), 10);
-		}
-		
-		if (bc.getInput().isButtonHeld(MouseEvent.BUTTON3))
-		{
-			addBirb(bc, bc.getInput().getMousePoint(), 10);
-		}
+		doInputBinds(bc);
 		
 		BirbLogic.setBc(bc);
 		doBirbLogic(bc);
@@ -58,6 +24,68 @@ public class BirbsManager extends AbstractBirbsManager
 	public void render(BirbsContainer bc, Renderer r)
 	{
 	
+	}
+	
+	public void doInputBinds(BirbsContainer bc)
+	{
+		if (bc.getInput().isKeyDown(KeyEvent.VK_ESCAPE))
+		{
+			System.exit(0);
+		}
+		if (bc.getInput().isKey(KeyEvent.VK_R))
+		{
+			bc.removeAllBirbs();
+			bc.setCameraOffsetX(0);
+			bc.setCameraOffsetY(0);
+			bc.setScale(0.1);
+		}
+		
+		if (bc.getInput().isKeyDown(KeyEvent.VK_H))
+		{
+			Birb.toggleHitboxVisible();
+		}
+		
+		if (bc.getInput().isButtonDown(MouseEvent.BUTTON3))
+		{
+			addBirb(bc, bc.getInput().getScaledMousePoint(), 100);
+		}
+		
+		if (bc.getInput().isButtonHeld(MouseEvent.BUTTON3, 30))
+		{
+			addBirb(bc, bc.getInput().getScaledMousePoint());
+		}
+		
+		if (bc.getInput().isButtonDown(MouseEvent.BUTTON1))
+		{
+//			addBirb(bc, bc.getInput().getScaledMousePoint(), 10);
+//			System.out.println(bc.getInput().getChangeMouseX());
+			bc.setCameraTempOffsetX(bc.getCameraOffsetX());
+			bc.setCameraTempOffsetY(bc.getCameraOffsetY());
+		}
+		
+		if (bc.getInput().isButtonHeld(MouseEvent.BUTTON1, 0))
+		{
+//			addBirb(bc, bc.getInput().getScaledMousePoint(), 10);
+			bc.setCameraOffsetX(bc.getCameraTempOffsetX() + bc.getInput().getChangeMouseX());
+			bc.setCameraOffsetY(bc.getCameraTempOffsetY() + bc.getInput().getChangeMouseY());
+		}
+		
+		bc.setScale((bc.getScale() - bc.getInput().getScroll()/10.0));
+//		if(bc.getInput().getScroll() < 0)
+//		{
+//			bc.setCameraOffsetX(bc.getCameraOffsetX() - (1920 * (.125)) / bc.getScale());
+//			bc.setCameraOffsetY(bc.getCameraOffsetY() - (1080 * (.125)) / bc.getScale());
+//		}
+//		else if(bc.getInput().getScroll() > 0)
+//		{
+//			bc.setCameraOffsetX(bc.getCameraOffsetX() + (1920 * (.125)) / bc.getScale());
+//			bc.setCameraOffsetY(bc.getCameraOffsetY() + (1080 * (.125)) / bc.getScale());
+//		}
+		Birb.setOffsetX(bc.getCameraOffsetX());
+		Birb.setOffsetY(bc.getCameraOffsetY());
+		bc.getWindow().setOffsetX(bc.getCameraOffsetX());
+		bc.getWindow().setOffsetY(bc.getCameraOffsetY());
+		bc.getWindow().setScale(bc.getScale());
 	}
 	
 	private void doBirbLogic(BirbsContainer bc)
@@ -106,27 +134,11 @@ public class BirbsManager extends AbstractBirbsManager
 	{
 		for (int i = 0; i < multiplier; i++)
 		{
-			double x = p.getX() + 2 * multiplier * (Math.random() - 0.5);
-			double y = p.getY() + 2 * multiplier * (Math.random() - 0.5);
+			double x = p.getX() + 10 * multiplier * (Math.random() - 0.5);
+			double y = p.getY() + 10 * multiplier * (Math.random() - 0.5);
 			Point2D.Double newPoint = new Point2D.Double(x, y);
 			addBirb(bc, newPoint);
 		}
-	}
-	
-	public void removeBirb(BirbsContainer bc, Birb birb)
-	{
-		bc.getBirbsList().remove(birb);
-		bc.getWindow().getJLayeredPane().remove(birb);
-	}
-	
-	public void removeAllBirbs(BirbsContainer bc)
-	{
-		for (int i = bc.getBirbsList().size() - 1; i >= 0; i--)
-		{
-			Birb birb = bc.getBirbsList().get(i);
-			removeBirb(bc, birb);
-		}
-		bc.setBirbTotalSpawned(0);
 	}
 	
 	public static void main(String[] args)
