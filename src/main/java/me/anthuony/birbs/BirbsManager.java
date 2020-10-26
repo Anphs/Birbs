@@ -48,6 +48,7 @@ public class BirbsManager extends AbstractBirbsManager
 		if (bc.getInput().isButtonDown(MouseEvent.BUTTON3))
 		{
 			addBirb(bc, bc.getInput().getScaledMousePoint(), 100);
+//			addBirb(bc, new Point2D.Double(19200/2, 10800/2));
 		}
 		
 		if (bc.getInput().isButtonHeld(MouseEvent.BUTTON3, 30))
@@ -90,6 +91,9 @@ public class BirbsManager extends AbstractBirbsManager
 	
 	private void doBirbLogic(BirbsContainer bc)
 	{
+		Formation form = new Formation("circle", bc.getBirbsList());
+		form.updateFormationPoints(bc);
+		
 		ThreadGroup tg = new ThreadGroup("Update Locations");
 		int np = Runtime.getRuntime().availableProcessors() - 2;
 		

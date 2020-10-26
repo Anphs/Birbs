@@ -14,7 +14,6 @@ public class Window extends JLayeredPane
 	public Window(me.anthuony.birbs.BirbsContainer bc)
 	{
 		Dimension s = new Dimension((int) bc.getWindowWidth(), (int) bc.getWindowHeight());
-		
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(s);
@@ -30,6 +29,7 @@ public class Window extends JLayeredPane
 		
 		frame.add(this);
 		frame.pack();
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setVisible(true);
 	}
 	

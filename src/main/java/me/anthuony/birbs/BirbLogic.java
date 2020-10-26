@@ -9,7 +9,7 @@ public class BirbLogic extends Thread
 	private Birb birb;
 	private final ArrayList<Birb> logicBirbsList;
 	private static BirbsContainer bc;
-	private static boolean avoidOthers = true;
+	private static boolean avoidOthers = false;
 	private static boolean doAlignment = true;
 	private static boolean doCohesion = true;
 	private static boolean deleteClose = false;
@@ -44,7 +44,14 @@ public class BirbLogic extends Thread
 //			}
 			else
 			{
-				seekPoint(bc.getInput().getScaledMousePoint(), true);
+				if(birb.getFormationPoint() != null)
+				{
+					seekPoint(birb.getFormationPoint(), true);
+				}
+				else
+				{
+					seekPoint(bc.getInput().getScaledMousePoint(), true);
+				}
 			}
 			updateBirbLocation();
 		}
@@ -224,9 +231,9 @@ public class BirbLogic extends Thread
 //		int r = (color.getRed() + 3) % 255;
 //		int g = (color.getGreen() + 1) % 255;
 //		int bl = (color.getBlue() + 2) % 255;
-		int r = (int)(birb.getPoint().getX() / bc.getWorldWidth() * 255);
+		int b = (int)(birb.getPoint().getX() / bc.getWorldWidth() * 255);
 		int g = (int)(birb.getPoint().getY() / bc.getWorldHeight() * 255);
-		int b = 255 - r;
+		int r = 255 - b;
 		
 		Vector vel = birb.getVel();
 		int velMag = (int) vel.getMagnitude();

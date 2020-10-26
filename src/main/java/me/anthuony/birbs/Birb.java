@@ -12,7 +12,7 @@ public class Birb extends Component
 	private final static double maxTurnSpeed = .1, turnNoise = 0;
 	private final String ID;
 	private Vector vel, acc;
-	private Point2D.Double p;
+	private Point2D.Double point, formationPoint;
 	private static double offsetX = 0, offsetY = 0;
 	private Color birbColor;
 	private static boolean hitboxVisible;
@@ -25,10 +25,10 @@ public class Birb extends Component
 	private static final int[] triangleY = new int[]{0, ddd, 0, -ddd};
 	private static Polygon birbTriangle = new Polygon(triangleX, triangleY, 4);
 	
-	public Birb(String ID, Point2D.Double p)
+	public Birb(String ID, Point2D.Double point)
 	{
 		this.ID = ID;
-		this.p = p;
+		this.point = point;
 		update();
 		
 		double velMag = Math.random() * 2 + 4;
@@ -45,15 +45,18 @@ public class Birb extends Component
 	
 	public void updateLocationCentered()
 	{
-		double x = p.x;
-		double y = p.y;
-		int cX = (int) (x - this.getWidth() / 2);
-		int cY = (int) (y - this.getHeight() / 2);
+		double x = point.x;
+		double y = point.y;
+		double cX = (x - (this.getWidth() / 2.0));
+		double cY = (y - (this.getHeight() / 2.0));
 		cX += offsetX;
 		cY += offsetY;
 		cX *= scale;
 		cY *= scale;
-		this.setLocation(cX, cY);
+		cX = Math.round(cX);
+		cY = Math.round(cY);
+		this.setLocation((int) cX, (int) cY);
+		System.out.println(cX + " "+ cY);
 	}
 	
 	public static void updateTriangle()
@@ -125,12 +128,12 @@ public class Birb extends Component
 	
 	public Point2D.Double getPoint()
 	{
-		return p;
+		return point;
 	}
 	
 	public void setWorldPoint(Point2D.Double p)
 	{
-		this.p = p;
+		this.point = p;
 		this.update();
 	}
 	
@@ -203,5 +206,15 @@ public class Birb extends Component
 	public static void setOffsetY(double offsetY)
 	{
 		Birb.offsetY = offsetY;
+	}
+	
+	public Point2D.Double getFormationPoint()
+	{
+		return formationPoint;
+	}
+	
+	public void setFormationPoint(Point2D.Double seekPoint)
+	{
+		this.formationPoint = seekPoint;
 	}
 }

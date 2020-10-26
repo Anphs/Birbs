@@ -1,5 +1,8 @@
 package me.anthuony.birbs;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 public class BirbsContainer implements Runnable
@@ -11,9 +14,10 @@ public class BirbsContainer implements Runnable
 	private final AbstractBirbsManager world;
 	
 	private final double UPDATE_CAP = 1.0 / 60.0;
-	private int windowWidth = 1920, windowHeight = 1080;
+	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	private int windowWidth = screenSize.width, windowHeight = screenSize.height;
 	private int worldWidth = 19200, worldHeight = 10800;
-	private double cameraOffsetX = 0, cameraOffsetY = 0, cameraTempOffsetX = 0, cameraTempOffsetY = 0;
+	private double cameraOffsetX = (worldWidth - windowWidth * 10) / -2.0, cameraOffsetY = (worldHeight - windowHeight * 10) / -2.0, cameraTempOffsetX = 0, cameraTempOffsetY = 0;
 	private double scale = .1, minScale = .1, maxScale = 1.5;
 	private String title = "Birbs";
 	
@@ -134,6 +138,21 @@ public class BirbsContainer implements Runnable
 	
 	public void setScale(double scale)
 	{
+		Point2D.Double zoomPoint = input.getScaledMousePoint();
+		if(getInput().getScroll() < 0 && scale >= minScale && scale <= maxScale)
+		{
+			double diffX = ((zoomPoint.getX() + getCameraOffsetX()) * (getScale() - scale)) * (1.0 / scale);
+			double diffY = ((zoomPoint.getY() + getCameraOffsetY()) * (getScale() - scale)) * (1.0 / scale);
+			setCameraOffsetX(getCameraOffsetX() + diffX);
+			setCameraOffsetY(getCameraOffsetY() + diffY);
+		}
+		else if(getInput().getScroll() > 0 && scale >= minScale && scale <= maxScale)
+		{
+			double diffX = ((zoomPoint.getX() + getCameraOffsetX()) * (scale - getScale())) * (1.0 / scale);
+			double diffY = ((zoomPoint.getY() + getCameraOffsetY()) * (scale - getScale())) * (1.0 / scale);
+			setCameraOffsetX(getCameraOffsetX() - diffX);
+			setCameraOffsetY(getCameraOffsetY() - diffY);
+		}
 		if(scale <= minScale)
 		{
 			this.scale = minScale;
@@ -147,16 +166,6 @@ public class BirbsContainer implements Runnable
 			this.scale = scale;
 		}
 		Birb.setScale(this.scale);
-//		if(getInput().getScroll() < 0 && scale >= minScale && scale <= maxScale)
-//		{
-//			setCameraOffsetX(getCameraOffsetX() - (1920 * (.125)) / getScale());
-//			setCameraOffsetY(getCameraOffsetY() - (1080 * (.125)) / getScale());
-//		}
-//		else if(getInput().getScroll() > 0 && scale >= minScale && scale <= maxScale)
-//		{
-//			setCameraOffsetX(getCameraOffsetX() + (1920 * (.125)) / getScale());
-//			setCameraOffsetY(getCameraOffsetY() + (1080 * (.125)) / getScale());
-//		}
 	}
 	
 	public String getTitle()
