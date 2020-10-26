@@ -164,6 +164,9 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 	public void mouseWheelMoved(MouseWheelEvent e)
 	{
 		scroll = e.getWheelRotation();
+		mouseX = ((e.getX() / bc.getScale()));
+		mouseY = (e.getY() / bc.getScale());
+		mousePoint = new Point2D.Double(mouseX, mouseY);
 	}
 	
 	public double getMouseX()

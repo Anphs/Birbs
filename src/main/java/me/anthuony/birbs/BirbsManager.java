@@ -35,8 +35,8 @@ public class BirbsManager extends AbstractBirbsManager
 		if (bc.getInput().isKey(KeyEvent.VK_R))
 		{
 			bc.removeAllBirbs();
-			bc.setCameraOffsetX(0);
-			bc.setCameraOffsetY(0);
+			bc.setCameraOffsetX((bc.getWorldWidth() - bc.getWindowWidth() * 10) / -2.0);
+			bc.setCameraOffsetY((bc.getWorldHeight() - bc.getWindowHeight() * 10) / -2.0);
 			bc.setScale(0.1);
 		}
 		

@@ -139,32 +139,28 @@ public class BirbsContainer implements Runnable
 	public void setScale(double scale)
 	{
 		Point2D.Double zoomPoint = input.getScaledMousePoint();
+//		zoomPoint = new Point2D.Double(getWorldWidth()/2.0,getWorldHeight()/2.0);
+//		zoomPoint = new Point2D.Double(getWorldWidth()/2.0 + getCameraOffsetX(), getWorldHeight()/2.0 + getCameraOffsetY());
+		
+		//Zoom In
 		if(getInput().getScroll() < 0 && scale >= minScale && scale <= maxScale)
 		{
-			double diffX = ((zoomPoint.getX() + getCameraOffsetX()) * (getScale() - scale)) * (1.0 / scale);
-			double diffY = ((zoomPoint.getY() + getCameraOffsetY()) * (getScale() - scale)) * (1.0 / scale);
+			double diffX = ((zoomPoint.getX() + getCameraOffsetX()) * -.1) * (1.0 / scale);
+			double diffY = ((zoomPoint.getY() + getCameraOffsetY()) * -.1) * (1.0 / scale);
 			setCameraOffsetX(getCameraOffsetX() + diffX);
 			setCameraOffsetY(getCameraOffsetY() + diffY);
 		}
+		//Zoom out
 		else if(getInput().getScroll() > 0 && scale >= minScale && scale <= maxScale)
 		{
-			double diffX = ((zoomPoint.getX() + getCameraOffsetX()) * (scale - getScale())) * (1.0 / scale);
-			double diffY = ((zoomPoint.getY() + getCameraOffsetY()) * (scale - getScale())) * (1.0 / scale);
+			double diffX = ((zoomPoint.getX() + getCameraOffsetX()) * -.1) * (1.0 / scale);
+			double diffY = ((zoomPoint.getY() + getCameraOffsetY()) * -.1) * (1.0 / scale);
 			setCameraOffsetX(getCameraOffsetX() - diffX);
 			setCameraOffsetY(getCameraOffsetY() - diffY);
 		}
-		if(scale <= minScale)
-		{
-			this.scale = minScale;
-		}
-		else if(scale >= maxScale)
-		{
-			this.scale = maxScale;
-		}
-		else
-		{
-			this.scale = scale;
-		}
+		scale = Math.round(scale * 10)/10.0;
+		this.scale = Math.max(minScale, scale);
+		this.scale = Math.min(maxScale, this.scale);
 		Birb.setScale(this.scale);
 	}
 	
