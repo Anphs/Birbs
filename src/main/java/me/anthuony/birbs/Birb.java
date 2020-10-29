@@ -8,7 +8,7 @@ public class Birb extends Component
 {
 	private static final int baseWidth = 70, baseHeight = 70;
 	private static final int WIDTH= 70, HEIGHT = 70;
-	private static double scale = 1.0;
+	private static double scale = .1;
 	private final static double maxTurnSpeed = .1, turnNoise = 0;
 	private final String ID;
 	private Vector vel, acc;
@@ -32,6 +32,7 @@ public class Birb extends Component
 		update();
 		
 		double velMag = Math.random() * 2 + 4;
+		velMag = 20;
 		vel = new Vector(velMag, Math.random() * 2 * Math.PI);
 //		vel = new Vector(0, 3 * Math.PI / 2);
 		birbColor = new Color(254, 105, 3, /*50 + 30 * (int) velMag*/ 0);
@@ -56,7 +57,6 @@ public class Birb extends Component
 		cX = Math.round(cX);
 		cY = Math.round(cY);
 		this.setLocation((int) cX, (int) cY);
-		System.out.println(cX + " "+ cY);
 	}
 	
 	public static void updateTriangle()

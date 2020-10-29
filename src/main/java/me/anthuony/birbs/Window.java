@@ -9,11 +9,12 @@ public class Window extends JLayeredPane
 {
 	private final JFrame frame;
 	private int birbCount;
-	private double offsetX = 0, offsetY = 0, scale = 1;
+	private double offsetX = 0, offsetY = 0, scale = .1;
 	
 	public Window(me.anthuony.birbs.BirbsContainer bc)
 	{
 		Dimension s = new Dimension((int) bc.getWindowWidth(), (int) bc.getWindowHeight());
+//		Dimension s = new Dimension( 1920, 1080);
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(s);

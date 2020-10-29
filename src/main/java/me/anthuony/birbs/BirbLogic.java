@@ -13,6 +13,7 @@ public class BirbLogic extends Thread
 	private static boolean doAlignment = true;
 	private static boolean doCohesion = true;
 	private static boolean deleteClose = false;
+	private static int colorOffset = 0;
 	
 	//Multi-threading
 	public BirbLogic(ArrayList<Birb> birbsList, String name, ThreadGroup tg)
@@ -231,9 +232,28 @@ public class BirbLogic extends Thread
 //		int r = (color.getRed() + 3) % 255;
 //		int g = (color.getGreen() + 1) % 255;
 //		int bl = (color.getBlue() + 2) % 255;
-		int b = (int)(birb.getPoint().getX() / bc.getWorldWidth() * 255);
-		int g = (int)(birb.getPoint().getY() / bc.getWorldHeight() * 255);
+		int b = (int)((birb.getPoint().getX() + colorOffset) / bc.getWorldWidth() * 255);
+		int g = (int)((birb.getPoint().getY() + colorOffset) / bc.getWorldHeight() * 255);
 		int r = 255 - b;
+		
+		b = Math.max(b, 0);
+		g = Math.max(g, 0);
+		r = Math.max(r, 0);
+		b = Math.min(b, 255);
+		g = Math.min(g, 255);
+		r = Math.min(r, 255);
+		
+		if(Math.abs(b - colorOffset) < 10)
+		{
+			r = 255;
+			g = 255;
+			b = 255;
+		}
+		if(Math.abs(g - colorOffset) < 10)
+		{
+			g = 255;
+			b = 255;
+		}
 		
 		Vector vel = birb.getVel();
 		int velMag = (int) vel.getMagnitude();
@@ -245,5 +265,13 @@ public class BirbLogic extends Thread
 	public static void setBc(BirbsContainer bc)
 	{
 		BirbLogic.bc = bc;
+	}
+	public static void incrementColorOffset()
+	{
+		colorOffset++;
+		if(colorOffset > 255)
+		{
+			colorOffset = 0;
+		}
 	}
 }

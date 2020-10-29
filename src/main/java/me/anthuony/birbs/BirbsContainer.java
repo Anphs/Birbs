@@ -16,6 +16,7 @@ public class BirbsContainer implements Runnable
 	private final double UPDATE_CAP = 1.0 / 60.0;
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	private int windowWidth = screenSize.width, windowHeight = screenSize.height;
+//	private int windowWidth = 1920, windowHeight = 1080;
 	private int worldWidth = 19200, worldHeight = 10800;
 	private double cameraOffsetX = (worldWidth - windowWidth * 10) / -2.0, cameraOffsetY = (worldHeight - windowHeight * 10) / -2.0, cameraTempOffsetX = 0, cameraTempOffsetY = 0;
 	private double scale = .1, minScale = .1, maxScale = 1.5;
@@ -139,9 +140,8 @@ public class BirbsContainer implements Runnable
 	public void setScale(double scale)
 	{
 		Point2D.Double zoomPoint = input.getScaledMousePoint();
-//		zoomPoint = new Point2D.Double(getWorldWidth()/2.0,getWorldHeight()/2.0);
-//		zoomPoint = new Point2D.Double(getWorldWidth()/2.0 + getCameraOffsetX(), getWorldHeight()/2.0 + getCameraOffsetY());
 		
+		scale = Math.round(scale * 10)/10.0;
 		//Zoom In
 		if(getInput().getScroll() < 0 && scale >= minScale && scale <= maxScale)
 		{
@@ -158,7 +158,6 @@ public class BirbsContainer implements Runnable
 			setCameraOffsetX(getCameraOffsetX() - diffX);
 			setCameraOffsetY(getCameraOffsetY() - diffY);
 		}
-		scale = Math.round(scale * 10)/10.0;
 		this.scale = Math.max(minScale, scale);
 		this.scale = Math.min(maxScale, this.scale);
 		Birb.setScale(this.scale);

@@ -18,6 +18,7 @@ public class BirbsManager extends AbstractBirbsManager
 		doBirbLogic(bc);
 		
 		bc.getWindow().setBirbCount(bc.getBirbsList().size());
+		BirbLogic.incrementColorOffset();
 	}
 	
 	@Override
@@ -34,10 +35,7 @@ public class BirbsManager extends AbstractBirbsManager
 		}
 		if (bc.getInput().isKey(KeyEvent.VK_R))
 		{
-			bc.removeAllBirbs();
-			bc.setCameraOffsetX((bc.getWorldWidth() - bc.getWindowWidth() * 10) / -2.0);
-			bc.setCameraOffsetY((bc.getWorldHeight() - bc.getWindowHeight() * 10) / -2.0);
-			bc.setScale(0.1);
+			reset(bc);
 		}
 		
 		if (bc.getInput().isKeyDown(KeyEvent.VK_H))
@@ -47,53 +45,43 @@ public class BirbsManager extends AbstractBirbsManager
 		
 		if (bc.getInput().isButtonDown(MouseEvent.BUTTON3))
 		{
-			addBirb(bc, bc.getInput().getScaledMousePoint(), 100);
+			addBirb(bc, bc.getInput().getScaledMousePoint(), 5000);
 //			addBirb(bc, new Point2D.Double(19200/2, 10800/2));
+			Formation form = new Formation("line", bc.getBirbsList());
+			form.updateFormationPoints(bc);
 		}
 		
 		if (bc.getInput().isButtonHeld(MouseEvent.BUTTON3, 30))
 		{
 			addBirb(bc, bc.getInput().getScaledMousePoint());
+			Formation form = new Formation("line", bc.getBirbsList());
+			form.updateFormationPoints(bc);
 		}
 		
 		if (bc.getInput().isButtonDown(MouseEvent.BUTTON1))
 		{
-//			addBirb(bc, bc.getInput().getScaledMousePoint(), 10);
-//			System.out.println(bc.getInput().getChangeMouseX());
 			bc.setCameraTempOffsetX(bc.getCameraOffsetX());
 			bc.setCameraTempOffsetY(bc.getCameraOffsetY());
 		}
 		
 		if (bc.getInput().isButtonHeld(MouseEvent.BUTTON1, 0))
 		{
-//			addBirb(bc, bc.getInput().getScaledMousePoint(), 10);
 			bc.setCameraOffsetX(bc.getCameraTempOffsetX() + bc.getInput().getChangeMouseX());
 			bc.setCameraOffsetY(bc.getCameraTempOffsetY() + bc.getInput().getChangeMouseY());
 		}
 		
-		bc.setScale((bc.getScale() - bc.getInput().getScroll()/10.0));
-//		if(bc.getInput().getScroll() < 0)
-//		{
-//			bc.setCameraOffsetX(bc.getCameraOffsetX() - (1920 * (.125)) / bc.getScale());
-//			bc.setCameraOffsetY(bc.getCameraOffsetY() - (1080 * (.125)) / bc.getScale());
-//		}
-//		else if(bc.getInput().getScroll() > 0)
-//		{
-//			bc.setCameraOffsetX(bc.getCameraOffsetX() + (1920 * (.125)) / bc.getScale());
-//			bc.setCameraOffsetY(bc.getCameraOffsetY() + (1080 * (.125)) / bc.getScale());
-//		}
+		if(bc.getInput().getScroll() != 0)
+		{
+			updateScale(bc);
+		}
 		Birb.setOffsetX(bc.getCameraOffsetX());
 		Birb.setOffsetY(bc.getCameraOffsetY());
 		bc.getWindow().setOffsetX(bc.getCameraOffsetX());
 		bc.getWindow().setOffsetY(bc.getCameraOffsetY());
-		bc.getWindow().setScale(bc.getScale());
 	}
 	
 	private void doBirbLogic(BirbsContainer bc)
 	{
-		Formation form = new Formation("circle", bc.getBirbsList());
-		form.updateFormationPoints(bc);
-		
 		ThreadGroup tg = new ThreadGroup("Update Locations");
 		int np = Runtime.getRuntime().availableProcessors() - 2;
 		
@@ -145,9 +133,25 @@ public class BirbsManager extends AbstractBirbsManager
 		}
 	}
 	
+	public void updateScale(BirbsContainer bc)
+	{
+		bc.setScale((bc.getScale() - bc.getInput().getScroll()/10.0));
+		bc.getWindow().setScale(bc.getScale());
+	}
+	
+	public void reset(BirbsContainer bc)
+	{
+		bc.removeAllBirbs();
+		bc.setCameraOffsetX((bc.getWorldWidth() - bc.getWindowWidth() * 10) / -2.0);
+		bc.setCameraOffsetY((bc.getWorldHeight() - bc.getWindowHeight() * 10) / -2.0);
+		bc.setScale(0.1);
+		updateScale(bc);
+	}
+	
 	public static void main(String[] args)
 	{
 		BirbsContainer bc = new BirbsContainer(new BirbsManager());
 		bc.start();
+		Birb.setScale(bc.getScale());
 	}
 }
