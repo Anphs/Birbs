@@ -85,7 +85,7 @@ public class Birb extends Component
 		{
 			g2d.setTransform(original);
 			g2d.setPaint(new Color(255, 255, 255, 150));
-			g2d.drawRect(0, 0, WIDTH - 1, HEIGHT - 1);
+			g2d.drawRect(0, 0, getScaledWidth() - 1, getScaledHeight() - 1);
 		}
 //		g2d.setTransform(original);
 //		g2d.fillRect(0, 0, 1000, 1000);

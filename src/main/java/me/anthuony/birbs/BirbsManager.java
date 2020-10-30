@@ -119,7 +119,10 @@ public class BirbsManager extends AbstractBirbsManager
 	{
 		Birb birb = new Birb("Birb" + bc.incrementBirbTotalSpawned(), p);
 		bc.getBirbsList().add(birb);
-		bc.getWindow().getJLayeredPane().add(birb, JLayeredPane.PALETTE_LAYER);
+//		if(bc.getBirbTotalSpawned() == 1)
+//		{
+			bc.getWindow().getJLayeredPane().add(birb, JLayeredPane.PALETTE_LAYER);
+//		}
 	}
 	
 	public void addBirb(BirbsContainer bc, Point2D.Double p, int multiplier)
