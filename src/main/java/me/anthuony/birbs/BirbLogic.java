@@ -218,8 +218,10 @@ public class BirbLogic extends Thread
 		y = (y + vel.getMagnitude() * birb.getSpeedMultiplier() * Math.sin(vel.getDirection()));
 		
 		//Adjust for world boundaries and birb boundaries
-		x = (Math.abs((x + bc.getWorldWidth() + birb.getWidth() / 2.0) % bc.getWorldWidth())) - birb.getWidth() / 2.0;
-		y = (Math.abs((y + bc.getWorldHeight() + birb.getHeight() / 2.0) % bc.getWorldHeight())) - birb.getHeight() / 2.0;
+//		x = (Math.abs((x + bc.getWorldWidth() + birb.getWidth() / 2.0) % bc.getWorldWidth())) - birb.getWidth() / 2.0;
+//		y = (Math.abs((y + bc.getWorldHeight() + birb.getHeight() / 2.0) % bc.getWorldHeight())) - birb.getHeight() / 2.0;
+		x = (Math.abs((x + bc.getWorldWidth() + 70 / 2.0) % bc.getWorldWidth())) - 70 / 2.0;
+		y = (Math.abs((y + bc.getWorldHeight() + 70 / 2.0) % bc.getWorldHeight())) - 70 / 2.0;
 		
 		//Update location
 		Point2D.Double newPoint = new Point2D.Double(x, y);
@@ -243,17 +245,17 @@ public class BirbLogic extends Thread
 		g = Math.min(g, 255);
 		r = Math.min(r, 255);
 		
-		if(Math.abs(b - colorOffset) < 10)
-		{
-			r = 255;
-			g = 255;
-			b = 255;
-		}
-		if(Math.abs(g - colorOffset) < 10)
-		{
-			g = 255;
-			b = 255;
-		}
+//		if(Math.abs(b - colorOffset) < 10)
+//		{
+//			r = 255;
+//			g = 255;
+//			b = 255;
+//		}
+//		if(Math.abs(g - colorOffset) < 10)
+//		{
+//			g = 255;
+//			b = 255;
+//		}
 		
 		Vector vel = birb.getVel();
 		int velMag = (int) vel.getMagnitude();

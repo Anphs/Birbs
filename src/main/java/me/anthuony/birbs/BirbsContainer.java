@@ -9,7 +9,7 @@ public class BirbsContainer implements Runnable
 {
 	
 	private Window window;
-	//	private Renderer renderer;
+	private Renderer renderer;
 	private Input input;
 	private final AbstractBirbsManager world;
 	
@@ -37,7 +37,7 @@ public class BirbsContainer implements Runnable
 	public void start()
 	{
 		window = new Window(this);
-//		renderer = new Renderer(this);
+		renderer = new Renderer(this);
 		input = new Input(this);
 		
 		Thread thread = new Thread(this);
@@ -89,7 +89,7 @@ public class BirbsContainer implements Runnable
 			if (render)
 			{
 //				renderer.clear();
-//				world.render(this, renderer);
+				world.render(this, renderer);
 				window.update();
 				frames++;
 			} else
@@ -160,7 +160,6 @@ public class BirbsContainer implements Runnable
 		}
 		this.scale = Math.max(minScale, scale);
 		this.scale = Math.min(maxScale, this.scale);
-		Birb.setScale(this.scale);
 	}
 	
 	public String getTitle()
@@ -202,7 +201,6 @@ public class BirbsContainer implements Runnable
 	public void removeBirb(Birb birb)
 	{
 		birbsList.remove(birb);
-		window.getJLayeredPane().remove(birb);
 	}
 	
 	public void removeAllBirbs()

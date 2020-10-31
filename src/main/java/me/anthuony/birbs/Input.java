@@ -30,10 +30,10 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 		changeMouseY = 0;
 		changeMouseY = 0;
 		
-		bc.getWindow().getJLayeredPane().addKeyListener(this);
-		bc.getWindow().getJLayeredPane().addMouseMotionListener(this);
-		bc.getWindow().getJLayeredPane().addMouseListener(this);
-		bc.getWindow().getJLayeredPane().addMouseWheelListener(this);
+		bc.getWindow().getCanvas().addKeyListener(this);
+		bc.getWindow().getCanvas().addMouseMotionListener(this);
+		bc.getWindow().getCanvas().addMouseListener(this);
+		bc.getWindow().getCanvas().addMouseWheelListener(this);
 	}
 	
 	public void update()
@@ -164,8 +164,8 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e)
 	{
-		updateMousePoint(e);
 		scroll = e.getWheelRotation();
+		updateMousePoint(e);
 	}
 	
 	public double getMouseX()
@@ -192,8 +192,8 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 	
 	public void updateMousePoint(MouseEvent e)
 	{
-		mouseX = ((e.getX() / bc.getScale()));
-		mouseY = (e.getY() / bc.getScale());
+		mouseX = e.getX() / bc.getScale();
+		mouseY = e.getY() / bc.getScale();
 		mousePoint = new Point2D.Double(mouseX, mouseY);
 	}
 	
