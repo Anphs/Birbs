@@ -10,16 +10,16 @@ public class Birb
 	private final static double maxTurnSpeed = .1, turnNoise = 0;
 	private final String ID;
 	private Vector vel, acc;
-	private Point2D.Double point, formationPoint;
-	private static double offsetX = 0, offsetY = 0;
+	private Point2D.Double worldPoint, screenPoint, formationPoint;
 	private Color birbColor;
 	private static boolean hitboxVisible;
+	private boolean onScreen;
 	private double speedMultiplier = 1;
 	
-	public Birb(String ID, Point2D.Double point)
+	public Birb(String ID, Point2D.Double worldPoint)
 	{
 		this.ID = ID;
-		this.point = point;
+		this.worldPoint = worldPoint;
 		
 		double velMag = Math.random() * 2 + 4;
 		velMag = 20;
@@ -48,14 +48,24 @@ public class Birb
 		this.acc = acc;
 	}
 	
-	public Point2D.Double getPoint()
+	public Point2D.Double getWorldPoint()
 	{
-		return point;
+		return worldPoint;
 	}
 	
 	public void setWorldPoint(Point2D.Double p)
 	{
-		this.point = p;
+		this.worldPoint = p;
+	}
+	
+	public Point2D.Double getScreenPoint()
+	{
+		return screenPoint;
+	}
+	
+	public void setScreenPoint(Point2D.Double screenPoint)
+	{
+		this.screenPoint = screenPoint;
 	}
 	
 	public double getAvoidRadius()
@@ -103,16 +113,6 @@ public class Birb
 		this.speedMultiplier = speedMultiplier;
 	}
 	
-	public static void setOffsetX(double offsetX)
-	{
-		Birb.offsetX = offsetX;
-	}
-	
-	public static void setOffsetY(double offsetY)
-	{
-		Birb.offsetY = offsetY;
-	}
-	
 	public Point2D.Double getFormationPoint()
 	{
 		return formationPoint;
@@ -131,5 +131,15 @@ public class Birb
 	public static int getBaseHeight()
 	{
 		return baseHeight;
+	}
+	
+	public boolean isOnScreen()
+	{
+		return onScreen;
+	}
+	
+	public void setOnScreen(boolean onScreen)
+	{
+		this.onScreen = onScreen;
 	}
 }

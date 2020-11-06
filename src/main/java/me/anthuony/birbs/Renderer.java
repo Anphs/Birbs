@@ -1,6 +1,8 @@
 package me.anthuony.birbs;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Renderer
 {
@@ -64,6 +66,22 @@ public class Renderer
 		}
 	}
 	
+	public void drawNotes(Graphics2D g2d)
+	{
+		ArrayList<String> instructions = new ArrayList<>(Arrays.asList(
+//				"Press ESC to close",
+//				"I redid the renderer performance has increased by at least 5 times",
+//				"Right click to spawn 5000 birbs"
+		));
+		
+		g2d.setFont(new Font("Courier New", Font.BOLD, 20));
+		g2d.setColor(Color.WHITE);
+
+		for(int i=0; i<instructions.size(); i++) {
+			g2d.drawString(instructions.get(i), 10, i*20+20);
+		}
+	}
+	
 	public void updateTriangle(BirbsContainer bc)
 	{
 		int x = (int) (Birb.getBaseWidth() * bc.getScale() / 2);
@@ -78,10 +96,6 @@ public class Renderer
 	{
 		g2d.setPaint(b.getBirbColor());
 		g2d.rotate(b.getVel().getDirection());
-		
-		g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-		g2d.setStroke(new BasicStroke((float) (5 * bc.getScale())));
 		g2d.drawPolygon(birbTriangle);
 	}
 }
