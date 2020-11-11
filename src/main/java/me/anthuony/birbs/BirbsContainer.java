@@ -1,6 +1,5 @@
 package me.anthuony.birbs;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -8,26 +7,30 @@ import java.util.ArrayList;
 public class BirbsContainer implements Runnable
 {
 	
-	private Window window;
-	private Renderer renderer;
-	private Input input;
 	private final AbstractBirbsManager world;
-	
 	private final double UPDATE_CAP = 1.0 / 60.0;
-	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-	private int windowWidth = screenSize.width, windowHeight = screenSize.height;
-//	private int windowWidth = 1920, windowHeight = 1080;
-	private int worldWidth = 19200, worldHeight = 10800;
-	private double cameraOffsetX = (worldWidth - windowWidth * 10) / -2.0, cameraOffsetY = (worldHeight - windowHeight * 10) / -2.0, cameraTempOffsetX = 0, cameraTempOffsetY = 0;
-	private double scale = .1, minScale = .1, maxScale = 1.5;
-	private String title = "Birbs";
-	
+	private final double cameraPanningInterval = 100;
+	private final double minScale = .1;
+	private final double maxScale = 1.5;
 	private final ArrayList<Birb> birbsList = new ArrayList<>();
-	private int birbTotalSpawned;
-	
+	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	private final int windowWidth = screenSize.width;
+	private final int windowHeight = screenSize.height;
 	double frameTime = 0;
 	int frames = 0;
 	int fps = 0;
+	private Window window;
+	private Renderer renderer;
+	private Input input;
+	//	private int windowWidth = 1920, windowHeight = 1080;
+	private int worldWidth = 19200, worldHeight = 10800;
+	private double cameraOffsetX = (worldWidth - windowWidth * 10) / -2.0;
+	private double cameraOffsetY = (worldHeight - windowHeight * 10) / -2.0;
+	private double cameraTempOffsetX = 0;
+	private double cameraTempOffsetY = 0;
+	private double scale = .1;
+	private String title = "Birbs";
+	private int birbTotalSpawned;
 	
 	public BirbsContainer(AbstractBirbsManager world)
 	{
@@ -141,9 +144,9 @@ public class BirbsContainer implements Runnable
 	{
 		Point2D.Double zoomPoint = input.getScaledMousePoint();
 		
-		scale = Math.round(scale * 10)/10.0;
+		scale = Math.round(scale * 10) / 10.0;
 		//Zoom In
-		if(getInput().getScroll() < 0 && scale >= minScale && scale <= maxScale)
+		if (getInput().getScroll() < 0 && scale >= minScale && scale <= maxScale)
 		{
 			double diffX = ((zoomPoint.getX() + getCameraOffsetX()) * -.1) * (1.0 / scale);
 			double diffY = ((zoomPoint.getY() + getCameraOffsetY()) * -.1) * (1.0 / scale);
@@ -151,7 +154,7 @@ public class BirbsContainer implements Runnable
 			setCameraOffsetY(getCameraOffsetY() + diffY);
 		}
 		//Zoom out
-		else if(getInput().getScroll() > 0 && scale >= minScale && scale <= maxScale)
+		else if (getInput().getScroll() > 0 && scale >= minScale && scale <= maxScale)
 		{
 			double diffX = ((zoomPoint.getX() + getCameraOffsetX()) * -.1) * (1.0 / scale);
 			double diffY = ((zoomPoint.getY() + getCameraOffsetY()) * -.1) * (1.0 / scale);
@@ -192,10 +195,15 @@ public class BirbsContainer implements Runnable
 		return birbTotalSpawned;
 	}
 	
+	public void setBirbTotalSpawned(int birbTotalSpawned)
+	{
+		this.birbTotalSpawned = birbTotalSpawned;
+	}
+	
 	public int incrementBirbTotalSpawned()
 	{
 		birbTotalSpawned++;
-		return birbTotalSpawned-1;
+		return birbTotalSpawned - 1;
 	}
 	
 	public void removeBirb(Birb birb)
@@ -213,11 +221,6 @@ public class BirbsContainer implements Runnable
 		setBirbTotalSpawned(0);
 	}
 	
-	public void setBirbTotalSpawned(int birbTotalSpawned)
-	{
-		this.birbTotalSpawned = birbTotalSpawned;
-	}
-	
 	public AbstractBirbsManager getWorld()
 	{
 		return world;
@@ -228,19 +231,29 @@ public class BirbsContainer implements Runnable
 		return cameraOffsetX;
 	}
 	
-	public double getCameraOffsetY()
-	{
-		return cameraOffsetY;
-	}
-	
 	public void setCameraOffsetX(double x)
 	{
 		cameraOffsetX = x;
 	}
 	
+	public double getCameraOffsetY()
+	{
+		return cameraOffsetY;
+	}
+	
 	public void setCameraOffsetY(double y)
 	{
 		cameraOffsetY = y;
+	}
+	
+	public void changeCameraOffsetX(double x)
+	{
+		cameraOffsetX += x;
+	}
+	
+	public void changeCameraOffsetY(double y)
+	{
+		cameraOffsetY += y;
 	}
 	
 	public double getCameraTempOffsetX()
@@ -271,5 +284,10 @@ public class BirbsContainer implements Runnable
 	public int getWindowHeight()
 	{
 		return windowHeight;
+	}
+	
+	public double getCameraPanningInterval()
+	{
+		return cameraPanningInterval;
 	}
 }

@@ -40,12 +40,12 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 	{
 		scroll = 0;
 		
-		if(isButtonDown(MouseEvent.BUTTON1))
+		if (isButtonDown(MouseEvent.BUTTON1))
 		{
 			mouseDownPoint = getMousePoint();
 		}
 		
-		if(mouseDownPoint != null)
+		if (mouseDownPoint != null)
 		{
 			changeMouseX = getMousePoint().getX() - mouseDownPoint.getX();
 			changeMouseY = getMousePoint().getY() - mouseDownPoint.getY();

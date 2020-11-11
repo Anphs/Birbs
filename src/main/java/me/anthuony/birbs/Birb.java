@@ -1,18 +1,17 @@
 package me.anthuony.birbs;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
 public class Birb
 {
 	private static final int baseWidth = 70, baseHeight = 70;
 	private final static double maxTurnSpeed = .1, turnNoise = 0;
+	private static boolean hitboxVisible;
 	private final String ID;
 	private Vector vel, acc;
 	private Point2D.Double worldPoint, screenPoint, formationPoint;
 	private Color birbColor;
-	private static boolean hitboxVisible;
 	private boolean onScreen;
 	private double speedMultiplier = 1;
 	
@@ -26,6 +25,31 @@ public class Birb
 		vel = new Vector(velMag, Math.random() * 2 * Math.PI);
 //		vel = new Vector(0, 3 * Math.PI / 2);
 		birbColor = new Color(254, 105, 3, /*50 + 30 * (int) velMag*/ 0);
+	}
+	
+	public static double getMaxTurnSpeed()
+	{
+		return maxTurnSpeed;
+	}
+	
+	public static double getTurnNoise()
+	{
+		return turnNoise;
+	}
+	
+	public static void toggleHitboxVisible()
+	{
+		hitboxVisible = !hitboxVisible;
+	}
+	
+	public static int getBaseWidth()
+	{
+		return baseWidth;
+	}
+	
+	public static int getBaseHeight()
+	{
+		return baseHeight;
 	}
 	
 	public Vector getVel()
@@ -70,7 +94,7 @@ public class Birb
 	
 	public double getAvoidRadius()
 	{
-		return (int)vel.getMagnitude()*15+150;
+		return (int) vel.getMagnitude() * 15 + 150;
 	}
 	
 	public Color getBirbColor()
@@ -83,24 +107,9 @@ public class Birb
 		this.birbColor = birbColor;
 	}
 	
-	public static double getMaxTurnSpeed()
-	{
-		return maxTurnSpeed;
-	}
-	
-	public static double getTurnNoise()
-	{
-		return turnNoise;
-	}
-	
 	public String getID()
 	{
 		return ID;
-	}
-	
-	public static void toggleHitboxVisible()
-	{
-		hitboxVisible = !hitboxVisible;
 	}
 	
 	public double getSpeedMultiplier()
@@ -121,16 +130,6 @@ public class Birb
 	public void setFormationPoint(Point2D.Double seekPoint)
 	{
 		this.formationPoint = seekPoint;
-	}
-	
-	public static int getBaseWidth()
-	{
-		return baseWidth;
-	}
-	
-	public static int getBaseHeight()
-	{
-		return baseHeight;
 	}
 	
 	public boolean isOnScreen()

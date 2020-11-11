@@ -3,16 +3,13 @@ package me.anthuony.birbs;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Window
 {
 	private final JFrame frame;
-	private Canvas canvas;
-	private BufferStrategy bs;
-	private Graphics g;
+	private final Canvas canvas;
+	private final BufferStrategy bs;
+	private final Graphics g;
 	
 	public Window(me.anthuony.birbs.BirbsContainer bc)
 	{
@@ -24,17 +21,17 @@ public class Window
 		frame.setLocationRelativeTo(null);
 		frame.setTitle(bc.getTitle());
 		frame.setLayout(new BorderLayout());
-
+		
 		canvas = new Canvas();
 		canvas.setPreferredSize(s);
-
+		
 		frame.add(canvas, BorderLayout.CENTER);
 		frame.pack();
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(true);
 		frame.setVisible(true);
-		frame.requestFocus();
+		canvas.requestFocus();
 		
 		canvas.createBufferStrategy(2);
 		bs = canvas.getBufferStrategy();

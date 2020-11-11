@@ -6,13 +6,13 @@ import java.util.Arrays;
 
 public class Renderer
 {
-	BirbsContainer bc;
 	private static final int d = 70 / 2;
 	private static final int dd = (int) (d / 1.5);
 	private static final int ddd = d / 2;
 	private static final int[] triangleX = new int[]{dd, -dd, -ddd, -dd};
 	private static final int[] triangleY = new int[]{0, ddd, 0, -ddd};
 	private static Polygon birbTriangle = new Polygon(triangleX, triangleY, 4);
+	BirbsContainer bc;
 	
 	public Renderer(BirbsContainer bc)
 	{
@@ -22,34 +22,34 @@ public class Renderer
 	public void drawRect(Graphics2D g2d)
 	{
 		g2d.setColor(Color.ORANGE);
-		g2d.fillRect(50, 50, 50 ,50);
+		g2d.fillRect(50, 50, 50, 50);
 	}
 	
 	public void drawBackground(Graphics2D g2d)
 	{
 		g2d.setPaint(new Color(50, 50, 50, 255));
 		g2d.fillRect(0, 0, bc.getWindowWidth(), bc.getWindowHeight());
-
+		
 		g2d.setPaint(new Color(0, 0, 0, 255));
-		g2d.fillRect((int)(bc.getCameraOffsetX() * bc.getScale()) , (int)(bc.getCameraOffsetY() * bc.getScale()), (int)(19200 * bc.getScale()), (int)(10800 * bc.getScale()));
+		g2d.fillRect((int) (bc.getCameraOffsetX() * bc.getScale()), (int) (bc.getCameraOffsetY() * bc.getScale()), (int) (19200 * bc.getScale()), (int) (10800 * bc.getScale()));
 	}
 	
 	public void drawCenteredString(Graphics2D g2d, Font f, String str, int x, int y)
 	{
 		FontMetrics metrics = g2d.getFontMetrics(f);
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-
+		
 		x *= bc.getScale();
 		y *= bc.getScale();
 		x -= metrics.stringWidth(str) / 2;
 		y += metrics.getAscent() / 2;
 		x += bc.getCameraOffsetX() * bc.getScale();
 		y += bc.getCameraOffsetY() * bc.getScale();
-
+		
 		g2d.setFont(f);
 		g2d.drawString(str, x, y);
 	}
-
+	
 	public void drawMousePosition(Graphics g2d)
 	{
 		g2d.setColor(Color.WHITE);
@@ -76,9 +76,10 @@ public class Renderer
 		
 		g2d.setFont(new Font("Courier New", Font.BOLD, 20));
 		g2d.setColor(Color.WHITE);
-
-		for(int i=0; i<instructions.size(); i++) {
-			g2d.drawString(instructions.get(i), 10, i*20+20);
+		
+		for (int i = 0; i < instructions.size(); i++)
+		{
+			g2d.drawString(instructions.get(i), 10, i * 20 + 20);
 		}
 	}
 	

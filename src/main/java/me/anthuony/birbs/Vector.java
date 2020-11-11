@@ -2,7 +2,8 @@ package me.anthuony.birbs;
 
 public class Vector
 {
-	private double magnitude, direction;
+	private final double magnitude;
+	private final double direction;
 	
 	public Vector(double d, double e)
 	{

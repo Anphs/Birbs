@@ -6,14 +6,14 @@ import java.util.ArrayList;
 
 public class BirbLogic extends Thread
 {
-	private Birb birb;
-	private final ArrayList<Birb> logicBirbsList;
+	private static final boolean avoidOthers = false;
+	private static final boolean doAlignment = true;
+	private static final boolean doCohesion = true;
+	private static final boolean deleteClose = false;
 	private static BirbsContainer bc;
-	private static boolean avoidOthers = false;
-	private static boolean doAlignment = true;
-	private static boolean doCohesion = true;
-	private static boolean deleteClose = false;
 	private static int colorOffset = 0;
+	private final ArrayList<Birb> logicBirbsList;
+	private Birb birb;
 	
 	//Multi-threading
 	public BirbLogic(ArrayList<Birb> birbsList, String name, ThreadGroup tg)
@@ -22,19 +22,33 @@ public class BirbLogic extends Thread
 		this.logicBirbsList = birbsList;
 	}
 	
+	public static void setBc(BirbsContainer bc)
+	{
+		BirbLogic.bc = bc;
+	}
+	
+	public static void incrementColorOffset()
+	{
+		colorOffset++;
+		if (colorOffset > 255)
+		{
+			colorOffset = 0;
+		}
+	}
+	
 	public void run()
 	{
 		for (Birb birb : logicBirbsList)
 		{
 			this.birb = birb;
 			updateBirbColor();
-			if(deleteClose)
+			if (deleteClose)
 			{
 				doDeleteClose();
 			}
-			if(avoidOthers)
+			if (avoidOthers)
 			{
-				if(doAvoidOthers() && doAlignment)
+				if (doAvoidOthers() && doAlignment)
 				{
 					doAlignment();
 				}
@@ -45,12 +59,11 @@ public class BirbLogic extends Thread
 //			}
 			else
 			{
-				if(birb.getFormationPoint() != null)
+				if (birb.getFormationPoint() != null)
 				{
 					adjustFormationSpeed(birb.getFormationPoint());
 					seekPoint(birb.getFormationPoint(), true);
-				}
-				else
+				} else
 				{
 					seekPoint(bc.getInput().getScaledMousePoint(), true);
 				}
@@ -63,7 +76,7 @@ public class BirbLogic extends Thread
 	{
 		int deleteRange = 10;
 		ArrayList<Birb> birbsInRadius = getBirbsInRadius(deleteRange);
-		for(Birb otherBirb: birbsInRadius)
+		for (Birb otherBirb : birbsInRadius)
 		{
 			bc.removeBirb(otherBirb);
 		}
@@ -71,14 +84,14 @@ public class BirbLogic extends Thread
 	
 	private void doAlignment()
 	{
-		ArrayList<Birb> birbsInRadius = getBirbsInRadius(300);
-		if(birbsInRadius.size() > 0)
+		ArrayList<Birb> birbsInRadius = getBirbsInRadius(25 * birb.getVel().getMagnitude());
+		if (birbsInRadius.size() > 0)
 		{
 			double avgMag = 0;
 			double avgDir = 0;
 			double avgX = 0;
 			double avgY = 0;
-			for(Birb otherBirb: birbsInRadius)
+			for (Birb otherBirb : birbsInRadius)
 			{
 				avgMag += otherBirb.getVel().getMagnitude();
 				avgDir += otherBirb.getVel().getDirection();
@@ -93,7 +106,7 @@ public class BirbLogic extends Thread
 			
 			double currentDirection = birb.getVel().getDirection();
 			double adjustment = getDirectionAdjustment(currentDirection, avgDir);
-			double newDirection = (adjustment+currentDirection)%(2*Math.PI);
+			double newDirection = (adjustment + currentDirection) % (2 * Math.PI);
 			birb.setVel(new Vector(avgMag, newDirection));
 			seekPoint(avgPoint, true);
 		}
@@ -103,26 +116,31 @@ public class BirbLogic extends Thread
 	{
 		double adjustment = desiredDirection - currentDirection;
 //		System.out.println(desiredDirection+" "+currentDirection+" "+adjustment);
-		double change = adjustment%(2*Math.PI);
+		double change = adjustment % (2 * Math.PI);
 		
-		if(change > Math.PI && currentDirection < Math.PI) {
-			change -= 2*Math.PI;
+		if (change > Math.PI && currentDirection < Math.PI)
+		{
+			change -= 2 * Math.PI;
 		}
 		
-		if(change < -Math.PI && currentDirection > Math.PI) {
-			change += 2*Math.PI;
+		if (change < -Math.PI && currentDirection > Math.PI)
+		{
+			change += 2 * Math.PI;
 		}
 		
-		if(Math.abs(change) > Birb.getMaxTurnSpeed()) {
-			if(change > 0) {
+		if (Math.abs(change) > Birb.getMaxTurnSpeed())
+		{
+			if (change > 0)
+			{
 				change = Birb.getMaxTurnSpeed();
-			}
-			else {
+			} else
+			{
 				change = -Birb.getMaxTurnSpeed();
 			}
 		}
 		return change;
 	}
+	
 	public void seekPoint(Point2D.Double desiredPoint, boolean seek)
 	{
 		double desiredX = desiredPoint.getX();
@@ -132,17 +150,18 @@ public class BirbLogic extends Thread
 		
 		double currentDirection = birb.getVel().getDirection();
 		double desiredDirection = Math.atan2(desiredY - currentY, desiredX - currentX);
-		if(!seek)
+		if (!seek)
 		{
 			desiredDirection += Math.PI;
 		}
-		if(desiredDirection<0) {
-			desiredDirection += 2*Math.PI;
+		if (desiredDirection < 0)
+		{
+			desiredDirection += 2 * Math.PI;
 		}
 		
 		double adjustment = getDirectionAdjustment(currentDirection, desiredDirection);
 		
-		double newDirection = (adjustment+currentDirection)%(2*Math.PI);
+		double newDirection = (adjustment + currentDirection) % (2 * Math.PI);
 		birb.setVel(new Vector(birb.getVel().getMagnitude(), newDirection));
 	}
 	
@@ -150,11 +169,10 @@ public class BirbLogic extends Thread
 	{
 		double distance = getPointDistance(formationPoint, birb.getWorldPoint());
 		double slowDownRange = 300;
-		if(distance < slowDownRange)
+		if (distance < slowDownRange)
 		{
-			birb.setSpeedMultiplier(Math.min(distance/slowDownRange, 20));
-		}
-		else
+			birb.setSpeedMultiplier(Math.min(distance / slowDownRange, 20));
+		} else
 		{
 			birb.setSpeedMultiplier(1);
 		}
@@ -179,15 +197,15 @@ public class BirbLogic extends Thread
 		return getPointDistance(b1.getWorldPoint(), b2.getWorldPoint());
 	}
 	
-	public ArrayList<Birb> getBirbsInRadius(int radius)
+	public ArrayList<Birb> getBirbsInRadius(double radius)
 	{
 		ArrayList<Birb> birbsInRadius = new ArrayList<Birb>();
-		for(Birb otherBirb: bc.getBirbsList())
+		for (Birb otherBirb : bc.getBirbsList())
 		{
-			if(otherBirb != birb)
+			if (otherBirb != birb)
 			{
 				double distance = getBirbDistance(otherBirb);
-				if(distance <= radius)
+				if (distance <= radius)
 				{
 					birbsInRadius.add(otherBirb);
 				}
@@ -199,24 +217,24 @@ public class BirbLogic extends Thread
 	
 	public boolean doAvoidOthers()
 	{
-		int avoidRange = (int)birb.getVel().getMagnitude()*15+25;
+		int avoidRange = (int) birb.getVel().getMagnitude() * 15 + 25;
 		ArrayList<Birb> birbsInRadius = getBirbsInRadius(avoidRange);
 		Birb closestOther = null;
-		if(birbsInRadius.size() > 0)
+		if (birbsInRadius.size() > 0)
 		{
 			closestOther = birbsInRadius.get(0);
 		}
-		for(Birb otherBirb: birbsInRadius)
+		for (Birb otherBirb : birbsInRadius)
 		{
-			if(getBirbDistance(closestOther, otherBirb) < getBirbDistance(closestOther, birb))
+			if (getBirbDistance(closestOther, otherBirb) < getBirbDistance(closestOther, birb))
 			{
 				closestOther = otherBirb;
 			}
 		}
-		if(closestOther != null)
+		if (closestOther != null)
 		{
 			seekPoint(closestOther.getWorldPoint(), false);
-			birb.setSpeedMultiplier(getBirbDistance(closestOther)/(avoidRange*1.5));
+			birb.setSpeedMultiplier(getBirbDistance(closestOther) / (avoidRange * 1.5));
 			return false;
 //			System.out.println(getBirbDistance(closestOther));
 		}
@@ -255,8 +273,8 @@ public class BirbLogic extends Thread
 //		int r = (color.getRed() + 3) % 255;
 //		int g = (color.getGreen() + 1) % 255;
 //		int bl = (color.getBlue() + 2) % 255;
-		int b = (int)((birb.getWorldPoint().getX() + colorOffset) / bc.getWorldWidth() * 255);
-		int g = (int)((birb.getWorldPoint().getY() + colorOffset) / bc.getWorldHeight() * 255);
+		int b = (int) ((birb.getWorldPoint().getX() + colorOffset) / bc.getWorldWidth() * 255);
+		int g = (int) ((birb.getWorldPoint().getY() + colorOffset) / bc.getWorldHeight() * 255);
 		int r = 255 - b;
 		
 		b = Math.max(b, 0);
@@ -265,7 +283,7 @@ public class BirbLogic extends Thread
 		b = Math.min(b, 255);
 		g = Math.min(g, 255);
 		r = Math.min(r, 255);
-		
+
 //		if(Math.abs(b - colorOffset) < 10)
 //		{
 //			r = 255;
@@ -281,20 +299,7 @@ public class BirbLogic extends Thread
 		Vector vel = birb.getVel();
 		int velMag = (int) vel.getMagnitude();
 //		Color newColor = new Color(r, g, b, 50 + 30 * velMag);
-		Color newColor = new Color(r, g, b,255);
+		Color newColor = new Color(r, g, b, 255);
 		birb.setBirbColor(newColor);
-	}
-	
-	public static void setBc(BirbsContainer bc)
-	{
-		BirbLogic.bc = bc;
-	}
-	public static void incrementColorOffset()
-	{
-		colorOffset++;
-		if(colorOffset > 255)
-		{
-			colorOffset = 0;
-		}
 	}
 }

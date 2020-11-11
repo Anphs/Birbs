@@ -1,16 +1,20 @@
 package me.anthuony.birbs;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class BirbsManager extends AbstractBirbsManager
 {
+	
+	public static void main(String[] args)
+	{
+		BirbsContainer bc = new BirbsContainer(new BirbsManager());
+		bc.start();
+	}
 	
 	@Override
 	public void update(BirbsContainer bc, float dt)
@@ -40,15 +44,15 @@ public class BirbsManager extends AbstractBirbsManager
 		} else
 		{
 			g2d.setColor(Color.GRAY);
-			r.drawCenteredString(g2d, new Font("Courier New", Font.BOLD, (int)(10800 * bc.getScale()) / 5), "" + bc.getBirbsList().size(), 19200 / 2, 10800 / 2);
+			r.drawCenteredString(g2d, new Font("Courier New", Font.BOLD, (int) (10800 * bc.getScale()) / 5), "" + bc.getBirbsList().size(), 19200 / 2, 10800 / 2);
 		}
 		
 		//Notes
 		r.drawNotes(g2d);
 		
 		r.updateTriangle(bc);
-		
-		
+
+
 //		g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 //		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -56,9 +60,9 @@ public class BirbsManager extends AbstractBirbsManager
 		
 		g2d.setStroke(new BasicStroke((float) (5 * bc.getScale())));
 		
-		for(Birb birb: bc.getBirbsList())
+		for (Birb birb : bc.getBirbsList())
 		{
-			if(birb.isOnScreen())
+			if (birb.isOnScreen())
 			{
 				g2d.setTransform(original);
 				g2d.translate(birb.getScreenPoint().getX(), birb.getScreenPoint().getY());
@@ -93,6 +97,24 @@ public class BirbsManager extends AbstractBirbsManager
 			Birb.toggleHitboxVisible();
 		}
 		
+		//Arrow Key Panning
+		if (bc.getInput().isKey(KeyEvent.VK_UP) || bc.getInput().isKey(KeyEvent.VK_W))
+		{
+			bc.changeCameraOffsetY(bc.getCameraPanningInterval());
+		}
+		if (bc.getInput().isKey(KeyEvent.VK_DOWN) || bc.getInput().isKey(KeyEvent.VK_S))
+		{
+			bc.changeCameraOffsetY(-bc.getCameraPanningInterval());
+		}
+		if (bc.getInput().isKey(KeyEvent.VK_LEFT) || bc.getInput().isKey(KeyEvent.VK_A))
+		{
+			bc.changeCameraOffsetX(bc.getCameraPanningInterval());
+		}
+		if (bc.getInput().isKey(KeyEvent.VK_RIGHT) || bc.getInput().isKey(KeyEvent.VK_D))
+		{
+			bc.changeCameraOffsetX(-bc.getCameraPanningInterval());
+		}
+		
 		if (bc.getInput().isButtonDown(MouseEvent.BUTTON3))
 		{
 			addBirb(bc, bc.getInput().getScaledMousePoint(), 5000);
@@ -120,7 +142,7 @@ public class BirbsManager extends AbstractBirbsManager
 			bc.setCameraOffsetY(bc.getCameraTempOffsetY() + bc.getInput().getChangeMouseY());
 		}
 		
-		if(bc.getInput().getScroll() != 0)
+		if (bc.getInput().getScroll() != 0)
 		{
 			updateScale(bc);
 		}
@@ -184,7 +206,7 @@ public class BirbsManager extends AbstractBirbsManager
 	
 	public void updateScale(BirbsContainer bc)
 	{
-		bc.setScale((bc.getScale() - bc.getInput().getScroll()/10.0));
+		bc.setScale((bc.getScale() - bc.getInput().getScroll() / 10.0));
 	}
 	
 	public void reset(BirbsContainer bc)
@@ -194,11 +216,5 @@ public class BirbsManager extends AbstractBirbsManager
 		bc.setCameraOffsetY((bc.getWorldHeight() - bc.getWindowHeight() * 10) / -2.0);
 		bc.setScale(0.1);
 		updateScale(bc);
-	}
-	
-	public static void main(String[] args)
-	{
-		BirbsContainer bc = new BirbsContainer(new BirbsManager());
-		bc.start();
 	}
 }
