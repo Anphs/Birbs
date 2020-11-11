@@ -1,8 +1,11 @@
 package me.anthuony.birbs;
 
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class Renderer
 {
@@ -68,18 +71,12 @@ public class Renderer
 	
 	public void drawNotes(Graphics2D g2d)
 	{
-		ArrayList<String> instructions = new ArrayList<>(Arrays.asList(
-//				"Press ESC to close",
-//				"I redid the renderer performance has increased by at least 5 times",
-//				"Right click to spawn 5000 birbs"
-		));
-		
 		g2d.setFont(new Font("Courier New", Font.BOLD, 20));
 		g2d.setColor(Color.WHITE);
 		
-		for (int i = 0; i < instructions.size(); i++)
+		for (int i = 0; i < bc.getChangelog().size(); i++)
 		{
-			g2d.drawString(instructions.get(i), 10, i * 20 + 20);
+			g2d.drawString(bc.getChangelog().get(i), 10, i * 20 + 20);
 		}
 	}
 	

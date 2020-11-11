@@ -2,7 +2,10 @@ package me.anthuony.birbs;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class BirbsContainer implements Runnable
 {
@@ -19,6 +22,7 @@ public class BirbsContainer implements Runnable
 	double frameTime = 0;
 	int frames = 0;
 	int fps = 0;
+	ArrayList<String> changelog = new ArrayList<>();
 	private Window window;
 	private Renderer renderer;
 	private Input input;
@@ -45,6 +49,18 @@ public class BirbsContainer implements Runnable
 		
 		Thread thread = new Thread(this);
 		thread.start();
+		
+		try
+		{
+			Scanner scan = new Scanner(new File("src/main/java/me/anthuony/birbs/Changelog.txt"));
+			while (scan.hasNext())
+			{
+				changelog.add(scan.nextLine());
+			}
+		} catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public void stop()
@@ -289,5 +305,10 @@ public class BirbsContainer implements Runnable
 	public double getCameraPanningInterval()
 	{
 		return cameraPanningInterval;
+	}
+	
+	public ArrayList<String> getChangelog()
+	{
+		return changelog;
 	}
 }
