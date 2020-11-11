@@ -123,7 +123,7 @@ public class BirbsManager extends AbstractBirbsManager
 			form.updateFormationPoints(bc);
 		}
 		
-		if (bc.getInput().isButtonHeld(MouseEvent.BUTTON3, 30))
+		if (bc.getInput().isButtonHeld(MouseEvent.BUTTON3, 1))
 		{
 			addBirb(bc, bc.getInput().getScaledMousePoint());
 			Formation form = new Formation("circle", bc.getBirbsList());

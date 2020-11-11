@@ -14,7 +14,7 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 	private final int NUM_BUTTONS = 5;
 	private final boolean[] buttons = new boolean[NUM_BUTTONS];
 	private final boolean[] buttonsLast = new boolean[NUM_BUTTONS];
-	private final int[] buttonsHeldTicks = new int[NUM_BUTTONS];
+	private final double[] buttonsHeldStart = new double[NUM_BUTTONS];
 	
 	private Point2D.Double mousePoint = new Point2D.Double(0, 0), mouseDownPoint;
 	private double mouseX, mouseY, changeMouseX, changeMouseY;
@@ -91,13 +91,14 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 	{
 		if (isButtonDown(button))
 		{
-			buttonsHeldTicks[button] = delay;
+			buttonsHeldStart[button] = System.nanoTime()/1.0e9;
 			return false;
-		} else
-		{
-			buttonsHeldTicks[button]--;
 		}
-		return buttons[button] && buttonsHeldTicks[button] < 0;
+		if (!isButton(button))
+		{
+			return false;
+		}
+		return (System.nanoTime()/1.0e9 - buttonsHeldStart[button]) > delay;
 	}
 	
 	@Override
