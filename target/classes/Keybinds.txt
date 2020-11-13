@@ -1,0 +1,4 @@
+ESC to Close
+R to Reset
+H to Toggle Hitboxes
+WASD and Arrow Keys to Pan

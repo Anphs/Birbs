@@ -1,5 +1,10 @@
+Change Log (Report #11):
 You can now use WASD or the arrow keys to pan the camera around
 The birbs now seek their spot and slow down as they approach their point
 Fixed the keyboard not being registered until the mouse was clicked on the application window
 Changed button held method to use the System.nanoTime rather than ticks
-Added reading the this changelog from a file
+Added reading this changelog from a file
+
+Change Log (Report #12):
+Added methods for left aligned text and right aligned text
+Added methods to draw lists

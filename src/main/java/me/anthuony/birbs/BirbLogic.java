@@ -264,7 +264,7 @@ public class BirbLogic extends Thread
 		
 		Point2D.Double newScreenPoint = new Point2D.Double(sX, sY);
 		birb.setScreenPoint(newScreenPoint);
-		birb.setOnScreen(sX > 0 && sX < bc.getWindowWidth() && sY > 0 && sY < bc.getWindowHeight());
+		birb.setOnScreen(sX > -70*bc.getScale() && sX < bc.getWindowWidth()+70*bc.getScale() && sY > -70*bc.getScale() && sY < bc.getWindowHeight()+70*bc.getScale());
 	}
 	
 	public void updateBirbColor()

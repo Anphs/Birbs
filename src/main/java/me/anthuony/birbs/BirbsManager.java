@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class BirbsManager extends AbstractBirbsManager
 {
@@ -33,52 +34,53 @@ public class BirbsManager extends AbstractBirbsManager
 		Graphics2D g2d = (Graphics2D) bc.getWindow().getG();
 		AffineTransform original = g2d.getTransform();
 		Font bigWords = new Font("Courier New", Font.BOLD, (int) ((19200 * bc.getScale()) / 20));
+		Font interfaceFont = new Font("Courier New", Font.BOLD, 20);
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		
 		r.drawBackground(g2d);
-		r.drawMousePosition(g2d);
 		
-		//Say click anywhere or birb count
-		if (bc.getBirbsList().size() == 0)
-		{
-			r.drawCenteredString(g2d, bigWords, "Click Anywhere to Begin", 19200 / 2, 10800 / 2);
-		} else
-		{
-			g2d.setColor(Color.GRAY);
-			r.drawCenteredString(g2d, new Font("Courier New", Font.BOLD, (int) (10800 * bc.getScale()) / 5), "" + bc.getBirbsList().size(), 19200 / 2, 10800 / 2);
-		}
-		
-		//Notes
-		r.drawNotes(g2d);
-		
-		r.updateTriangle(bc);
-
-
-//		g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-//		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2d.setStroke(new BasicStroke((float) (5 * bc.getScale())));
 		
-		g2d.setStroke(new BasicStroke((float) (5 * bc.getScale())));
-		
+		int onScreenCount = 0;
 		for (Birb birb : bc.getBirbsList())
 		{
-			if (birb.isOnScreen())
+			if (birb.isOnScreen() /*&& birb.getID().endsWith("10")*/)
 			{
 				g2d.setTransform(original);
 				g2d.translate(birb.getScreenPoint().getX(), birb.getScreenPoint().getY());
 				r.drawBirb(g2d, birb);
+				onScreenCount++;
 			}
-//			g2d.setTransform(original);
-//			double x = (birb.getWorldPoint().getX() + bc.getCameraOffsetX()) * bc.getScale();
-//			double y = (birb.getWorldPoint().getY() + bc.getCameraOffsetY()) * bc.getScale();
-//			if(x > 0 && x < bc.getWindowWidth() && y > 0 && y < bc.getWindowHeight())
-//			{
-//				g2d.translate(x, y);
-//				r.drawBirb(g2d, birb);
-//			}
 		}
 		
 		g2d.setTransform(original);
+		
+		//UI Text
+		g2d.setColor(Color.WHITE);
+		g2d.setFont(interfaceFont);
+		FontMetrics interfaceFontMetrics = g2d.getFontMetrics();
+		
+		
+		ArrayList<String> topLeftText = new ArrayList<>(Arrays.asList(
+				""+bc.getBirbsList().size()+" Birbs in the World",
+				""+onScreenCount+" Birbs on Screen"
+		));
+		
+		
+		r.drawLeftAlignedList(g2d, interfaceFont, topLeftText, 10, 0);
+		r.drawMousePosition(g2d, interfaceFont);
+		r.drawFPS(g2d, interfaceFont);
+//		r.drawLeftAlignedList(g2d, interfaceFont, bc.getChangelog(), 10, bc.getWindowHeight() - (bc.getChangelog().size() * interfaceFontMetrics.getAscent()) - 10);
+		r.drawRightAlignedList(g2d, interfaceFont, bc.getKeybindsHint(), bc.getWindowWidth() - 10, bc.getWindowHeight() - (bc.getKeybindsHint().size() * interfaceFontMetrics.getAscent()) - 10);
+		
+		//Say click anywhere
+		if (bc.getBirbsList().size() == 0)
+		{
+			r.drawCenteredString(g2d, bigWords, "Click Anywhere to Begin", 19200 / 2.0, 10800 / 2.0);
+		}
+		
+		r.updateTriangle(bc);
 	}
 	
 	public void doInputBinds(BirbsContainer bc)

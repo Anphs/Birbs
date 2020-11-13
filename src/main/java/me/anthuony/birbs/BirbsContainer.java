@@ -2,8 +2,9 @@ package me.anthuony.birbs;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -23,6 +24,7 @@ public class BirbsContainer implements Runnable
 	int frames = 0;
 	int fps = 0;
 	ArrayList<String> changelog = new ArrayList<>();
+	ArrayList<String> keybindsHint = new ArrayList<>();
 	private Window window;
 	private Renderer renderer;
 	private Input input;
@@ -50,17 +52,36 @@ public class BirbsContainer implements Runnable
 		Thread thread = new Thread(this);
 		thread.start();
 		
-		try
+		String changelogFile = "Changelog.txt";
+		String keybindsFile = "Keybinds.txt";
+		ClassLoader classLoader = getClass().getClassLoader();
+		
+		try (InputStream inputStream = classLoader.getResourceAsStream(changelogFile))
 		{
-			Scanner scan = new Scanner(new File("src/main/java/me/anthuony/birbs/Changelog.txt"));
+			assert inputStream != null;
+			Scanner scan = new Scanner(inputStream);
 			while (scan.hasNext())
 			{
 				changelog.add(scan.nextLine());
 			}
-		} catch (FileNotFoundException e)
+		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}
+		
+		try (InputStream inputStream = classLoader.getResourceAsStream(keybindsFile))
+		{
+			assert inputStream != null;
+			Scanner scan = new Scanner(inputStream);
+			while (scan.hasNext())
+			{
+				keybindsHint.add(scan.nextLine());
+			}
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void stop()
@@ -310,5 +331,15 @@ public class BirbsContainer implements Runnable
 	public ArrayList<String> getChangelog()
 	{
 		return changelog;
+	}
+	
+	public ArrayList<String> getKeybindsHint()
+	{
+		return keybindsHint;
+	}
+	
+	public int getFps()
+	{
+		return fps;
 	}
 }

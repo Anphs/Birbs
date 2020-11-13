@@ -165,8 +165,8 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e)
 	{
-		scroll = e.getWheelRotation();
 		updateMousePoint(e);
+		scroll = e.getWheelRotation();
 	}
 	
 	public double getMouseX()

@@ -25,7 +25,7 @@ public class Renderer
 	public void drawRect(Graphics2D g2d)
 	{
 		g2d.setColor(Color.ORANGE);
-		g2d.fillRect(50, 50, 50, 50);
+		g2d.fillRect(3440/2, 1440/2, 1, 1);
 	}
 	
 	public void drawBackground(Graphics2D g2d)
@@ -37,47 +37,84 @@ public class Renderer
 		g2d.fillRect((int) (bc.getCameraOffsetX() * bc.getScale()), (int) (bc.getCameraOffsetY() * bc.getScale()), (int) (19200 * bc.getScale()), (int) (10800 * bc.getScale()));
 	}
 	
-	public void drawCenteredString(Graphics2D g2d, Font f, String str, int x, int y)
+	public void drawCenteredString(Graphics2D g2d, Font f, String str, double x, double y)
 	{
 		FontMetrics metrics = g2d.getFontMetrics(f);
-		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		
 		x *= bc.getScale();
 		y *= bc.getScale();
-		x -= metrics.stringWidth(str) / 2;
-		y += metrics.getAscent() / 2;
+		x -= metrics.stringWidth(str) / 2.0;
+		y += metrics.getAscent() / 2.0;
 		x += bc.getCameraOffsetX() * bc.getScale();
 		y += bc.getCameraOffsetY() * bc.getScale();
 		
 		g2d.setFont(f);
-		g2d.drawString(str, x, y);
+		g2d.drawString(str, (int) x, (int) y);
 	}
 	
-	public void drawMousePosition(Graphics g2d)
+	public void drawRightAlignedString(Graphics2D g2d, Font f, String str, double x, double y)
+	{
+		FontMetrics metrics = g2d.getFontMetrics(f);
+		
+		x -= metrics.stringWidth(str);
+		y += metrics.getAscent();
+		
+		g2d.setFont(f);
+		g2d.drawString(str, (int) x, (int) y);
+	}
+	
+	public void drawLeftAlignedString(Graphics2D g2d, Font f, String str, double x, double y)
+	{
+		FontMetrics metrics = g2d.getFontMetrics(f);
+		
+		y += metrics.getAscent();
+		
+		g2d.setFont(f);
+		g2d.drawString(str, (int) x, (int) y);
+	}
+	
+	public void drawRightAlignedList(Graphics2D g2d, Font f, ArrayList<String> list, double x, double y)
+	{
+		FontMetrics metrics = g2d.getFontMetrics(f);
+		
+		for(int i = 0; i < list.size(); i++)
+		{
+			drawRightAlignedString(g2d, f, list.get(i), x, y + i * metrics.getAscent());
+		}
+	}
+	
+	public void drawLeftAlignedList(Graphics2D g2d, Font f, ArrayList<String> list, double x, double y)
+	{
+		FontMetrics metrics = g2d.getFontMetrics(f);
+		
+		for(int i = 0; i < list.size(); i++)
+		{
+			drawLeftAlignedString(g2d, f, list.get(i), x, y + i * metrics.getAscent());
+		}
+	}
+	
+	public void drawMousePosition(Graphics2D g2d, Font f)
 	{
 		g2d.setColor(Color.WHITE);
-		Font smallWords = new Font("Courier New", Font.BOLD, 20);
-		g2d.setFont(smallWords);
+		g2d.setFont(f);
 		try
 		{
 			int x = (int) (bc.getInput().getMousePoint().getX() * bc.getScale());
 			int y = (int) (bc.getInput().getMousePoint().getY() * bc.getScale());
-			g2d.drawString("x: " + x + " y: " + y, 10, bc.getWindowHeight() - 20);
+			String str = "x: " + x + " y: " + y;
+			drawRightAlignedString(g2d, f, str, bc.getWindowWidth() - 10, 0);
 		} catch (NullPointerException e)
 		{
 			//Do nothing since the mouse is not over the window
 		}
 	}
 	
-	public void drawNotes(Graphics2D g2d)
+	public void drawFPS(Graphics2D g2d, Font f)
 	{
-		g2d.setFont(new Font("Courier New", Font.BOLD, 20));
 		g2d.setColor(Color.WHITE);
-		
-		for (int i = 0; i < bc.getChangelog().size(); i++)
-		{
-			g2d.drawString(bc.getChangelog().get(i), 10, i * 20 + 20);
-		}
+		g2d.setFont(f);
+		String str = "FPS: " + bc.getFps();
+		drawRightAlignedString(g2d, f, str, bc.getWindowWidth() - 10, 20);
 	}
 	
 	public void updateTriangle(BirbsContainer bc)
