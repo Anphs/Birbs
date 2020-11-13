@@ -21,11 +21,7 @@ public class BirbsManager extends AbstractBirbsManager
 	public void update(BirbsContainer bc, float dt)
 	{
 		doInputBinds(bc);
-		
-		BirbLogic.setBc(bc);
 		doBirbLogic(bc);
-		
-		BirbLogic.incrementColorOffset();
 	}
 	
 	@Override
@@ -35,7 +31,7 @@ public class BirbsManager extends AbstractBirbsManager
 		AffineTransform original = g2d.getTransform();
 		Font bigWords = new Font("Courier New", Font.BOLD, (int) ((19200 * bc.getScale()) / 20));
 		Font interfaceFont = new Font("Courier New", Font.BOLD, 20);
-		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		
 		r.drawBackground(g2d);
 		
@@ -63,10 +59,9 @@ public class BirbsManager extends AbstractBirbsManager
 		
 		
 		ArrayList<String> topLeftText = new ArrayList<>(Arrays.asList(
-				""+bc.getBirbsList().size()+" Birbs in the World",
-				""+onScreenCount+" Birbs on Screen"
+				"" + bc.getBirbsList().size() + " Birbs in the World",
+				"" + onScreenCount + " Birbs on Screen"
 		));
-		
 		
 		r.drawLeftAlignedList(g2d, interfaceFont, topLeftText, 10, 0);
 		r.drawMousePosition(g2d, interfaceFont);
@@ -77,10 +72,8 @@ public class BirbsManager extends AbstractBirbsManager
 		//Say click anywhere
 		if (bc.getBirbsList().size() == 0)
 		{
-			r.drawCenteredString(g2d, bigWords, "Click Anywhere to Begin", 19200 / 2.0, 10800 / 2.0);
+//			r.drawCenteredString(g2d, bigWords, "Click Anywhere to Begin", 19200 / 2.0, 10800 / 2.0);
 		}
-		
-		r.updateTriangle(bc);
 	}
 	
 	public void doInputBinds(BirbsContainer bc)
@@ -93,7 +86,6 @@ public class BirbsManager extends AbstractBirbsManager
 		{
 			reset(bc);
 		}
-		
 		if (bc.getInput().isKeyDown(KeyEvent.VK_H))
 		{
 			Birb.toggleHitboxVisible();
@@ -121,14 +113,14 @@ public class BirbsManager extends AbstractBirbsManager
 		{
 			addBirb(bc, bc.getInput().getScaledMousePoint(), 5000);
 //			addBirb(bc, new Point2D.Double(19200/2, 10800/2));
-			Formation form = new Formation("circle", bc.getBirbsList());
+			Formation form = new Formation("cubic", bc.getBirbsList());
 			form.updateFormationPoints(bc);
 		}
 		
 		if (bc.getInput().isButtonHeld(MouseEvent.BUTTON3, 1))
 		{
 			addBirb(bc, bc.getInput().getScaledMousePoint());
-			Formation form = new Formation("circle", bc.getBirbsList());
+			Formation form = new Formation("cubic", bc.getBirbsList());
 			form.updateFormationPoints(bc);
 		}
 		
@@ -170,7 +162,7 @@ public class BirbsManager extends AbstractBirbsManager
 		
 		for (int i = 0; i < birbGroups.size(); i++)
 		{
-			logics.add(new BirbLogic(birbGroups.get(i), "BirbLogic" + i, tg));
+			logics.add(new BirbLogic(birbGroups.get(i), "BirbLogic" + i, tg, bc));
 		}
 		int i = 0;
 		while (i < logics.size())
@@ -209,11 +201,13 @@ public class BirbsManager extends AbstractBirbsManager
 	public void updateScale(BirbsContainer bc)
 	{
 		bc.setScale((bc.getScale() - bc.getInput().getScroll() / 10.0));
+		Renderer.updateTriangle(bc);
 	}
 	
 	public void reset(BirbsContainer bc)
 	{
 		bc.removeAllBirbs();
+		bc.setBirbTotalSpawned(0);
 		bc.setCameraOffsetX((bc.getWorldWidth() - bc.getWindowWidth() * 10) / -2.0);
 		bc.setCameraOffsetY((bc.getWorldHeight() - bc.getWindowHeight() * 10) / -2.0);
 		bc.setScale(0.1);

@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -185,16 +184,16 @@ public class BirbsContainer implements Runnable
 		//Zoom In
 		if (getInput().getScroll() < 0 && scale >= minScale && scale <= maxScale)
 		{
-			double diffX = ((zoomPoint.getX() + getCameraOffsetX()) * -.1) * (1.0 / scale);
-			double diffY = ((zoomPoint.getY() + getCameraOffsetY()) * -.1) * (1.0 / scale);
+			double diffX = (zoomPoint.getX() + getCameraOffsetX()) * -.1 / scale;
+			double diffY = (zoomPoint.getY() + getCameraOffsetY()) * -.1 / scale;
 			setCameraOffsetX(getCameraOffsetX() + diffX);
 			setCameraOffsetY(getCameraOffsetY() + diffY);
 		}
 		//Zoom out
 		else if (getInput().getScroll() > 0 && scale >= minScale && scale <= maxScale)
 		{
-			double diffX = ((zoomPoint.getX() + getCameraOffsetX()) * -.1) * (1.0 / scale);
-			double diffY = ((zoomPoint.getY() + getCameraOffsetY()) * -.1) * (1.0 / scale);
+			double diffX = (zoomPoint.getX() + getCameraOffsetX()) * -.1 / scale;
+			double diffY = (zoomPoint.getY() + getCameraOffsetY()) * -.1 / scale;
 			setCameraOffsetX(getCameraOffsetX() - diffX);
 			setCameraOffsetY(getCameraOffsetY() - diffY);
 		}
@@ -250,12 +249,7 @@ public class BirbsContainer implements Runnable
 	
 	public void removeAllBirbs()
 	{
-		for (int i = birbsList.size() - 1; i >= 0; i--)
-		{
-			Birb birb = birbsList.get(i);
-			removeBirb(birb);
-		}
-		setBirbTotalSpawned(0);
+		birbsList.clear();
 	}
 	
 	public AbstractBirbsManager getWorld()

@@ -1,15 +1,11 @@
 package me.anthuony.birbs;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
 
 public class Renderer
 {
-	private static final int d = 70 / 2;
+	private static final int d = 7 / 2;
 	private static final int dd = (int) (d / 1.5);
 	private static final int ddd = d / 2;
 	private static final int[] triangleX = new int[]{dd, -dd, -ddd, -dd};
@@ -25,7 +21,7 @@ public class Renderer
 	public void drawRect(Graphics2D g2d)
 	{
 		g2d.setColor(Color.ORANGE);
-		g2d.fillRect(3440/2, 1440/2, 1, 1);
+		g2d.fillRect(3440 / 2, 1440 / 2, 1, 1);
 	}
 	
 	public void drawBackground(Graphics2D g2d)
@@ -77,7 +73,7 @@ public class Renderer
 	{
 		FontMetrics metrics = g2d.getFontMetrics(f);
 		
-		for(int i = 0; i < list.size(); i++)
+		for (int i = 0; i < list.size(); i++)
 		{
 			drawRightAlignedString(g2d, f, list.get(i), x, y + i * metrics.getAscent());
 		}
@@ -87,7 +83,7 @@ public class Renderer
 	{
 		FontMetrics metrics = g2d.getFontMetrics(f);
 		
-		for(int i = 0; i < list.size(); i++)
+		for (int i = 0; i < list.size(); i++)
 		{
 			drawLeftAlignedString(g2d, f, list.get(i), x, y + i * metrics.getAscent());
 		}
@@ -117,7 +113,7 @@ public class Renderer
 		drawRightAlignedString(g2d, f, str, bc.getWindowWidth() - 10, 20);
 	}
 	
-	public void updateTriangle(BirbsContainer bc)
+	public static void updateTriangle(BirbsContainer bc)
 	{
 		int x = (int) (Birb.getBaseWidth() * bc.getScale() / 2);
 		int xx = (int) (x / 1.5);

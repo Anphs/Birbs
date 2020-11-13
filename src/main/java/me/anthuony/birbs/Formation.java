@@ -39,6 +39,20 @@ public class Formation
 				Point2D.Double formationPoint = new Point2D.Double(x, y);
 				currentBirb.setFormationPoint(formationPoint);
 			}
+		} else if (type.equalsIgnoreCase("Cubic"))
+		{
+			for (int i = 0; i < birbsList.size(); i++)
+			{
+				Birb currentBirb = birbsList.get(i);
+				double maxY = Math.pow(birbsList.size()/2, 3);
+				double temp = (bc.getWorldHeight() - 1000) / maxY / 2;
+				double x = (bc.getWorldWidth() - 1000) * ((double) i / birbsList.size());
+				x = bc.getWorldWidth() - x - 500;
+				double y = bc.getWorldHeight()/2.0 + (Math.pow(i - birbsList.size()/2, 3) * temp);
+				Point2D.Double formationPoint = new Point2D.Double(x, y);
+				currentBirb.setFormationPoint(formationPoint);
+			}
 		}
+		
 	}
 }

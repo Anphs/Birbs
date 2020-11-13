@@ -1,5 +1,6 @@
 package me.anthuony.birbs;
 
+import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
 
@@ -55,6 +56,7 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 		
 		System.arraycopy(buttons, 0, buttonsLast, 0, NUM_BUTTONS);
 		
+		updateMousePoint();
 	}
 	
 	public boolean isKey(int keyCode)
@@ -91,14 +93,14 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 	{
 		if (isButtonDown(button))
 		{
-			buttonsHeldStart[button] = System.nanoTime()/1.0e9;
+			buttonsHeldStart[button] = System.nanoTime() / 1.0e9;
 			return false;
 		}
 		if (!isButton(button))
 		{
 			return false;
 		}
-		return (System.nanoTime()/1.0e9 - buttonsHeldStart[button]) > delay;
+		return (System.nanoTime() / 1.0e9 - buttonsHeldStart[button]) > delay;
 	}
 	
 	@Override
@@ -129,7 +131,6 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 	public void mousePressed(MouseEvent e)
 	{
 		buttons[e.getButton()] = true;
-		updateMousePoint(e);
 	}
 	
 	@Override
@@ -153,19 +154,16 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 	@Override
 	public void mouseDragged(MouseEvent e)
 	{
-		updateMousePoint(e);
 	}
 	
 	@Override
 	public void mouseMoved(MouseEvent e)
 	{
-		updateMousePoint(e);
 	}
 	
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e)
 	{
-		updateMousePoint(e);
 		scroll = e.getWheelRotation();
 	}
 	
@@ -191,10 +189,10 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 		return new Point2D.Double(x, y);
 	}
 	
-	public void updateMousePoint(MouseEvent e)
+	public void updateMousePoint()
 	{
-		mouseX = e.getX() / bc.getScale();
-		mouseY = e.getY() / bc.getScale();
+		mouseX = MouseInfo.getPointerInfo().getLocation().getX() / bc.getScale();
+		mouseY = MouseInfo.getPointerInfo().getLocation().getY() / bc.getScale();
 		mousePoint = new Point2D.Double(mouseX, mouseY);
 	}
 	

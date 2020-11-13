@@ -10,30 +10,16 @@ public class BirbLogic extends Thread
 	private static final boolean doAlignment = true;
 	private static final boolean doCohesion = true;
 	private static final boolean deleteClose = false;
-	private static BirbsContainer bc;
-	private static int colorOffset = 0;
 	private final ArrayList<Birb> logicBirbsList;
+	private final BirbsContainer bc;
 	private Birb birb;
 	
 	//Multi-threading
-	public BirbLogic(ArrayList<Birb> birbsList, String name, ThreadGroup tg)
+	public BirbLogic(ArrayList<Birb> birbsList, String name, ThreadGroup tg, BirbsContainer bc)
 	{
 		super(tg, name);
 		this.logicBirbsList = birbsList;
-	}
-	
-	public static void setBc(BirbsContainer bc)
-	{
-		BirbLogic.bc = bc;
-	}
-	
-	public static void incrementColorOffset()
-	{
-		colorOffset++;
-		if (colorOffset > 255)
-		{
-			colorOffset = 0;
-		}
+		this.bc = bc;
 	}
 	
 	public void run()
@@ -264,7 +250,7 @@ public class BirbLogic extends Thread
 		
 		Point2D.Double newScreenPoint = new Point2D.Double(sX, sY);
 		birb.setScreenPoint(newScreenPoint);
-		birb.setOnScreen(sX > -70*bc.getScale() && sX < bc.getWindowWidth()+70*bc.getScale() && sY > -70*bc.getScale() && sY < bc.getWindowHeight()+70*bc.getScale());
+		birb.setOnScreen(sX > -70 * bc.getScale() && sX < bc.getWindowWidth() + 70 * bc.getScale() && sY > -70 * bc.getScale() && sY < bc.getWindowHeight() + 70 * bc.getScale());
 	}
 	
 	public void updateBirbColor()
@@ -273,8 +259,8 @@ public class BirbLogic extends Thread
 //		int r = (color.getRed() + 3) % 255;
 //		int g = (color.getGreen() + 1) % 255;
 //		int bl = (color.getBlue() + 2) % 255;
-		int b = (int) ((birb.getWorldPoint().getX() + colorOffset) / bc.getWorldWidth() * 255);
-		int g = (int) ((birb.getWorldPoint().getY() + colorOffset) / bc.getWorldHeight() * 255);
+		int b = (int) ((birb.getWorldPoint().getX()) / bc.getWorldWidth() * 255);
+		int g = (int) ((birb.getWorldPoint().getY()) / bc.getWorldHeight() * 255);
 		int r = 255 - b;
 		
 		b = Math.max(b, 0);
