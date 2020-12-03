@@ -7,7 +7,6 @@ public class Birb
 {
 	private static final int baseWidth = 70, baseHeight = 70;
 	private final static double maxTurnSpeed = .1, turnNoise = 0;
-	private static boolean hitboxVisible;
 	private final String ID;
 	private Vector vel, acc;
 	private Point2D.Double worldPoint, screenPoint, formationPoint;
@@ -35,11 +34,6 @@ public class Birb
 	public static double getTurnNoise()
 	{
 		return turnNoise;
-	}
-	
-	public static void toggleHitboxVisible()
-	{
-		hitboxVisible = !hitboxVisible;
 	}
 	
 	public static int getBaseWidth()

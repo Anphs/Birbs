@@ -66,13 +66,13 @@ public class BirbsManager extends AbstractBirbsManager
 		r.drawLeftAlignedList(g2d, interfaceFont, topLeftText, 10, 0);
 		r.drawMousePosition(g2d, interfaceFont);
 		r.drawFPS(g2d, interfaceFont);
-//		r.drawLeftAlignedList(g2d, interfaceFont, bc.getChangelog(), 10, bc.getWindowHeight() - (bc.getChangelog().size() * interfaceFontMetrics.getAscent()) - 10);
+		r.drawLeftAlignedList(g2d, interfaceFont, bc.getChangelog(), 10, bc.getWindowHeight() - (bc.getChangelog().size() * interfaceFontMetrics.getAscent()) - 10);
 		r.drawRightAlignedList(g2d, interfaceFont, bc.getKeybindsHint(), bc.getWindowWidth() - 10, bc.getWindowHeight() - (bc.getKeybindsHint().size() * interfaceFontMetrics.getAscent()) - 10);
 		
 		//Say click anywhere
 		if (bc.getBirbsList().size() == 0)
 		{
-//			r.drawCenteredString(g2d, bigWords, "Click Anywhere to Begin", 19200 / 2.0, 10800 / 2.0);
+			r.drawCenteredString(g2d, bigWords, "Click Anywhere to Begin", 19200 / 2.0, 10800 / 2.0);
 		}
 	}
 	
@@ -88,7 +88,7 @@ public class BirbsManager extends AbstractBirbsManager
 		}
 		if (bc.getInput().isKeyDown(KeyEvent.VK_H))
 		{
-			Birb.toggleHitboxVisible();
+			bc.toggleHitboxes();
 		}
 		
 		//Arrow Key Panning

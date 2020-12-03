@@ -255,12 +255,10 @@ public class BirbLogic extends Thread
 	
 	public void updateBirbColor()
 	{
-//		Color color = birb.getBirbColor();
-//		int r = (color.getRed() + 3) % 255;
-//		int g = (color.getGreen() + 1) % 255;
-//		int bl = (color.getBlue() + 2) % 255;
-		int b = (int) ((birb.getWorldPoint().getX()) / bc.getWorldWidth() * 255);
-		int g = (int) ((birb.getWorldPoint().getY()) / bc.getWorldHeight() * 255);
+		double x = birb.getWorldPoint().getX();
+		double y = birb.getWorldPoint().getY();
+		int b = (int) (x / bc.getWorldWidth() * 255);
+		int g = (int) (y / bc.getWorldHeight() * 255);
 		int r = 255 - b;
 		
 		b = Math.max(b, 0);

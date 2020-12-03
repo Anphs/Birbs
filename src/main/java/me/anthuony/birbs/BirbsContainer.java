@@ -36,6 +36,7 @@ public class BirbsContainer implements Runnable
 	private double scale = .1;
 	private String title = "Birbs";
 	private int birbTotalSpawned;
+	private boolean hitboxVisible = false;
 	
 	public BirbsContainer(AbstractBirbsManager world)
 	{
@@ -335,5 +336,12 @@ public class BirbsContainer implements Runnable
 	public int getFps()
 	{
 		return fps;
+	}
+	
+	public void toggleHitboxes() { hitboxVisible = !hitboxVisible; }
+	
+	public boolean isHitboxVisible()
+	{
+		return hitboxVisible;
 	}
 }

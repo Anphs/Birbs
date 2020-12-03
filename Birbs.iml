@@ -11,5 +11,9 @@
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: com.aparapi:aparapi:2.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.aparapi:aparapi-jni:1.4.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.bcel:bcel:6.4.1" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.13.1" level="project" />
   </component>
 </module>

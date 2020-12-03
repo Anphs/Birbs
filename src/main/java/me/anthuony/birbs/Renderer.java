@@ -125,6 +125,12 @@ public class Renderer
 	
 	public void drawBirb(Graphics2D g2d, Birb b)
 	{
+		if(bc.isHitboxVisible())
+		{
+			g2d.setPaint(Color.WHITE);
+			int x = (int) (Birb.getBaseWidth() * bc.getScale() / 2);
+			g2d.drawRect(-x, -x, 2 * x, 2 * x);
+		}
 		g2d.setPaint(b.getBirbColor());
 		g2d.rotate(b.getVel().getDirection());
 		g2d.drawPolygon(birbTriangle);
