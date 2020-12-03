@@ -47,7 +47,7 @@ public class BirbLogic extends Thread
 			{
 				if (birb.getFormationPoint() != null)
 				{
-					adjustFormationSpeed(birb.getFormationPoint());
+//					adjustFormationSpeed(birb.getFormationPoint());
 					seekPoint(birb.getFormationPoint(), true);
 				} else
 				{

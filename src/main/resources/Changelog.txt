@@ -1,6 +1,4 @@
-Change Log (Report #12):
-Added methods for left aligned text and right aligned text
-Added methods to draw lists
-Added more information to UI
-Added cubic function formation
-Cleaned up the code a little
+Change Log (Report #13):
+Readded hitbox rendering
+Added a few more formations
+Added support for multiple formations during a single instance

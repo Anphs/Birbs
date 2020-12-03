@@ -113,15 +113,13 @@ public class BirbsManager extends AbstractBirbsManager
 		{
 			addBirb(bc, bc.getInput().getScaledMousePoint(), 5000);
 //			addBirb(bc, new Point2D.Double(19200/2, 10800/2));
-			Formation form = new Formation("cubic", bc.getBirbsList());
-			form.updateFormationPoints(bc);
+			updateFormations(bc);
 		}
 		
 		if (bc.getInput().isButtonHeld(MouseEvent.BUTTON3, 1))
 		{
 			addBirb(bc, bc.getInput().getScaledMousePoint());
-			Formation form = new Formation("cubic", bc.getBirbsList());
-			form.updateFormationPoints(bc);
+			updateFormations(bc);
 		}
 		
 		if (bc.getInput().isButtonDown(MouseEvent.BUTTON1))
@@ -212,5 +210,36 @@ public class BirbsManager extends AbstractBirbsManager
 		bc.setCameraOffsetY((bc.getWorldHeight() - bc.getWindowHeight() * 10) / -2.0);
 		bc.setScale(0.1);
 		updateScale(bc);
+	}
+	
+	public void updateFormations(BirbsContainer bc)
+	{
+		ArrayList<String> Formations = new ArrayList<>(Arrays.asList(
+				"line",
+				"circle2",
+				"circle",
+				"cubic",
+				"cubic2"
+		));
+		
+		int birbFormationCount = bc.getBirbsList().size()/Formations.size();
+		
+		for(int i=0; i<Formations.size(); i++)
+		{
+			ArrayList<Birb> formationBirbsList = new ArrayList<Birb>();
+			for(int j=0; j<birbFormationCount; j++)
+			{
+				formationBirbsList.add(bc.getBirbsList().get(j + i * birbFormationCount));
+			}
+			if(i == Formations.size() - 1)
+			{
+				for(int j = (i + 1) * birbFormationCount; j<bc.getBirbsList().size(); j++)
+				{
+					formationBirbsList.add(bc.getBirbsList().get(j));
+				}
+			}
+			Formation form = new Formation(Formations.get(i), formationBirbsList);
+			form.updateFormationPoints(bc);
+		}
 	}
 }
