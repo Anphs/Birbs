@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class BirbLogic extends Thread
 {
-	private static final boolean avoidOthers = false;
+	private static final boolean avoidOthers = true;
 	private static final boolean doAlignment = true;
 	private static final boolean doCohesion = true;
 	private static final boolean deleteClose = false;
@@ -255,34 +255,21 @@ public class BirbLogic extends Thread
 	
 	public void updateBirbColor()
 	{
-		double x = birb.getWorldPoint().getX();
-		double y = birb.getWorldPoint().getY();
-		int b = (int) (x / bc.getWorldWidth() * 255);
-		int g = (int) (y / bc.getWorldHeight() * 255);
-		int r = 255 - b;
+//		double x = birb.getWorldPoint().getX();
+//		double y = birb.getWorldPoint().getY();
+//		int b = (int) (x / bc.getWorldWidth() * 255);
+//		int g = (int) (y / bc.getWorldHeight() * 255);
+//		int r = 255 - b;
 		
-		b = Math.max(b, 0);
-		g = Math.max(g, 0);
-		r = Math.max(r, 0);
-		b = Math.min(b, 255);
-		g = Math.min(g, 255);
-		r = Math.min(r, 255);
+		double angle = Math.abs(Math.toDegrees(birb.getVel().getDirection()));
+		int r = (int)(angle * 255 / 360);
+		int g = (int)(angle * 255 / 360);
+		int b = (int)(angle * 255 / 360);
+		
+		b = Math.min(Math.max(b, 0), 255);
+		g = Math.min(Math.max(g, 0), 255);
+		r = Math.min(Math.max(r, 0), 255);
 
-//		if(Math.abs(b - colorOffset) < 10)
-//		{
-//			r = 255;
-//			g = 255;
-//			b = 255;
-//		}
-//		if(Math.abs(g - colorOffset) < 10)
-//		{
-//			g = 255;
-//			b = 255;
-//		}
-		
-		Vector vel = birb.getVel();
-		int velMag = (int) vel.getMagnitude();
-//		Color newColor = new Color(r, g, b, 50 + 30 * velMag);
 		Color newColor = new Color(r, g, b, 255);
 		birb.setBirbColor(newColor);
 	}

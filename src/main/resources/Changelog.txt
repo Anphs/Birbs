@@ -1,4 +1,4 @@
-Change Log (Report #13):
-Readded hitbox rendering
-Added a few more formations
-Added support for multiple formations during a single instance
+Change Log (Report #14):
+Holding E changes has a cool effect
+Made the color of the birbs depend on their heading
+Cleaned up a little code

@@ -31,9 +31,11 @@ public class BirbsManager extends AbstractBirbsManager
 		AffineTransform original = g2d.getTransform();
 		Font bigWords = new Font("Courier New", Font.BOLD, (int) ((19200 * bc.getScale()) / 20));
 		Font interfaceFont = new Font("Courier New", Font.BOLD, 20);
-		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		
-		r.drawBackground(g2d);
+		if(!bc.getInput().isKey(KeyEvent.VK_E))
+		{
+			r.drawBackground(g2d);
+		}
 		
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		g2d.setStroke(new BasicStroke((float) (5 * bc.getScale())));
@@ -53,6 +55,7 @@ public class BirbsManager extends AbstractBirbsManager
 		g2d.setTransform(original);
 		
 		//UI Text
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2d.setColor(Color.WHITE);
 		g2d.setFont(interfaceFont);
 		FontMetrics interfaceFontMetrics = g2d.getFontMetrics();
@@ -111,15 +114,15 @@ public class BirbsManager extends AbstractBirbsManager
 		
 		if (bc.getInput().isButtonDown(MouseEvent.BUTTON3))
 		{
-			addBirb(bc, bc.getInput().getScaledMousePoint(), 5000);
+			addBirb(bc, bc.getInput().getScaledMousePoint(), 500);
 //			addBirb(bc, new Point2D.Double(19200/2, 10800/2));
-			updateFormations(bc);
+//			updateFormations(bc);
 		}
 		
 		if (bc.getInput().isButtonHeld(MouseEvent.BUTTON3, 1))
 		{
 			addBirb(bc, bc.getInput().getScaledMousePoint());
-			updateFormations(bc);
+//			updateFormations(bc);
 		}
 		
 		if (bc.getInput().isButtonDown(MouseEvent.BUTTON1))

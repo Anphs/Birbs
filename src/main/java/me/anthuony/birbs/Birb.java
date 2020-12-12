@@ -23,7 +23,7 @@ public class Birb
 		velMag = 20;
 		vel = new Vector(velMag, Math.random() * 2 * Math.PI);
 //		vel = new Vector(0, 3 * Math.PI / 2);
-		birbColor = new Color(254, 105, 3, /*50 + 30 * (int) velMag*/ 0);
+		birbColor = new Color(0, 0, 0,0);
 	}
 	
 	public static double getMaxTurnSpeed()
