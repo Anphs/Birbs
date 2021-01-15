@@ -10,7 +10,6 @@ public class Renderer
 	private static final int ddd = d / 2;
 	private static final int[] triangleX = new int[]{dd, -dd, -ddd, -dd};
 	private static final int[] triangleY = new int[]{0, ddd, 0, -ddd};
-	private static Polygon birbTriangle = new Polygon(triangleX, triangleY, 4);
 	BirbsContainer bc;
 	
 	public Renderer(BirbsContainer bc)
@@ -113,26 +112,40 @@ public class Renderer
 		drawRightAlignedString(g2d, f, str, bc.getWindowWidth() - 10, 20);
 	}
 	
-	public static void updateTriangle(BirbsContainer bc)
+	public Polygon getTriangle(BirbsContainer bc, double scale)
 	{
-		int x = (int) (Birb.getBaseWidth() * bc.getScale() / 2);
+		int x = (int) (Birb.getBaseWidth() * bc.getScale() * scale/ 2);
 		int xx = (int) (x / 1.5);
 		int xxx = x / 2;
 		int[] triangleX = new int[]{xx, -xx, -xxx, -xx};
 		int[] triangleY = new int[]{0, xxx, 0, -xxx};
-		birbTriangle = new Polygon(triangleX, triangleY, 4);
+		return new Polygon(triangleX, triangleY, 4);
 	}
 	
 	public void drawBirb(Graphics2D g2d, Birb b)
 	{
+		int hitboxWidth = (int) (Birb.getBaseWidth() * bc.getScale() * b.getScale() / 2);
+		
 		if(bc.isHitboxVisible())
 		{
-			g2d.setPaint(Color.WHITE);
-			int x = (int) (Birb.getBaseWidth() * bc.getScale() / 2);
-			g2d.drawRect(-x, -x, 2 * x, 2 * x);
+			g2d.setPaint(b.getBirbColor().darker());
+			g2d.drawRect(-hitboxWidth, -hitboxWidth, 2 * hitboxWidth, 2 * hitboxWidth);
+		}
+		if(bc.isDrawName())
+		{
+			String name = b.getName();
+			Font nameTagFont = new Font("Courier New", Font.BOLD, (int)(bc.getScale() * 40));
+			g2d.setPaint(b.getBirbColor().brighter());
+			FontMetrics metrics = g2d.getFontMetrics(nameTagFont);
+
+			double x = -metrics.stringWidth(name) / 2.0;
+			double y = +metrics.getAscent() / 2.0;
+
+			g2d.setFont(nameTagFont);
+			g2d.drawString(name, (int) x, (int) (y + 1.25 * hitboxWidth));
 		}
 		g2d.setPaint(b.getBirbColor());
 		g2d.rotate(b.getVel().getDirection());
-		g2d.drawPolygon(birbTriangle);
+		g2d.drawPolygon(getTriangle(bc, b.getScale()));
 	}
 }

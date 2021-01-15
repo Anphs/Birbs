@@ -6,24 +6,27 @@ import java.awt.geom.Point2D;
 public class Birb
 {
 	private static final int baseWidth = 70, baseHeight = 70;
-	private final static double maxTurnSpeed = .1, turnNoise = 0;
-	private final String ID;
+	private final static double maxTurnSpeed = .1;
+	private final static double turnNoise = 0;
+	private double scale = 1;
+	private final String ID, name;
 	private Vector vel, acc;
 	private Point2D.Double worldPoint, screenPoint, formationPoint;
 	private Color birbColor;
 	private boolean onScreen;
 	private double speedMultiplier = 1;
 	
-	public Birb(String ID, Point2D.Double worldPoint)
+	public Birb(String ID, String name, Point2D.Double worldPoint)
 	{
 		this.ID = ID;
+		this.name = name;
 		this.worldPoint = worldPoint;
 		
-		double velMag = Math.random() * 2 + 4;
-		velMag = 20;
-		vel = new Vector(velMag, Math.random() * 2 * Math.PI);
+		double velMag = 20;
+		this.vel = new Vector(velMag, Math.random() * 2 * Math.PI);
 //		vel = new Vector(0, 3 * Math.PI / 2);
-		birbColor = new Color(0, 0, 0,0);
+		this.birbColor = new Color(0, 0, 0,0);
+		this.scale = Math.random() + .5 + .25;
 	}
 	
 	public static double getMaxTurnSpeed()
@@ -134,5 +137,15 @@ public class Birb
 	public void setOnScreen(boolean onScreen)
 	{
 		this.onScreen = onScreen;
+	}
+	
+	public double getScale()
+	{
+		return scale;
+	}
+	
+	public String getName()
+	{
+		return name;
 	}
 }

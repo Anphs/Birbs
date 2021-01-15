@@ -1,4 +1,6 @@
 ESC to Close
 R to Reset
+P to Pause
 H to Toggle Hitboxes
-WASD and Arrow Keys to Pan
+Right Click to spawn Birbs
+WASD or Arrow Keys or Left Click to Pan

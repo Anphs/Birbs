@@ -1,4 +1,4 @@
-Change Log (Report #14):
-Holding E changes has a cool effect
-Made the color of the birbs depend on their heading
-Cleaned up a little code
+Change Log (Report #16):
+Added name tags
+Added the ability to pause
+Gave the birbs randomly generated names

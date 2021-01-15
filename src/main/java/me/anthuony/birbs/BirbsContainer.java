@@ -24,6 +24,7 @@ public class BirbsContainer implements Runnable
 	int fps = 0;
 	ArrayList<String> changelog = new ArrayList<>();
 	ArrayList<String> keybindsHint = new ArrayList<>();
+	ArrayList<String> names = new ArrayList<>();
 	private Window window;
 	private Renderer renderer;
 	private Input input;
@@ -36,7 +37,7 @@ public class BirbsContainer implements Runnable
 	private double scale = .1;
 	private String title = "Birbs";
 	private int birbTotalSpawned;
-	private boolean hitboxVisible = false;
+	private boolean paused = false, drawHitbox = false, drawName = true;
 	
 	public BirbsContainer(AbstractBirbsManager world)
 	{
@@ -54,6 +55,7 @@ public class BirbsContainer implements Runnable
 		
 		String changelogFile = "Changelog.txt";
 		String keybindsFile = "Keybinds.txt";
+		String namesFile = "Names.txt";
 		ClassLoader classLoader = getClass().getClassLoader();
 		
 		try (InputStream inputStream = classLoader.getResourceAsStream(changelogFile))
@@ -76,6 +78,19 @@ public class BirbsContainer implements Runnable
 			while (scan.hasNext())
 			{
 				keybindsHint.add(scan.nextLine());
+			}
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
+		try (InputStream inputStream = classLoader.getResourceAsStream(namesFile))
+		{
+			assert inputStream != null;
+			Scanner scan = new Scanner(inputStream);
+			while (scan.hasNext())
+			{
+				names.add(scan.nextLine());
 			}
 		} catch (IOException e)
 		{
@@ -338,10 +353,32 @@ public class BirbsContainer implements Runnable
 		return fps;
 	}
 	
-	public void toggleHitboxes() { hitboxVisible = !hitboxVisible; }
+	public void toggleHitboxes() { drawHitbox = !drawHitbox; }
+	
+	public void togglePause() { paused = !paused; }
 	
 	public boolean isHitboxVisible()
 	{
-		return hitboxVisible;
+		return drawHitbox;
+	}
+	
+	public boolean isDrawName()
+	{
+		return drawName;
+	}
+	
+	public void setDrawName(boolean drawName)
+	{
+		this.drawName = drawName;
+	}
+	
+	public String getRandomName()
+	{
+		return names.get((int)(Math.random() * names.size()));
+	}
+	
+	public boolean isPaused()
+	{
+		return paused;
 	}
 }

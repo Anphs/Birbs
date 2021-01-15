@@ -93,6 +93,10 @@ public class BirbsManager extends AbstractBirbsManager
 		{
 			bc.toggleHitboxes();
 		}
+		if (bc.getInput().isKeyDown(KeyEvent.VK_P))
+		{
+			bc.togglePause();
+		}
 		
 		//Arrow Key Panning
 		if (bc.getInput().isKey(KeyEvent.VK_UP) || bc.getInput().isKey(KeyEvent.VK_W))
@@ -180,7 +184,7 @@ public class BirbsManager extends AbstractBirbsManager
 	
 	public void addBirb(BirbsContainer bc, Point2D.Double p)
 	{
-		Birb birb = new Birb("Birb" + bc.incrementBirbTotalSpawned(), p);
+		Birb birb = new Birb("Birb" + bc.incrementBirbTotalSpawned(), bc.getRandomName(),p);
 		bc.getBirbsList().add(birb);
 //		if(bc.getBirbTotalSpawned() == 1)
 //		{
@@ -202,7 +206,6 @@ public class BirbsManager extends AbstractBirbsManager
 	public void updateScale(BirbsContainer bc)
 	{
 		bc.setScale((bc.getScale() - bc.getInput().getScroll() / 10.0));
-		Renderer.updateTriangle(bc);
 	}
 	
 	public void reset(BirbsContainer bc)

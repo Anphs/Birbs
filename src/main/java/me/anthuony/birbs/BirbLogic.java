@@ -27,31 +27,30 @@ public class BirbLogic extends Thread
 		for (Birb birb : logicBirbsList)
 		{
 			this.birb = birb;
-			updateBirbColor();
-			if (deleteClose)
+			if(!bc.isPaused())
 			{
-				doDeleteClose();
-			}
-			if (avoidOthers)
-			{
-				if (doAvoidOthers() && doAlignment)
+				updateBirbColor();
+				if (deleteClose)
 				{
-					doAlignment();
+					doDeleteClose();
 				}
-			}
-//			if(avoidOthers)
-//			{
-//				doAvoidOthers();
-//			}
-			else
-			{
-				if (birb.getFormationPoint() != null)
+				if (avoidOthers)
 				{
-//					adjustFormationSpeed(birb.getFormationPoint());
-					seekPoint(birb.getFormationPoint(), true);
-				} else
+					if (doAvoidOthers() && doAlignment)
+					{
+						doAlignment();
+					}
+				}
+				else
 				{
-					seekPoint(bc.getInput().getScaledMousePoint(), true);
+					if (birb.getFormationPoint() != null)
+					{
+//						adjustFormationSpeed(birb.getFormationPoint());
+						seekPoint(birb.getFormationPoint(), true);
+					} else
+					{
+						seekPoint(bc.getInput().getScaledMousePoint(), true);
+					}
 				}
 			}
 			updateBirbLocation();
@@ -232,8 +231,11 @@ public class BirbLogic extends Thread
 		double x = birb.getWorldPoint().getX();
 		double y = birb.getWorldPoint().getY();
 		Vector vel = birb.getVel();
-		x = (x + vel.getMagnitude() * birb.getSpeedMultiplier() * Math.cos(vel.getDirection()));
-		y = (y + vel.getMagnitude() * birb.getSpeedMultiplier() * Math.sin(vel.getDirection()));
+		if(!bc.isPaused())
+		{
+			x = (x + vel.getMagnitude() * birb.getSpeedMultiplier() * Math.cos(vel.getDirection()));
+			y = (y + vel.getMagnitude() * birb.getSpeedMultiplier() * Math.sin(vel.getDirection()));
+		}
 		
 		//Adjust for world boundaries and birb boundaries
 //		x = (Math.abs((x + bc.getWorldWidth() + birb.getWidth() / 2.0) % bc.getWorldWidth())) - birb.getWidth() / 2.0;
@@ -255,20 +257,20 @@ public class BirbLogic extends Thread
 	
 	public void updateBirbColor()
 	{
-//		double x = birb.getWorldPoint().getX();
-//		double y = birb.getWorldPoint().getY();
-//		int b = (int) (x / bc.getWorldWidth() * 255);
-//		int g = (int) (y / bc.getWorldHeight() * 255);
-//		int r = 255 - b;
+		double x = birb.getWorldPoint().getX();
+		double y = birb.getWorldPoint().getY();
+		int b = (int) (x / bc.getWorldWidth() * 255);
+		int g = (int) (y / bc.getWorldHeight() * 255);
+		int r = 255 - b;
 		
 		double angle = Math.abs(Math.toDegrees(birb.getVel().getDirection()));
-		int r = (int)(angle * 255 / 360);
-		int g = (int)(angle * 255 / 360);
-		int b = (int)(angle * 255 / 360);
+//		int r = (int)(angle * 255 / 360);
+//		int g = (int)(angle * 255 / 360);
+//		int b = (int)(angle * 255 / 360);
 		
-		b = Math.min(Math.max(b, 0), 255);
-		g = Math.min(Math.max(g, 0), 255);
-		r = Math.min(Math.max(r, 0), 255);
+		b = Math.min(Math.max(b, 50), 255);
+		g = Math.min(Math.max(g, 50), 255);
+		r = Math.min(Math.max(r, 50), 255);
 
 		Color newColor = new Color(r, g, b, 255);
 		birb.setBirbColor(newColor);

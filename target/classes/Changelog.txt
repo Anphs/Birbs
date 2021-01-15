@@ -1,4 +1,4 @@
-Change Log (Report #13):
-Readded hitbox rendering
-Added a few more formations
-Added support for multiple formations during a single instance
+Change Log (Report #16):
+Added name tags
+Added the ability to pause
+Gave the birbs randomly generated names
