@@ -163,7 +163,7 @@ public class BirbLogic extends Thread
 		}
 	}
 	
-	public double getPointDistance(Point2D.Double p1, Point2D.Double p2)
+	public static double getPointDistance(Point2D.Double p1, Point2D.Double p2)
 	{
 		double p1x = p1.getX();
 		double p1y = p1.getY();
@@ -177,7 +177,7 @@ public class BirbLogic extends Thread
 		return getPointDistance(birb.getWorldPoint(), otherBirb.getWorldPoint());
 	}
 	
-	public double getBirbDistance(Birb b1, Birb b2)
+	public static double getBirbDistance(Birb b1, Birb b2)
 	{
 		return getPointDistance(b1.getWorldPoint(), b2.getWorldPoint());
 	}

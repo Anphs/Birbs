@@ -1,4 +1,5 @@
-Change Log (Report #16):
-Added name tags
-Added the ability to pause
-Gave the birbs randomly generated names
+Change Log (Report #17):
+Added a pursuit camera
+Added a keybind to follow a random birb
+Added a keybind to toggle UI
+Made it easier to exit pursuit camera

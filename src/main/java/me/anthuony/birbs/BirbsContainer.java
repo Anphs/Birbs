@@ -37,7 +37,8 @@ public class BirbsContainer implements Runnable
 	private double scale = .1;
 	private String title = "Birbs";
 	private int birbTotalSpawned;
-	private boolean paused = false, drawHitbox = false, drawName = true;
+	private boolean paused = false, drawHitbox = false, drawName = true, drawUI = true;
+	private Birb pursuitBirb;
 	
 	public BirbsContainer(AbstractBirbsManager world)
 	{
@@ -357,6 +358,10 @@ public class BirbsContainer implements Runnable
 	
 	public void togglePause() { paused = !paused; }
 	
+	public void toggleNames() { drawName = !drawName; }
+	
+	public void toggleUI() { drawUI = !drawUI; }
+	
 	public boolean isHitboxVisible()
 	{
 		return drawHitbox;
@@ -380,5 +385,20 @@ public class BirbsContainer implements Runnable
 	public boolean isPaused()
 	{
 		return paused;
+	}
+	
+	public Birb getPursuitBirb()
+	{
+		return pursuitBirb;
+	}
+	
+	public void setPursuitBirb(Birb pursuitBirb)
+	{
+		this.pursuitBirb = pursuitBirb;
+	}
+	
+	public boolean isDrawUI()
+	{
+		return drawUI;
 	}
 }

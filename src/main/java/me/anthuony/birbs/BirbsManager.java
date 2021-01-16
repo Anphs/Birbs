@@ -22,6 +22,12 @@ public class BirbsManager extends AbstractBirbsManager
 	{
 		doInputBinds(bc);
 		doBirbLogic(bc);
+		if(bc.getPursuitBirb() != null)
+		{
+			Point2D.Double pursuitBirbPoint = bc.getPursuitBirb().getWorldPoint();
+			bc.setCameraOffsetX(bc.getWindowWidth() / bc.getScale() / 2 - pursuitBirbPoint.getX());
+			bc.setCameraOffsetY(bc.getWindowHeight() / bc.getScale() / 2 - pursuitBirbPoint.getY());
+		}
 	}
 	
 	@Override
@@ -66,16 +72,19 @@ public class BirbsManager extends AbstractBirbsManager
 				"" + onScreenCount + " Birbs on Screen"
 		));
 		
-		r.drawLeftAlignedList(g2d, interfaceFont, topLeftText, 10, 0);
-		r.drawMousePosition(g2d, interfaceFont);
-		r.drawFPS(g2d, interfaceFont);
-		r.drawLeftAlignedList(g2d, interfaceFont, bc.getChangelog(), 10, bc.getWindowHeight() - (bc.getChangelog().size() * interfaceFontMetrics.getAscent()) - 10);
-		r.drawRightAlignedList(g2d, interfaceFont, bc.getKeybindsHint(), bc.getWindowWidth() - 10, bc.getWindowHeight() - (bc.getKeybindsHint().size() * interfaceFontMetrics.getAscent()) - 10);
-		
-		//Say click anywhere
-		if (bc.getBirbsList().size() == 0)
+		if(bc.isDrawUI())
 		{
-			r.drawCenteredString(g2d, bigWords, "Click Anywhere to Begin", 19200 / 2.0, 10800 / 2.0);
+			r.drawLeftAlignedList(g2d, interfaceFont, topLeftText, 10, 0);
+			r.drawMousePosition(g2d, interfaceFont);
+			r.drawFPS(g2d, interfaceFont);
+			r.drawLeftAlignedList(g2d, interfaceFont, bc.getChangelog(), 10, bc.getWindowHeight() - (bc.getChangelog().size() * interfaceFontMetrics.getAscent()) - 10);
+			r.drawRightAlignedList(g2d, interfaceFont, bc.getKeybindsHint(), bc.getWindowWidth() - 10, bc.getWindowHeight() - (bc.getKeybindsHint().size() * interfaceFontMetrics.getAscent()) - 10);
+			
+			//Say click anywhere
+			if (bc.getBirbsList().size() == 0)
+			{
+				r.drawCenteredString(g2d, bigWords, "Click Anywhere to Begin", 19200 / 2.0, 10800 / 2.0);
+			}
 		}
 	}
 	
@@ -97,25 +106,108 @@ public class BirbsManager extends AbstractBirbsManager
 		{
 			bc.togglePause();
 		}
+		if (bc.getInput().isKeyDown(KeyEvent.VK_N))
+		{
+			bc.toggleNames();
+		}
+		if (bc.getInput().isKeyDown(KeyEvent.VK_SPACE))
+		{
+			if(bc.getBirbsList().size() > 0)
+			{
+				bc.setPursuitBirb(bc.getBirbsList().get((int) (Math.random() * bc.getBirbsList().size())));
+			}
+		}
+		
+		if (bc.getInput().isKeyDown(KeyEvent.VK_F1))
+		{
+			bc.toggleUI();
+		}
+		
+		//Middle Click Pursuit Camera
+		if (bc.getInput().isButtonDown(MouseEvent.BUTTON2))
+		{
+			if(bc.getBirbsList().size() > 0 && bc.getPursuitBirb() == null)
+			{
+				Birb closest = bc.getBirbsList().get(0);
+				Point2D.Double mousePoint = bc.getInput().getScaledMousePoint();
+				for (Birb b : bc.getBirbsList())
+				{
+					if (BirbLogic.getPointDistance(closest.getWorldPoint(), mousePoint) > BirbLogic.getPointDistance(b.getWorldPoint(), mousePoint))
+					{
+						closest = b;
+					}
+				}
+				bc.setPursuitBirb(closest);
+			}
+			else
+			{
+				bc.setPursuitBirb(null);
+			}
+		}
 		
 		//Arrow Key Panning
-		if (bc.getInput().isKey(KeyEvent.VK_UP) || bc.getInput().isKey(KeyEvent.VK_W))
+		if(bc.getPursuitBirb() == null)
 		{
-			bc.changeCameraOffsetY(bc.getCameraPanningInterval());
+			if (bc.getInput().isKey(KeyEvent.VK_UP) || bc.getInput().isKey(KeyEvent.VK_W))
+			{
+				bc.changeCameraOffsetY(bc.getCameraPanningInterval());
+			}
+			if (bc.getInput().isKey(KeyEvent.VK_DOWN) || bc.getInput().isKey(KeyEvent.VK_S))
+			{
+				bc.changeCameraOffsetY(-bc.getCameraPanningInterval());
+			}
+			if (bc.getInput().isKey(KeyEvent.VK_LEFT) || bc.getInput().isKey(KeyEvent.VK_A))
+			{
+				bc.changeCameraOffsetX(bc.getCameraPanningInterval());
+			}
+			if (bc.getInput().isKey(KeyEvent.VK_RIGHT) || bc.getInput().isKey(KeyEvent.VK_D))
+			{
+				bc.changeCameraOffsetX(-bc.getCameraPanningInterval());
+			}
+			if (bc.getInput().isButtonDown(MouseEvent.BUTTON1))
+			{
+				bc.setCameraTempOffsetX(bc.getCameraOffsetX());
+				bc.setCameraTempOffsetY(bc.getCameraOffsetY());
+			}
+			
+			if (bc.getInput().isButtonHeld(MouseEvent.BUTTON1, 0))
+			{
+				bc.setCameraOffsetX(bc.getCameraTempOffsetX() + bc.getInput().getChangeMouseX());
+				bc.setCameraOffsetY(bc.getCameraTempOffsetY() + bc.getInput().getChangeMouseY());
+			}
 		}
-		if (bc.getInput().isKey(KeyEvent.VK_DOWN) || bc.getInput().isKey(KeyEvent.VK_S))
+		else
 		{
-			bc.changeCameraOffsetY(-bc.getCameraPanningInterval());
-		}
-		if (bc.getInput().isKey(KeyEvent.VK_LEFT) || bc.getInput().isKey(KeyEvent.VK_A))
-		{
-			bc.changeCameraOffsetX(bc.getCameraPanningInterval());
-		}
-		if (bc.getInput().isKey(KeyEvent.VK_RIGHT) || bc.getInput().isKey(KeyEvent.VK_D))
-		{
-			bc.changeCameraOffsetX(-bc.getCameraPanningInterval());
+			if (bc.getInput().isKey(KeyEvent.VK_UP) || bc.getInput().isKey(KeyEvent.VK_W))
+			{
+				bc.setPursuitBirb(null);
+			}
+			if (bc.getInput().isKey(KeyEvent.VK_DOWN) || bc.getInput().isKey(KeyEvent.VK_S))
+			{
+				bc.setPursuitBirb(null);
+			}
+			if (bc.getInput().isKey(KeyEvent.VK_LEFT) || bc.getInput().isKey(KeyEvent.VK_A))
+			{
+				bc.setPursuitBirb(null);
+			}
+			if (bc.getInput().isKey(KeyEvent.VK_RIGHT) || bc.getInput().isKey(KeyEvent.VK_D))
+			{
+				bc.setPursuitBirb(null);
+			}
+			if (bc.getInput().isButtonDown(MouseEvent.BUTTON1))
+			{
+				bc.setPursuitBirb(null);
+				bc.setCameraTempOffsetX(bc.getCameraOffsetX());
+				bc.setCameraTempOffsetY(bc.getCameraOffsetY());
+			}
+			if (bc.getInput().isButtonHeld(MouseEvent.BUTTON1, 0))
+			{
+				bc.setCameraOffsetX(bc.getCameraTempOffsetX() + bc.getInput().getChangeMouseX());
+				bc.setCameraOffsetY(bc.getCameraTempOffsetY() + bc.getInput().getChangeMouseY());
+			}
 		}
 		
+		//Birb spawning
 		if (bc.getInput().isButtonDown(MouseEvent.BUTTON3))
 		{
 			addBirb(bc, bc.getInput().getScaledMousePoint(), 500);
@@ -127,18 +219,6 @@ public class BirbsManager extends AbstractBirbsManager
 		{
 			addBirb(bc, bc.getInput().getScaledMousePoint());
 //			updateFormations(bc);
-		}
-		
-		if (bc.getInput().isButtonDown(MouseEvent.BUTTON1))
-		{
-			bc.setCameraTempOffsetX(bc.getCameraOffsetX());
-			bc.setCameraTempOffsetY(bc.getCameraOffsetY());
-		}
-		
-		if (bc.getInput().isButtonHeld(MouseEvent.BUTTON1, 0))
-		{
-			bc.setCameraOffsetX(bc.getCameraTempOffsetX() + bc.getInput().getChangeMouseX());
-			bc.setCameraOffsetY(bc.getCameraTempOffsetY() + bc.getInput().getChangeMouseY());
 		}
 		
 		if (bc.getInput().getScroll() != 0)
@@ -215,6 +295,7 @@ public class BirbsManager extends AbstractBirbsManager
 		bc.setCameraOffsetX((bc.getWorldWidth() - bc.getWindowWidth() * 10) / -2.0);
 		bc.setCameraOffsetY((bc.getWorldHeight() - bc.getWindowHeight() * 10) / -2.0);
 		bc.setScale(0.1);
+		bc.setPursuitBirb(null);
 		updateScale(bc);
 	}
 	

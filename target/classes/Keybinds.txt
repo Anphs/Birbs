@@ -1,6 +1,10 @@
 ESC to Close
 R to Reset
 P to Pause
+F1 to Toggle UI
+N to Toggle Names
 H to Toggle Hitboxes
-Right Click to spawn Birbs
+Right Click to Spawn Birbs
+Space to Follow A Random Birb
+Middle Click to Use Follow Camera
 WASD or Arrow Keys or Left Click to Pan
