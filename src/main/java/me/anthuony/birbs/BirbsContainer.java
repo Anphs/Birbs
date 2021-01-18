@@ -29,7 +29,7 @@ public class BirbsContainer implements Runnable
 	private Renderer renderer;
 	private Input input;
 	//	private int windowWidth = 1920, windowHeight = 1080;
-	private int worldWidth = 19200, worldHeight = 10800;
+	private int worldWidth = windowWidth * 10, worldHeight = windowHeight * 10;
 	private double cameraOffsetX = (worldWidth - windowWidth * 10) / -2.0;
 	private double cameraOffsetY = (worldHeight - windowHeight * 10) / -2.0;
 	private double cameraTempOffsetX = 0;
@@ -354,13 +354,25 @@ public class BirbsContainer implements Runnable
 		return fps;
 	}
 	
-	public void toggleHitboxes() { drawHitbox = !drawHitbox; }
+	public void toggleHitboxes()
+	{
+		drawHitbox = !drawHitbox;
+	}
 	
-	public void togglePause() { paused = !paused; }
+	public void togglePause()
+	{
+		paused = !paused;
+	}
 	
-	public void toggleNames() { drawName = !drawName; }
+	public void toggleNames()
+	{
+		drawName = !drawName;
+	}
 	
-	public void toggleUI() { drawUI = !drawUI; }
+	public void toggleUI()
+	{
+		drawUI = !drawUI;
+	}
 	
 	public boolean isHitboxVisible()
 	{
@@ -379,7 +391,7 @@ public class BirbsContainer implements Runnable
 	
 	public String getRandomName()
 	{
-		return names.get((int)(Math.random() * names.size()));
+		return names.get((int) (Math.random() * names.size()));
 	}
 	
 	public boolean isPaused()

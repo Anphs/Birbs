@@ -16,6 +16,7 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 	private final boolean[] buttons = new boolean[NUM_BUTTONS];
 	private final boolean[] buttonsLast = new boolean[NUM_BUTTONS];
 	private final double[] buttonsHeldStart = new double[NUM_BUTTONS];
+	private double mouseIdleTime = System.nanoTime() / 1.0e9;
 	
 	private Point2D.Double mousePoint = new Point2D.Double(0, 0), mouseDownPoint;
 	private double mouseX, mouseY, changeMouseX, changeMouseY;
@@ -193,7 +194,23 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 	{
 		mouseX = MouseInfo.getPointerInfo().getLocation().getX() / bc.getScale();
 		mouseY = MouseInfo.getPointerInfo().getLocation().getY() / bc.getScale();
-		mousePoint = new Point2D.Double(mouseX, mouseY);
+		
+		Point2D.Double newMousePoint = new Point2D.Double(mouseX, mouseY);
+		if(!newMousePoint.equals(mousePoint))
+		{
+			mouseIdleTime = System.nanoTime() / 1.0e9;
+		}
+		mousePoint = newMousePoint;
+	}
+	
+	public boolean isMouseIdle(double seconds)
+	{
+		return (System.nanoTime() / 1.0e9 - mouseIdleTime) > seconds;
+	}
+	
+	public double getMouseIdleTime()
+	{
+		return System.nanoTime() / 1.0e9 - mouseIdleTime;
 	}
 	
 	public double getChangeMouseX()

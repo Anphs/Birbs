@@ -22,12 +22,26 @@ public class BirbLogic extends Thread
 		this.bc = bc;
 	}
 	
+	public static double getPointDistance(Point2D.Double p1, Point2D.Double p2)
+	{
+		double p1x = p1.getX();
+		double p1y = p1.getY();
+		double p2x = p2.getX();
+		double p2y = p2.getY();
+		return Point2D.distance(p1x, p1y, p2x, p2y);
+	}
+	
+	public static double getBirbDistance(Birb b1, Birb b2)
+	{
+		return getPointDistance(b1.getWorldPoint(), b2.getWorldPoint());
+	}
+	
 	public void run()
 	{
 		for (Birb birb : logicBirbsList)
 		{
 			this.birb = birb;
-			if(!bc.isPaused())
+			if (!bc.isPaused())
 			{
 				updateBirbColor();
 				if (deleteClose)
@@ -40,8 +54,7 @@ public class BirbLogic extends Thread
 					{
 						doAlignment();
 					}
-				}
-				else
+				} else
 				{
 					if (birb.getFormationPoint() != null)
 					{
@@ -163,23 +176,9 @@ public class BirbLogic extends Thread
 		}
 	}
 	
-	public static double getPointDistance(Point2D.Double p1, Point2D.Double p2)
-	{
-		double p1x = p1.getX();
-		double p1y = p1.getY();
-		double p2x = p2.getX();
-		double p2y = p2.getY();
-		return Point2D.distance(p1x, p1y, p2x, p2y);
-	}
-	
 	public double getBirbDistance(Birb otherBirb)
 	{
 		return getPointDistance(birb.getWorldPoint(), otherBirb.getWorldPoint());
-	}
-	
-	public static double getBirbDistance(Birb b1, Birb b2)
-	{
-		return getPointDistance(b1.getWorldPoint(), b2.getWorldPoint());
 	}
 	
 	public ArrayList<Birb> getBirbsInRadius(double radius)
@@ -231,7 +230,7 @@ public class BirbLogic extends Thread
 		double x = birb.getWorldPoint().getX();
 		double y = birb.getWorldPoint().getY();
 		Vector vel = birb.getVel();
-		if(!bc.isPaused())
+		if (!bc.isPaused())
 		{
 			x = (x + vel.getMagnitude() * birb.getSpeedMultiplier() * Math.cos(vel.getDirection()));
 			y = (y + vel.getMagnitude() * birb.getSpeedMultiplier() * Math.sin(vel.getDirection()));
@@ -271,7 +270,7 @@ public class BirbLogic extends Thread
 		b = Math.min(Math.max(b, 50), 255);
 		g = Math.min(Math.max(g, 50), 255);
 		r = Math.min(Math.max(r, 50), 255);
-
+		
 		Color newColor = new Color(r, g, b, 255);
 		birb.setBirbColor(newColor);
 	}

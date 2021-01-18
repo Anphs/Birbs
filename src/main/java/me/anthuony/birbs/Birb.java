@@ -8,8 +8,8 @@ public class Birb
 	private static final int baseWidth = 70, baseHeight = 70;
 	private final static double maxTurnSpeed = .1;
 	private final static double turnNoise = 0;
-	private double scale = 1;
 	private final String ID, name;
+	private double scale = 1;
 	private Vector vel, acc;
 	private Point2D.Double worldPoint, screenPoint, formationPoint;
 	private Color birbColor;
@@ -25,7 +25,7 @@ public class Birb
 		double velMag = 20;
 		this.vel = new Vector(velMag, Math.random() * 2 * Math.PI);
 //		vel = new Vector(0, 3 * Math.PI / 2);
-		this.birbColor = new Color(0, 0, 0,0);
+		this.birbColor = new Color(0, 0, 0, 0);
 		this.scale = Math.random() + .5 + .25;
 	}
 	

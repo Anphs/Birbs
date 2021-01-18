@@ -3,6 +3,7 @@ package me.anthuony.birbs;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 
 public class Window
 {
@@ -10,9 +11,12 @@ public class Window
 	private final Canvas canvas;
 	private final BufferStrategy bs;
 	private final Graphics g;
+	private final BufferedImage transparentCursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+	private final Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(transparentCursorImg, new Point(0, 0), "blank cursor");
 	
 	public Window(me.anthuony.birbs.BirbsContainer bc)
 	{
+		
 		Dimension s = new Dimension(bc.getWindowWidth(), bc.getWindowHeight());
 		frame = new JFrame();
 		frame.setUndecorated(true);
@@ -51,5 +55,15 @@ public class Window
 	public Graphics getG()
 	{
 		return g;
+	}
+	
+	public JFrame getFrame()
+	{
+		return frame;
+	}
+	
+	public Cursor getBlankCursor()
+	{
+		return blankCursor;
 	}
 }

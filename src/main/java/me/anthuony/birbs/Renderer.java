@@ -20,7 +20,7 @@ public class Renderer
 	public void drawRect(Graphics2D g2d)
 	{
 		g2d.setColor(Color.ORANGE);
-		g2d.fillRect(3440 / 2, 1440 / 2, 1, 1);
+		g2d.fillRect(bc.getWindowWidth() / 2, bc.getWindowHeight() / 2, 1, 1);
 	}
 	
 	public void drawBackground(Graphics2D g2d)
@@ -29,7 +29,7 @@ public class Renderer
 		g2d.fillRect(0, 0, bc.getWindowWidth(), bc.getWindowHeight());
 		
 		g2d.setPaint(new Color(0, 0, 0, 255));
-		g2d.fillRect((int) (bc.getCameraOffsetX() * bc.getScale()), (int) (bc.getCameraOffsetY() * bc.getScale()), (int) (19200 * bc.getScale()), (int) (10800 * bc.getScale()));
+		g2d.fillRect((int) (bc.getCameraOffsetX() * bc.getScale()), (int) (bc.getCameraOffsetY() * bc.getScale()), (int) (bc.getWorldWidth() * bc.getScale()), (int) (bc.getWorldHeight() * bc.getScale()));
 	}
 	
 	public void drawCenteredString(Graphics2D g2d, Font f, String str, double x, double y)
@@ -90,7 +90,6 @@ public class Renderer
 	
 	public void drawMousePosition(Graphics2D g2d, Font f)
 	{
-		g2d.setColor(Color.WHITE);
 		g2d.setFont(f);
 		try
 		{
@@ -106,7 +105,6 @@ public class Renderer
 	
 	public void drawFPS(Graphics2D g2d, Font f)
 	{
-		g2d.setColor(Color.WHITE);
 		g2d.setFont(f);
 		String str = "FPS: " + bc.getFps();
 		drawRightAlignedString(g2d, f, str, bc.getWindowWidth() - 10, 20);
@@ -114,7 +112,7 @@ public class Renderer
 	
 	public Polygon getTriangle(BirbsContainer bc, double scale)
 	{
-		int x = (int) (Birb.getBaseWidth() * bc.getScale() * scale/ 2);
+		int x = (int) (Birb.getBaseWidth() * bc.getScale() * scale / 2);
 		int xx = (int) (x / 1.5);
 		int xxx = x / 2;
 		int[] triangleX = new int[]{xx, -xx, -xxx, -xx};
@@ -126,21 +124,21 @@ public class Renderer
 	{
 		int hitboxWidth = (int) (Birb.getBaseWidth() * bc.getScale() * b.getScale() / 2);
 		
-		if(bc.isHitboxVisible())
+		if (bc.isHitboxVisible())
 		{
 			g2d.setPaint(b.getBirbColor().darker());
 			g2d.drawRect(-hitboxWidth, -hitboxWidth, 2 * hitboxWidth, 2 * hitboxWidth);
 		}
-		if(bc.isDrawName())
+		if (bc.isDrawName())
 		{
 			String name = b.getName();
-			Font nameTagFont = new Font("Courier New", Font.BOLD, (int)(bc.getScale() * 40));
+			Font nameTagFont = new Font("Courier New", Font.BOLD, (int) (bc.getScale() * 40));
 			g2d.setPaint(b.getBirbColor().brighter());
 			FontMetrics metrics = g2d.getFontMetrics(nameTagFont);
-
+			
 			double x = -metrics.stringWidth(name) / 2.0;
 			double y = +metrics.getAscent() / 2.0;
-
+			
 			g2d.setFont(nameTagFont);
 			g2d.drawString(name, (int) x, (int) (y + 1.25 * hitboxWidth));
 		}

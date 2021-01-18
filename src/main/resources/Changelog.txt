@@ -3,3 +3,8 @@ Added a pursuit camera
 Added a keybind to follow a random birb
 Added a keybind to toggle UI
 Made it easier to exit pursuit camera
+
+Change Log (Report #18):
+Added a UI fade whenever the mouse is idle
+Made the mouse disappear whenever the mouse is idle
+Fixed code to allow for custom world sizes rather than just 19200 x 10800
