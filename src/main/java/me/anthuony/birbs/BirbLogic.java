@@ -82,7 +82,7 @@ public class BirbLogic extends Thread
 	
 	private void doAlignment()
 	{
-		ArrayList<Birb> birbsInRadius = getBirbsInRadius(25 * birb.getVel().getMagnitude());
+		ArrayList<Birb> birbsInRadius = getBirbsInRadius(25 * birb.getSpeed());
 		if (birbsInRadius.size() > 0)
 		{
 			double avgMag = 0;
@@ -91,8 +91,8 @@ public class BirbLogic extends Thread
 			double avgY = 0;
 			for (Birb otherBirb : birbsInRadius)
 			{
-				avgMag += otherBirb.getVel().getMagnitude();
-				avgDir += otherBirb.getVel().getDirection();
+				avgMag += otherBirb.getSpeed();
+				avgDir += otherBirb.getDirection();
 				avgX += otherBirb.getWorldPoint().getX();
 				avgY += otherBirb.getWorldPoint().getY();
 			}
@@ -102,10 +102,10 @@ public class BirbLogic extends Thread
 			avgY /= birbsInRadius.size();
 			Point2D.Double avgPoint = new Point2D.Double(avgX, avgY);
 			
-			double currentDirection = birb.getVel().getDirection();
+			double currentDirection = birb.getDirection();
 			double adjustment = getDirectionAdjustment(currentDirection, avgDir);
 			double newDirection = (adjustment + currentDirection) % (2 * Math.PI);
-			birb.setVel(new Vector(avgMag, newDirection));
+			birb.setVelocity(new Vector(avgMag, newDirection));
 			seekPoint(avgPoint, true);
 		}
 	}
@@ -146,7 +146,7 @@ public class BirbLogic extends Thread
 		double currentX = birb.getWorldPoint().getX();
 		double currentY = birb.getWorldPoint().getY();
 		
-		double currentDirection = birb.getVel().getDirection();
+		double currentDirection = birb.getVelocity().getDirection();
 		double desiredDirection = Math.atan2(desiredY - currentY, desiredX - currentX);
 		if (!seek)
 		{
@@ -160,7 +160,7 @@ public class BirbLogic extends Thread
 		double adjustment = getDirectionAdjustment(currentDirection, desiredDirection);
 		
 		double newDirection = (adjustment + currentDirection) % (2 * Math.PI);
-		birb.setVel(new Vector(birb.getVel().getMagnitude(), newDirection));
+		birb.setVelocity(new Vector(birb.getSpeed(), newDirection));
 	}
 	
 	public void adjustFormationSpeed(Point2D.Double formationPoint)
@@ -201,7 +201,7 @@ public class BirbLogic extends Thread
 	
 	public boolean doAvoidOthers()
 	{
-		int avoidRange = (int) birb.getVel().getMagnitude() * 15 + 25;
+		int avoidRange = (int) birb.getSpeed() * 15 + 25;
 		ArrayList<Birb> birbsInRadius = getBirbsInRadius(avoidRange);
 		Birb closestOther = null;
 		if (birbsInRadius.size() > 0)
@@ -229,7 +229,7 @@ public class BirbLogic extends Thread
 	{
 		double x = birb.getWorldPoint().getX();
 		double y = birb.getWorldPoint().getY();
-		Vector vel = birb.getVel();
+		Vector vel = birb.getVelocity();
 		if (!bc.isPaused())
 		{
 			x = (x + vel.getMagnitude() * birb.getSpeedMultiplier() * Math.cos(vel.getDirection()));
@@ -262,7 +262,7 @@ public class BirbLogic extends Thread
 		int g = (int) (y / bc.getWorldHeight() * 255);
 		int r = 255 - b;
 		
-		double angle = Math.abs(Math.toDegrees(birb.getVel().getDirection()));
+		double angle = Math.abs(Math.toDegrees(birb.getDirection()));
 //		int r = (int)(angle * 255 / 360);
 //		int g = (int)(angle * 255 / 360);
 //		int b = (int)(angle * 255 / 360);
@@ -272,6 +272,6 @@ public class BirbLogic extends Thread
 		r = Math.min(Math.max(r, 50), 255);
 		
 		Color newColor = new Color(r, g, b, 255);
-		birb.setBirbColor(newColor);
+		birb.setColor(newColor);
 	}
 }

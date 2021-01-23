@@ -126,14 +126,14 @@ public class Renderer
 		
 		if (bc.isHitboxVisible())
 		{
-			g2d.setPaint(b.getBirbColor().darker());
+			g2d.setPaint(b.getColor().darker());
 			g2d.drawRect(-hitboxWidth, -hitboxWidth, 2 * hitboxWidth, 2 * hitboxWidth);
 		}
 		if (bc.isDrawName())
 		{
 			String name = b.getName();
 			Font nameTagFont = new Font("Courier New", Font.BOLD, (int) (bc.getScale() * 40));
-			g2d.setPaint(b.getBirbColor().brighter());
+			g2d.setPaint(b.getColor().brighter());
 			FontMetrics metrics = g2d.getFontMetrics(nameTagFont);
 			
 			double x = -metrics.stringWidth(name) / 2.0;
@@ -142,8 +142,8 @@ public class Renderer
 			g2d.setFont(nameTagFont);
 			g2d.drawString(name, (int) x, (int) (y + 1.25 * hitboxWidth));
 		}
-		g2d.setPaint(b.getBirbColor());
-		g2d.rotate(b.getVel().getDirection());
+		g2d.setPaint(b.getColor());
+		g2d.rotate(b.getDirection());
 		g2d.drawPolygon(getTriangle(bc, b.getScale()));
 	}
 }
