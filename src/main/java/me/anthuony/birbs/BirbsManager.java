@@ -82,6 +82,20 @@ public class BirbsManager extends AbstractBirbsManager
 				"" + onScreenCount + " Birbs on Screen"
 		));
 		
+		ArrayList<String> pursuitBirbHistoryListNames = new ArrayList<String>();
+		for(Birb b: bc.getPursuitBirbHistoryList())
+		{
+			if(b != null)
+			{
+				String name = b.getName();
+				if (b == bc.getPursuitBirb())
+				{
+					name += "   <<<";
+				}
+				pursuitBirbHistoryListNames.add(name);
+			}
+		}
+		
 		if (bc.isDrawUI())
 		{
 			r.drawLeftAlignedList(g2d, interfaceFont, topLeftText, 10, 0);
@@ -89,6 +103,7 @@ public class BirbsManager extends AbstractBirbsManager
 			r.drawFPS(g2d, interfaceFont);
 			r.drawLeftAlignedList(g2d, interfaceFont, bc.getChangelog(), 10, bc.getWindowHeight() - (bc.getChangelog().size() * interfaceFontMetrics.getAscent()) - 10);
 			r.drawRightAlignedList(g2d, interfaceFont, bc.getKeybindsHint(), bc.getWindowWidth() - 10, bc.getWindowHeight() - (bc.getKeybindsHint().size() * interfaceFontMetrics.getAscent()) - 10);
+			r.drawLeftAlignedList(g2d, interfaceFont, pursuitBirbHistoryListNames, 10, 100);
 			
 			//Say click anywhere
 			if (bc.getBirbsList().size() == 0)
@@ -124,7 +139,7 @@ public class BirbsManager extends AbstractBirbsManager
 		{
 			if (bc.getBirbsList().size() > 0)
 			{
-				bc.setPursuitBirb(bc.getBirbsList().get((int) (Math.random() * bc.getBirbsList().size())));
+				bc.setPursuitBirb(bc.getRandomUniqueBirb(bc.getBirbsList(), bc.getPursuitBirbHistoryList()));
 			}
 		}
 		
@@ -151,6 +166,31 @@ public class BirbsManager extends AbstractBirbsManager
 			} else
 			{
 				bc.setPursuitBirb(null);
+			}
+		}
+		
+		// < > Navigate Pursuit Birb List
+		if (bc.getInput().isKeyDown(KeyEvent.VK_COMMA))
+		{
+			if(bc.getBirbsList().size() > 0)
+			{
+				if (bc.getPursuitBirbHistoryList().size() > 1 && bc.getPursuitBirbHistoryIndex() > 0)
+				{
+					bc.setPursuitBirb(bc.getPursuitBirbHistoryList().get(bc.decrementBirbHistoryIndex()));
+				}
+			}
+		}
+		if (bc.getInput().isKeyDown(KeyEvent.VK_PERIOD))
+		{
+			if(bc.getBirbsList().size() > 0)
+			{
+				if (bc.getPursuitBirbHistoryList().size() - 1 > bc.getPursuitBirbHistoryIndex())
+				{
+					bc.setPursuitBirb(bc.getPursuitBirbHistoryList().get(bc.incrementBirbHistoryIndex()));
+				} else
+				{
+					bc.setPursuitBirb(bc.getRandomUniqueBirb(bc.getBirbsList(), bc.getPursuitBirbHistoryList()));
+				}
 			}
 		}
 		
@@ -219,14 +259,13 @@ public class BirbsManager extends AbstractBirbsManager
 		if (bc.getInput().isButtonDown(MouseEvent.BUTTON3))
 		{
 			addBirb(bc, bc.getInput().getScaledMousePoint(), 100);
-//			addBirb(bc, new Point2D.Double(19200/2, 10800/2));
 //			updateFormations(bc);
 		}
 		
 		if (bc.getInput().isButtonHeld(MouseEvent.BUTTON3, 1))
 		{
 			addBirb(bc, bc.getInput().getScaledMousePoint());
-			updateFormations(bc);
+//			updateFormations(bc);
 		}
 		
 		if (bc.getInput().getScroll() != 0)
@@ -304,6 +343,7 @@ public class BirbsManager extends AbstractBirbsManager
 		bc.setCameraOffsetY((bc.getWorldHeight() - bc.getWindowHeight() * 10) / -2.0);
 		bc.setScale(0.1);
 		bc.setPursuitBirb(null);
+		bc.getPursuitBirbHistoryList().clear();
 		updateScale(bc);
 	}
 	

@@ -39,6 +39,8 @@ public class BirbsContainer implements Runnable
 	private int birbTotalSpawned;
 	private boolean paused = false, drawHitbox = false, drawName = true, drawUI = true;
 	private Birb pursuitBirb;
+	private ArrayList<Birb> pursuitBirbHistoryList = new ArrayList<Birb>();
+	private int pursuitBirbHistoryIndex = 0;
 	
 	public BirbsContainer(AbstractBirbsManager world)
 	{
@@ -407,10 +409,52 @@ public class BirbsContainer implements Runnable
 	public void setPursuitBirb(Birb pursuitBirb)
 	{
 		this.pursuitBirb = pursuitBirb;
+		if(!pursuitBirbHistoryList.contains(pursuitBirb))
+		{
+			pursuitBirbHistoryList.add(pursuitBirb);
+			pursuitBirbHistoryIndex = pursuitBirbHistoryList.size() - 1;
+		}
+	}
+	
+	public Birb getRandomBirb(ArrayList<Birb> birbsList)
+	{
+		return birbsList.get((int) (Math.random() * birbsList.size()));
+	}
+	
+	public Birb getRandomUniqueBirb(ArrayList<Birb> birbsList, ArrayList<Birb> exclusionList)
+	{
+		Birb randomBirb = birbsList.get((int) (Math.random() * birbsList.size()));
+		while(exclusionList.contains(randomBirb))
+		{
+			randomBirb = birbsList.get((int) (Math.random() * birbsList.size()));
+		}
+		return randomBirb;
 	}
 	
 	public boolean isDrawUI()
 	{
 		return drawUI;
+	}
+	
+	public ArrayList<Birb> getPursuitBirbHistoryList()
+	{
+		return pursuitBirbHistoryList;
+	}
+	
+	public int incrementBirbHistoryIndex()
+	{
+		pursuitBirbHistoryIndex++;
+		return pursuitBirbHistoryIndex;
+	}
+	
+	public int decrementBirbHistoryIndex()
+	{
+		pursuitBirbHistoryIndex--;
+		return pursuitBirbHistoryIndex;
+	}
+	
+	public int getPursuitBirbHistoryIndex()
+	{
+		return pursuitBirbHistoryIndex;
 	}
 }
