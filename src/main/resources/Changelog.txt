@@ -13,3 +13,5 @@ Change Log (Report #19):
 Added a pursuit birb history list
 Added keybinds to navigate the pursuit birb history list
 Added a visual list for the pursuit birb history list
+
+Change Log (Report #20):

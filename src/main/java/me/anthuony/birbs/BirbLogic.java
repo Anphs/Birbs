@@ -6,10 +6,6 @@ import java.util.ArrayList;
 
 public class BirbLogic extends Thread
 {
-	private static final boolean avoidOthers = true;
-	private static final boolean doAlignment = true;
-	private static final boolean doCohesion = true;
-	private static final boolean deleteClose = false;
 	private final ArrayList<Birb> logicBirbsList;
 	private final BirbsContainer bc;
 	private Birb birb;
@@ -44,25 +40,27 @@ public class BirbLogic extends Thread
 			if (!bc.isPaused())
 			{
 				updateBirbColor();
-				if (deleteClose)
+				if (bc.isDeleteClose())
 				{
 					doDeleteClose();
 				}
-				if (avoidOthers)
+				if (doAvoidOthers())
 				{
-					if (doAvoidOthers() && doAlignment)
+					if (doAvoidOthers() && bc.isDoAlignment())
 					{
 						doAlignment();
 					}
-				} else
+				}
+				else
 				{
 					if (birb.getFormationPoint() != null)
 					{
 //						adjustFormationSpeed(birb.getFormationPoint());
 						seekPoint(birb.getFormationPoint(), true);
-					} else
+					}
+					else
 					{
-						seekPoint(bc.getInput().getScaledMousePoint(), true);
+//						seekPoint(bc.getInput().getScaledMousePoint(), true);
 					}
 				}
 			}
@@ -183,7 +181,7 @@ public class BirbLogic extends Thread
 	
 	public ArrayList<Birb> getBirbsInRadius(double radius)
 	{
-		ArrayList<Birb> birbsInRadius = new ArrayList<Birb>();
+		ArrayList<Birb> birbsInRadius = new ArrayList<>();
 		for (Birb otherBirb : bc.getBirbsList())
 		{
 			if (otherBirb != birb)
@@ -262,7 +260,7 @@ public class BirbLogic extends Thread
 		int g = (int) (y / bc.getWorldHeight() * 255);
 		int r = 255 - b;
 		
-		double angle = Math.abs(Math.toDegrees(birb.getDirection()));
+//		double angle = Math.abs(Math.toDegrees(birb.getDirection()));
 //		int r = (int)(angle * 255 / 360);
 //		int g = (int)(angle * 255 / 360);
 //		int b = (int)(angle * 255 / 360);

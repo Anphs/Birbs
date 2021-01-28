@@ -5,22 +5,11 @@ import java.util.ArrayList;
 
 public class Renderer
 {
-	private static final int d = 7 / 2;
-	private static final int dd = (int) (d / 1.5);
-	private static final int ddd = d / 2;
-	private static final int[] triangleX = new int[]{dd, -dd, -ddd, -dd};
-	private static final int[] triangleY = new int[]{0, ddd, 0, -ddd};
-	BirbsContainer bc;
+	private final BirbsContainer bc;
 	
 	public Renderer(BirbsContainer bc)
 	{
 		this.bc = bc;
-	}
-	
-	public void drawRect(Graphics2D g2d)
-	{
-		g2d.setColor(Color.ORANGE);
-		g2d.fillRect(bc.getWindowWidth() / 2, bc.getWindowHeight() / 2, 1, 1);
 	}
 	
 	public void drawBackground(Graphics2D g2d)

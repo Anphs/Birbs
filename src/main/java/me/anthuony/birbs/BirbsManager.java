@@ -82,7 +82,7 @@ public class BirbsManager extends AbstractBirbsManager
 				"" + onScreenCount + " Birbs on Screen"
 		));
 		
-		ArrayList<String> pursuitBirbHistoryListNames = new ArrayList<String>();
+		ArrayList<String> pursuitBirbHistoryListNames = new ArrayList<>();
 		for(Birb b: bc.getPursuitBirbHistoryList())
 		{
 			if(b != null)
@@ -219,11 +219,6 @@ public class BirbsManager extends AbstractBirbsManager
 				bc.setCameraTempOffsetY(bc.getCameraOffsetY());
 			}
 			
-			if (bc.getInput().isButtonHeld(MouseEvent.BUTTON1, 0))
-			{
-				bc.setCameraOffsetX(bc.getCameraTempOffsetX() + bc.getInput().getChangeMouseX());
-				bc.setCameraOffsetY(bc.getCameraTempOffsetY() + bc.getInput().getChangeMouseY());
-			}
 		} else
 		{
 			if (bc.getInput().isKey(KeyEvent.VK_UP) || bc.getInput().isKey(KeyEvent.VK_W))
@@ -248,17 +243,17 @@ public class BirbsManager extends AbstractBirbsManager
 				bc.setCameraTempOffsetX(bc.getCameraOffsetX());
 				bc.setCameraTempOffsetY(bc.getCameraOffsetY());
 			}
-			if (bc.getInput().isButtonHeld(MouseEvent.BUTTON1, 0))
-			{
-				bc.setCameraOffsetX(bc.getCameraTempOffsetX() + bc.getInput().getChangeMouseX());
-				bc.setCameraOffsetY(bc.getCameraTempOffsetY() + bc.getInput().getChangeMouseY());
-			}
+		}
+		if (bc.getInput().isButtonHeld(MouseEvent.BUTTON1, 0))
+		{
+			bc.setCameraOffsetX(bc.getCameraTempOffsetX() + bc.getInput().getChangeMouseX());
+			bc.setCameraOffsetY(bc.getCameraTempOffsetY() + bc.getInput().getChangeMouseY());
 		}
 		
 		//Birb spawning
 		if (bc.getInput().isButtonDown(MouseEvent.BUTTON3))
 		{
-			addBirb(bc, bc.getInput().getScaledMousePoint(), 100);
+			addBirb(bc, bc.getInput().getScaledMousePoint(), 1000);
 //			updateFormations(bc);
 		}
 		
@@ -277,7 +272,7 @@ public class BirbsManager extends AbstractBirbsManager
 	private void doBirbLogic(BirbsContainer bc)
 	{
 		ThreadGroup tg = new ThreadGroup("Update Locations");
-		int np = Runtime.getRuntime().availableProcessors() - 2;
+		int np = Runtime.getRuntime().availableProcessors();
 		
 		ArrayList<ArrayList<Birb>> birbGroups = new ArrayList<>();
 		ArrayList<BirbLogic> logics = new ArrayList<>();
@@ -299,7 +294,6 @@ public class BirbsManager extends AbstractBirbsManager
 		int i = 0;
 		while (i < logics.size())
 		{
-//
 			if (tg.activeCount() < np)
 			{
 				BirbLogic logic = logics.get(i);
@@ -313,10 +307,6 @@ public class BirbsManager extends AbstractBirbsManager
 	{
 		Birb birb = new Birb("Birb" + bc.incrementBirbTotalSpawned(), bc.getRandomName(), p);
 		bc.getBirbsList().add(birb);
-//		if(bc.getBirbTotalSpawned() == 1)
-//		{
-//			bc.getWindow().getJLayeredPane().add(birb, JLayeredPane.PALETTE_LAYER);
-//		}
 	}
 	
 	public void addBirb(BirbsContainer bc, Point2D.Double p, int multiplier)
@@ -361,7 +351,7 @@ public class BirbsManager extends AbstractBirbsManager
 		
 		for (int i = 0; i < Formations.size(); i++)
 		{
-			ArrayList<Birb> formationBirbsList = new ArrayList<Birb>();
+			ArrayList<Birb> formationBirbsList = new ArrayList<>();
 			for (int j = 0; j < birbFormationCount; j++)
 			{
 				formationBirbsList.add(bc.getBirbsList().get(j + i * birbFormationCount));

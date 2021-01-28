@@ -11,36 +11,46 @@ public class BirbsContainer implements Runnable
 {
 	
 	private final AbstractBirbsManager world;
-	private final double UPDATE_CAP = 1.0 / 60.0;
-	private final double cameraPanningInterval = 100;
-	private final double minScale = .1;
-	private final double maxScale = 1.5;
-	private final ArrayList<Birb> birbsList = new ArrayList<>();
-	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-	private final int windowWidth = screenSize.width;
-	private final int windowHeight = screenSize.height;
-	double frameTime = 0;
-	int frames = 0;
-	int fps = 0;
-	ArrayList<String> changelog = new ArrayList<>();
-	ArrayList<String> keybindsHint = new ArrayList<>();
-	ArrayList<String> names = new ArrayList<>();
 	private Window window;
 	private Renderer renderer;
 	private Input input;
-	//	private int windowWidth = 1920, windowHeight = 1080;
+	
+	private String title = "Birbs";
+	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	private final int windowWidth = screenSize.width;
+	private final int windowHeight = screenSize.height;
+	
+	private final double UPDATE_CAP = 1.0 / 60.0;
+	private double frameTime = 0;
+	private int frames = 0;
+	private int fps = 0;
+	
+	private final ArrayList<String> changelog = new ArrayList<>();
+	private final ArrayList<String> keybindsHint = new ArrayList<>();
+	private final ArrayList<String> names = new ArrayList<>();
+	
+	private final ArrayList<Birb> birbsList = new ArrayList<>();
+	private final ArrayList<Birb> pursuitBirbHistoryList = new ArrayList<Birb>();
+	
+	private final double cameraPanningInterval = 100;
+	private final double minScale = .1;
+	private final double maxScale = 1.5;
 	private int worldWidth = windowWidth * 10, worldHeight = windowHeight * 10;
 	private double cameraOffsetX = (worldWidth - windowWidth * 10) / -2.0;
 	private double cameraOffsetY = (worldHeight - windowHeight * 10) / -2.0;
 	private double cameraTempOffsetX = 0;
 	private double cameraTempOffsetY = 0;
 	private double scale = .1;
-	private String title = "Birbs";
 	private int birbTotalSpawned;
+	
 	private boolean paused = false, drawHitbox = false, drawName = true, drawUI = true;
 	private Birb pursuitBirb;
-	private ArrayList<Birb> pursuitBirbHistoryList = new ArrayList<Birb>();
 	private int pursuitBirbHistoryIndex = 0;
+	
+	private final boolean avoidOthers = true;
+	private final boolean doAlignment = true;
+	private final boolean doCohesion = true;
+	private final boolean deleteClose = false;
 	
 	public BirbsContainer(AbstractBirbsManager world)
 	{
@@ -161,7 +171,6 @@ public class BirbsContainer implements Runnable
 				}
 			}
 		}
-		
 		dispose();
 	}
 	
@@ -456,5 +465,25 @@ public class BirbsContainer implements Runnable
 	public int getPursuitBirbHistoryIndex()
 	{
 		return pursuitBirbHistoryIndex;
+	}
+	
+	public boolean isAvoidOthers()
+	{
+		return avoidOthers;
+	}
+	
+	public boolean isDoAlignment()
+	{
+		return doAlignment;
+	}
+	
+	public boolean isDoCohesion()
+	{
+		return doCohesion;
+	}
+	
+	public boolean isDeleteClose()
+	{
+		return deleteClose;
 	}
 }
