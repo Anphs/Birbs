@@ -5,101 +5,119 @@ import java.awt.geom.Point2D;
 
 public abstract class Entity
 {
-	private final String ID;
-	private double scale = 1;
-	private Vector velocity, acceleration;
-	private Point2D.Double worldPoint, screenPoint;
-	private Color color;
-	private boolean onScreen;
+	//Entity Types:
+	//1 = Birb
+	private	final int entityID;
+	private final BirbsContainer bc;
 	
-	public Entity(String ID, Point2D.Double worldPoint)
+	public Entity(BirbsContainer bc, int entityID, float xWorld, float yWorld, float scale)
 	{
-		this.ID = ID;
-		this.worldPoint = worldPoint;
+		this.entityID = entityID;
+		this.bc = bc;
+		bc.seteXWorld(entityID, xWorld);
+		bc.seteYWorld(entityID, yWorld);
+		bc.seteScale(entityID, scale);
 	}
 	
-	public String getID()
+	public void setSpeed(float velocity)
 	{
-		return ID;
+		bc.geteSpeed()[entityID] = velocity;
 	}
 	
-	public double getScale()
+	public float getSpeed()
 	{
-		return scale;
+		return bc.geteSpeed(entityID);
 	}
 	
-	public void setScale(double scale)
+	public void setDirection(float direction)
 	{
-		this.scale = scale;
+		bc.seteDirection(entityID, direction);
 	}
 	
-	public Vector getVelocity()
+	public void setScale(float scale)
 	{
-		return velocity;
-	}
-	
-	public double getSpeed()
-	{
-		return velocity.getMagnitude();
-	}
-	
-	public double getDirection()
-	{
-		return velocity.getDirection();
-	}
-	
-	public void setVelocity(Vector velocity)
-	{
-		this.velocity = velocity;
-	}
-	
-	public Vector getAcceleration()
-	{
-		return acceleration;
-	}
-	
-	public void setAcceleration(Vector acceleration)
-	{
-		this.acceleration = acceleration;
-	}
-	
-	public Point2D.Double getWorldPoint()
-	{
-		return worldPoint;
-	}
-	
-	public void setWorldPoint(Point2D.Double worldPoint)
-	{
-		this.worldPoint = worldPoint;
-	}
-	
-	public Point2D.Double getScreenPoint()
-	{
-		return screenPoint;
-	}
-	
-	public void setScreenPoint(Point2D.Double screenPoint)
-	{
-		this.screenPoint = screenPoint;
-	}
-	
-	public Color getColor()
-	{
-		return color;
+		bc.seteScale(entityID, scale);
 	}
 	
 	public void setColor(Color color)
 	{
-		this.color = color;
+		bc.seteColor(entityID, color);
+	}
+	
+	public Color getColor()
+	{
+		return bc.geteColor(entityID);
+	}
+	
+	public float getXWorld()
+	{
+		return bc.geteXWorld(entityID);
+	}
+	
+	public float getYWorld()
+	{
+		return bc.geteYWorld(entityID);
+	}
+	
+	public void setXWorld(float xWorld)
+	{
+		bc.seteXWorld(entityID, xWorld);
+	}
+	
+	public void setYWorld(float yWorld)
+	{
+		bc.seteYWorld(entityID, yWorld);
+	}
+	
+	public float getXScreen()
+	{
+		return bc.geteXScreen(entityID);
+	}
+	
+	public float getYScreen()
+	{
+		return bc.geteYScreen(entityID);
+	}
+	
+	public void setXScreen(float xScreen)
+	{
+		bc.seteXScreen(entityID, xScreen);
+	}
+	
+	public void setYScreen(float yScreen)
+	{
+		bc.seteYScreen(entityID, yScreen);
 	}
 	
 	public boolean isOnScreen()
 	{
-		return onScreen;
+		return bc.geteOnScreen(entityID);
 	}
 	
 	public void setOnScreen(boolean onScreen)
 	{
-		this.onScreen = onScreen;
+		bc.seteOnScreen(entityID, onScreen);
 	}
+	
+	public float getDirection()
+	{
+		return bc.geteDirection(entityID);
+	}
+	
+	public float getScale()
+	{
+		return bc.geteScale(entityID);
+	}
+	
+	public Point2D.Float getWorldPoint()
+	{
+		return new Point2D.Float(getXWorld(), getYWorld());
+	}
+	
+	public int getEntityID()
+	{
+		return entityID;
+	}
+	
+	public int getChunkID() { return bc.geteChunk(entityID); }
 }

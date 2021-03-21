@@ -1,5 +1,9 @@
 package me.anthuony.birbs;
 
+import com.aparapi.Kernel;
+import com.aparapi.Range;
+import scala.Array;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -18,13 +22,29 @@ public class BirbsManager extends AbstractBirbsManager
 	}
 	
 	@Override
-	public void update(BirbsContainer bc, float dt)
+	public void update(BirbsContainer bc)
 	{
 		doInputBinds(bc);
-		doBirbLogic(bc);
+		
+		//Logistics Equation
+		if(bc.getInput().isMouseIdle(.1))
+		{
+			bc.setDpdt(1 / 1000.0 * (bc.getCapacity() - bc.getEntityCount()));
+			addBirb(bc, new Point2D.Float((float) (bc.getWorldWidth() / 2.0),(float) (bc.getWorldHeight() / 2.0)), (int) bc.getDpdt());
+		}
+		
+		long t1 = System.currentTimeMillis();
+		
+//		doBirbLogic(bc);
+		doEntityLogic(bc);
+		
+		long t2 = System.currentTimeMillis();
+		
+		bc.setKernelTime(t2 - t1);
+		
 		if (bc.getPursuitBirb() != null)
 		{
-			Point2D.Double pursuitBirbPoint = bc.getPursuitBirb().getWorldPoint();
+			Point2D.Float pursuitBirbPoint = bc.getPursuitBirb().getWorldPoint();
 			bc.setCameraOffsetX(bc.getWindowWidth() / bc.getScale() / 2 - pursuitBirbPoint.getX());
 			bc.setCameraOffsetY(bc.getWindowHeight() / bc.getScale() / 2 - pursuitBirbPoint.getY());
 		}
@@ -52,7 +72,7 @@ public class BirbsManager extends AbstractBirbsManager
 			if (birb.isOnScreen() /*&& birb.getID().endsWith("10")*/)
 			{
 				g2d.setTransform(original);
-				g2d.translate(birb.getScreenPoint().getX(), birb.getScreenPoint().getY());
+				g2d.translate(birb.getXScreen(), birb.getYScreen());
 				r.drawBirb(g2d, birb);
 				onScreenCount++;
 			}
@@ -79,8 +99,32 @@ public class BirbsManager extends AbstractBirbsManager
 		
 		ArrayList<String> topLeftText = new ArrayList<>(Arrays.asList(
 				"" + bc.getBirbsList().size() + " Birbs in the World",
-				"" + onScreenCount + " Birbs on Screen"
+				"" + onScreenCount + " Birbs on Screen",
+				"" + (int) bc.getDpdt() + " birbs/update Rate of Spawning"
 		));
+		
+		int xMouse = (int) (bc.getInput().getMousePoint().getX() * bc.getScale());
+		int yMouse = (int) (bc.getInput().getMousePoint().getY() * bc.getScale());
+		ArrayList<String> topRightText = new ArrayList<>(Arrays.asList(
+				"Kernel Processing Time: " + bc.getKernelTime() + "ms",
+				"Render Time: " + bc.getRenderTime() + "ms",
+				"x: " + xMouse + " y: " + yMouse,
+				"FPS: " + bc.getFps()
+		));
+		
+		ArrayList<String> entityStringList = new ArrayList<>();
+		for(int i=0; i<bc.getEntityCount(); i++)
+		{
+			String str = ""+bc.geteChunk(i);
+			entityStringList.add(str);
+		}
+		
+		ArrayList<String> chunkInfo = new ArrayList<>();
+		for(int i=0; i<bc.getChunkWidth() * bc.getChunkHeight();i ++)
+		{
+			String str = i + " pos: " + bc.getChunkPos(i) + " count: " + bc.getChunkEntityCount(i);
+			chunkInfo.add(str);
+		}
 		
 		ArrayList<String> pursuitBirbHistoryListNames = new ArrayList<>();
 		for(Birb b: bc.getPursuitBirbHistoryList())
@@ -99,11 +143,13 @@ public class BirbsManager extends AbstractBirbsManager
 		if (bc.isDrawUI())
 		{
 			r.drawLeftAlignedList(g2d, interfaceFont, topLeftText, 10, 0);
-			r.drawMousePosition(g2d, interfaceFont);
-			r.drawFPS(g2d, interfaceFont);
+			r.drawRightAlignedList(g2d, interfaceFont, topRightText, bc.getWindowWidth() - 10, 0);
 			r.drawLeftAlignedList(g2d, interfaceFont, bc.getChangelog(), 10, bc.getWindowHeight() - (bc.getChangelog().size() * interfaceFontMetrics.getAscent()) - 10);
 			r.drawRightAlignedList(g2d, interfaceFont, bc.getKeybindsHint(), bc.getWindowWidth() - 10, bc.getWindowHeight() - (bc.getKeybindsHint().size() * interfaceFontMetrics.getAscent()) - 10);
 			r.drawLeftAlignedList(g2d, interfaceFont, pursuitBirbHistoryListNames, 10, 100);
+			
+//			r.drawLeftAlignedList(g2d, interfaceFont, entityStringList, 300, 0);
+//			r.drawLeftAlignedList(g2d, interfaceFont, chunkInfo, 400, 0);
 			
 			//Say click anywhere
 			if (bc.getBirbsList().size() == 0)
@@ -113,11 +159,11 @@ public class BirbsManager extends AbstractBirbsManager
 		}
 	}
 	
-	public void doInputBinds(BirbsContainer bc)
+	private void doInputBinds(BirbsContainer bc)
 	{
 		if (bc.getInput().isKey(KeyEvent.VK_ESCAPE))
 		{
-			System.exit(0);
+			bc.setRunning(false);
 		}
 		if (bc.getInput().isKey(KeyEvent.VK_R))
 		{
@@ -154,7 +200,7 @@ public class BirbsManager extends AbstractBirbsManager
 			if (bc.getBirbsList().size() > 0 && bc.getPursuitBirb() == null)
 			{
 				Birb closest = bc.getBirbsList().get(0);
-				Point2D.Double mousePoint = bc.getInput().getScaledMousePoint();
+				Point2D.Float mousePoint = bc.getInput().getScaledMousePoint();
 				for (Birb b : bc.getBirbsList())
 				{
 					if (BirbLogic.getPointDistance(closest.getWorldPoint(), mousePoint) > BirbLogic.getPointDistance(b.getWorldPoint(), mousePoint))
@@ -253,13 +299,13 @@ public class BirbsManager extends AbstractBirbsManager
 		//Birb spawning
 		if (bc.getInput().isButtonDown(MouseEvent.BUTTON3))
 		{
-			addBirb(bc, bc.getInput().getScaledMousePoint(), 1000);
+			addBirb(bc, bc.getInput().getScaledMousePoint(), 100);
 //			updateFormations(bc);
 		}
 		
 		if (bc.getInput().isButtonHeld(MouseEvent.BUTTON3, 1))
 		{
-			addBirb(bc, bc.getInput().getScaledMousePoint());
+			addBirb(bc, bc.getInput().getScaledMousePoint(), 1);
 //			updateFormations(bc);
 		}
 		
@@ -303,20 +349,36 @@ public class BirbsManager extends AbstractBirbsManager
 		}
 	}
 	
-	public void addBirb(BirbsContainer bc, Point2D.Double p)
+	private void doEntityLogic(BirbsContainer bc)
 	{
-		Birb birb = new Birb("Birb" + bc.incrementBirbTotalSpawned(), bc.getRandomName(), p);
+//		for(int i=0; i<bc.getEntityCount(); i++)
+//		{
+//			bc.seteXScreen(i, (float) (3440 * Math.random()));
+//			bc.seteYScreen(i, (float) (1440 * Math.random()));
+//			bc.seteOnScreen(i, true);
+//		}
+		
+		EntityKernel kernel = bc.getKernel();
+		kernel.updateVars(bc);
+
+		Range range = Range.create(bc.getEntityCount());
+		kernel.execute(range);
+	}
+	
+	private void addBirb(BirbsContainer bc, float worldX, float worldY)
+	{
+		Birb birb = new Birb(bc, bc.incrementEntityCount(), bc.getRandomName(), worldX, worldY, 1);
 		bc.getBirbsList().add(birb);
 	}
 	
-	public void addBirb(BirbsContainer bc, Point2D.Double p, int multiplier)
+	private void addBirb(BirbsContainer bc, Point2D.Float p, int multiplier)
 	{
 		for (int i = 0; i < multiplier; i++)
 		{
-			double x = p.getX() + 10 * multiplier * (Math.random() - 0.5);
-			double y = p.getY() + 10 * multiplier * (Math.random() - 0.5);
-			Point2D.Double newPoint = new Point2D.Double(x, y);
-			addBirb(bc, newPoint);
+			float x = (float) (p.getX() + 10 * multiplier * (Math.random() - 0.5)) % bc.getWorldWidth();
+			float y = (float) (p.getY() + 10 * multiplier * (Math.random() - 0.5)) % bc.getWorldHeight();
+			
+			addBirb(bc, x, y);
 		}
 	}
 	
@@ -328,13 +390,29 @@ public class BirbsManager extends AbstractBirbsManager
 	public void reset(BirbsContainer bc)
 	{
 		bc.removeAllBirbs();
-		bc.setBirbTotalSpawned(0);
+		bc.setEntityCount(0);
 		bc.setCameraOffsetX((bc.getWorldWidth() - bc.getWindowWidth() * 10) / -2.0);
 		bc.setCameraOffsetY((bc.getWorldHeight() - bc.getWindowHeight() * 10) / -2.0);
 		bc.setScale(0.1);
 		bc.setPursuitBirb(null);
 		bc.getPursuitBirbHistoryList().clear();
 		updateScale(bc);
+		
+		Arrays.fill(bc.geteType(), (byte)0);
+		Arrays.fill(bc.geteXWorld(), 0);
+		Arrays.fill(bc.geteYWorld(), 0);
+		Arrays.fill(bc.geteXScreen(), 0);
+		Arrays.fill(bc.geteYScreen(), 0);
+		Arrays.fill(bc.geteSpeed(), 0);
+		Arrays.fill(bc.geteDirection(), 0);
+		Arrays.fill(bc.geteAngularAcceleration(), 0);
+		Arrays.fill(bc.geteScale(), 0);
+		Arrays.fill(bc.geteChunk(), -100);
+		Arrays.fill(bc.geteColor(), null);
+		Arrays.fill(bc.geteOnScreen(), false);
+		
+		Arrays.fill(bc.getChunkPos(), 0);
+		Arrays.fill(bc.getChunkEntityCount(), 0);
 	}
 	
 	public void updateFormations(BirbsContainer bc)

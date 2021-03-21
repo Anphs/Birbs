@@ -28,6 +28,7 @@ public class Window
 		
 		canvas = new Canvas();
 		canvas.setPreferredSize(s);
+		canvas.setBackground(Color.black);
 		
 		frame.add(canvas, BorderLayout.CENTER);
 		frame.pack();

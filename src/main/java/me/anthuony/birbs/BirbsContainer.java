@@ -1,10 +1,13 @@
 package me.anthuony.birbs;
 
+import com.aparapi.Kernel;
+
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class BirbsContainer implements Runnable
@@ -14,25 +17,47 @@ public class BirbsContainer implements Runnable
 	private Window window;
 	private Renderer renderer;
 	private Input input;
+	private EntityKernel kernel;
 	
 	private String title = "Birbs";
-	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-	private final int windowWidth = screenSize.width;
-	private final int windowHeight = screenSize.height;
+	GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+	GraphicsDevice mainScreen = env.getScreenDevices()[0];
 	
-	private final double UPDATE_CAP = 1.0 / 60.0;
+	private final int windowWidth = mainScreen.getDisplayMode().getWidth();
+	private final int windowHeight = mainScreen.getDisplayMode().getHeight();
+	private boolean running = true;
+	
+	private final double UPDATE_CAP = 1.0 / mainScreen.getDisplayMode().getRefreshRate();
 	private double frameTime = 0;
 	private int frames = 0;
 	private int fps = 0;
+	private long kernelTime = 0, renderTime = 0;
 	
 	private final ArrayList<String> changelog = new ArrayList<>();
 	private final ArrayList<String> keybindsHint = new ArrayList<>();
 	private final ArrayList<String> names = new ArrayList<>();
 	
+	private final int maxEntityCount = 1000000;
+	private final byte[] eType = new byte[maxEntityCount];
+	private final float[] eXWorld = new float[maxEntityCount];
+	private final float[] eYWorld = new float[maxEntityCount];
+	private final float[] eXScreen = new float[maxEntityCount];
+	private final float[] eYScreen = new float[maxEntityCount];
+	private final float[] eXForce = new float[maxEntityCount];
+	private final float[] eYForce = new float[maxEntityCount];
+	private final float[] eSpeed = new float[maxEntityCount];
+	private final float[] eDirection = new float[maxEntityCount];
+	private final float[] eAngularAcceleration = new float[maxEntityCount];
+	private final float[] eScale = new float[maxEntityCount];
+	private final int[] eChunk = new int[maxEntityCount];
+	private final Color[] eColor = new Color[maxEntityCount];
+	private final boolean[] eOnScreen = new boolean[maxEntityCount];
+	private int entityCount = 0;
+	
 	private final ArrayList<Birb> birbsList = new ArrayList<>();
 	private final ArrayList<Birb> pursuitBirbHistoryList = new ArrayList<Birb>();
 	
-	private final double cameraPanningInterval = 100;
+	private final double cameraPanningInterval = 5000 * UPDATE_CAP;
 	private final double minScale = .1;
 	private final double maxScale = 1.5;
 	private int worldWidth = windowWidth * 10, worldHeight = windowHeight * 10;
@@ -41,11 +66,18 @@ public class BirbsContainer implements Runnable
 	private double cameraTempOffsetX = 0;
 	private double cameraTempOffsetY = 0;
 	private double scale = .1;
-	private int birbTotalSpawned;
+	
+	int capacity = getWindowWidth() * getWindowHeight() / 500;
+	private double dpdt = 0;
 	
 	private boolean paused = false, drawHitbox = false, drawName = true, drawUI = true;
 	private Birb pursuitBirb;
 	private int pursuitBirbHistoryIndex = 0;
+	
+	private final int chunkSize = (int) Birb.getInteractionRange() * 9;
+	private final int chunkWidth, chunkHeight;
+	private final int[] chunkPos;
+	private final int[] chunkEntityCount;
 	
 	private final boolean avoidOthers = true;
 	private final boolean doAlignment = true;
@@ -55,6 +87,26 @@ public class BirbsContainer implements Runnable
 	public BirbsContainer(AbstractBirbsManager world)
 	{
 		this.world = world;
+		
+		if(worldWidth % chunkSize == 0)
+		{
+			chunkWidth = worldWidth/chunkSize;
+		}
+		else
+		{
+			chunkWidth = worldWidth/chunkSize + 1;
+		}
+		if(worldHeight % chunkSize == 0)
+		{
+			chunkHeight = worldHeight/chunkSize;
+		}
+		else
+		{
+			chunkHeight = worldHeight/chunkSize + 1;
+		}
+		chunkPos = new int[chunkWidth * chunkHeight];
+		chunkEntityCount = new int[chunkPos.length];
+		Arrays.fill(eChunk, -100);
 	}
 	
 	public void start()
@@ -62,6 +114,9 @@ public class BirbsContainer implements Runnable
 		window = new Window(this);
 		renderer = new Renderer(this);
 		input = new Input(this);
+		kernel = new EntityKernel(this);
+		
+		kernel.setExecutionMode(Kernel.EXECUTION_MODE.JTP);
 		
 		Thread thread = new Thread(this);
 		thread.start();
@@ -109,7 +164,6 @@ public class BirbsContainer implements Runnable
 		{
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public void stop()
@@ -119,8 +173,6 @@ public class BirbsContainer implements Runnable
 	
 	public void run()
 	{
-		boolean running = true;
-		
 		boolean render = false;
 		double startTime = 0;
 		double endTime = System.nanoTime() / 1.0e9;
@@ -142,7 +194,7 @@ public class BirbsContainer implements Runnable
 			{
 				unProcessedTime -= UPDATE_CAP;
 				render = true;
-				world.update(this, (float) UPDATE_CAP);
+				world.update(this);
 				input.update();
 				
 				if (frameTime >= 1.0)
@@ -157,7 +209,13 @@ public class BirbsContainer implements Runnable
 			if (render)
 			{
 //				renderer.clear();
+				long t1 = System.currentTimeMillis();
+				
 				world.render(this, renderer);
+				
+				long t2 = System.currentTimeMillis();
+				renderTime = t2 - t1;
+				
 				window.update();
 				frames++;
 			} else
@@ -172,11 +230,17 @@ public class BirbsContainer implements Runnable
 			}
 		}
 		dispose();
+		System.exit(0);
 	}
 	
 	public void dispose()
 	{
+		kernel.dispose();
+	}
 	
+	public void setRunning(boolean running)
+	{
+		this.running = running;
 	}
 	
 	public int getWorldWidth()
@@ -206,7 +270,7 @@ public class BirbsContainer implements Runnable
 	
 	public void setScale(double scale)
 	{
-		Point2D.Double zoomPoint = input.getScaledMousePoint();
+		Point2D.Float zoomPoint = input.getScaledMousePoint();
 		
 		scale = Math.round(scale * 10) / 10.0;
 		//Zoom In
@@ -239,6 +303,11 @@ public class BirbsContainer implements Runnable
 		this.title = title;
 	}
 	
+	public double getUPDATE_CAP()
+	{
+		return UPDATE_CAP;
+	}
+	
 	public Window getWindow()
 	{
 		return window;
@@ -249,25 +318,50 @@ public class BirbsContainer implements Runnable
 		return input;
 	}
 	
+	public EntityKernel getKernel()
+	{
+		return kernel;
+	}
+	
+	public long getKernelTime()
+	{
+		return kernelTime;
+	}
+	
+	public void setKernelTime(long kernelTime)
+	{
+		this.kernelTime = kernelTime;
+	}
+	
+	public long getRenderTime()
+	{
+		return renderTime;
+	}
+	
+	public void setRenderTime(long renderTime)
+	{
+		this.renderTime = renderTime;
+	}
+	
 	public ArrayList<Birb> getBirbsList()
 	{
 		return birbsList;
 	}
 	
-	public int getBirbTotalSpawned()
+	public void setEntityCount(int entityCount)
 	{
-		return birbTotalSpawned;
+		this.entityCount = entityCount;
 	}
 	
-	public void setBirbTotalSpawned(int birbTotalSpawned)
+	public int incrementEntityCount()
 	{
-		this.birbTotalSpawned = birbTotalSpawned;
+		this.entityCount++;
+		return this.entityCount - 1;
 	}
 	
-	public int incrementBirbTotalSpawned()
+	public int getFrames()
 	{
-		birbTotalSpawned++;
-		return birbTotalSpawned - 1;
+		return frames;
 	}
 	
 	public void removeBirb(Birb birb)
@@ -485,5 +579,262 @@ public class BirbsContainer implements Runnable
 	public boolean isDeleteClose()
 	{
 		return deleteClose;
+	}
+	
+	public byte[] geteType()
+	{
+		return eType;
+	}
+	
+	public float[] geteXWorld()
+	{
+		return eXWorld;
+	}
+	
+	public float[] geteYWorld()
+	{
+		return eYWorld;
+	}
+	
+	public float[] geteXScreen()
+	{
+		return eXScreen;
+	}
+	
+	public float[] geteYScreen()
+	{
+		return eYScreen;
+	}
+	
+	public float[] geteXForce()
+	{
+		return eXForce;
+	}
+	
+	public float[] geteYForce()
+	{
+		return eYForce;
+	}
+	
+	public float[] geteSpeed()
+	{
+		return eSpeed;
+	}
+	
+	public float[] geteDirection()
+	{
+		return eDirection;
+	}
+	
+	public float[] geteAngularAcceleration()
+	{
+		return eAngularAcceleration;
+	}
+	
+	public boolean[] geteOnScreen()
+	{
+		return eOnScreen;
+	}
+	
+	public float[] geteScale()
+	{
+		return eScale;
+	}
+	
+	public int[] geteChunk() { return eChunk; }
+	
+	public Color[] geteColor() { return eColor; }
+	
+	public byte geteType(int entityID)
+	{
+		return eType[entityID];
+	}
+	
+	public float geteXWorld(int entityID)
+	{
+		return eXWorld[entityID];
+	}
+	
+	public float geteYWorld(int entityID)
+	{
+		return eYWorld[entityID];
+	}
+	
+	public float geteXScreen(int entityID)
+	{
+		return eXScreen[entityID];
+	}
+	
+	public float geteYScreen(int entityID)
+	{
+		return eYScreen[entityID];
+	}
+	
+	public float geteXForce(int entityID)
+	{
+		return eXForce[entityID];
+	}
+	
+	public float geteYForce(int entityID)
+	{
+		return eYForce[entityID];
+	}
+	
+	public float geteSpeed(int entityID)
+	{
+		return eSpeed[entityID];
+	}
+	
+	public float geteDirection(int entityID)
+	{
+		return eDirection[entityID];
+	}
+	
+	public float geteAngularAcceleration(int entityID)
+	{
+		return eAngularAcceleration[entityID];
+	}
+	
+	public boolean geteOnScreen(int entityID)
+	{
+		return eOnScreen[entityID];
+	}
+	
+	public float geteScale(int entityID)
+	{
+		return eScale[entityID];
+	}
+	
+	public int geteChunk(int entityID) { return eChunk[entityID]; }
+	
+	public Color geteColor(int entityID) { return eColor[entityID]; }
+	
+	public void seteType(int entityID, byte newEntityID)
+	{
+		eType[entityID] = newEntityID;
+	}
+	
+	public void seteXWorld(int entityID, float xWorld)
+	{
+		eXWorld[entityID] = xWorld;
+	}
+	
+	public void seteYWorld(int entityID, float yWorld)
+	{
+		eYWorld[entityID] = yWorld;
+	}
+	
+	public void seteXScreen(int entityID, float xScreen)
+	{
+		eXScreen[entityID] = xScreen;
+	}
+	
+	public void seteYScreen(int entityID, float yScreen)
+	{
+		eYScreen[entityID] = yScreen;
+	}
+	
+	public void seteXForce(int entityID, float xForce)
+	{
+		eXScreen[entityID] = xForce;
+	}
+	
+	public void seteYForce(int entityID, float yForce)
+	{
+		eYScreen[entityID] = yForce;
+	}
+	
+	public void seteSpeed(int entityID, float speed)
+	{
+		eSpeed[entityID] = speed;
+	}
+	
+	public void seteDirection(int entityID, float direction)
+	{
+		eDirection[entityID] = direction;
+	}
+	
+	public void seteAngularAcceleration(int entityID, float angularAcceleration)
+	{
+		eAngularAcceleration[entityID] = angularAcceleration;
+	}
+	
+	public void seteOnScreen(int entityID, boolean onScreen)
+	{
+		eOnScreen[entityID] = onScreen;
+	}
+	
+	public void seteScale(int entityID, float scale)
+	{
+		eScale[entityID] = scale;
+	}
+	
+	public void seteChunk(int entityID, int chunk) { eChunk[entityID] = chunk; }
+	
+	public void seteColor(int entityID, Color color) { eColor[entityID] = color; }
+	
+	public int getEntityCount()
+	{
+		return this.entityCount;
+	}
+	
+	public int getChunkSize()
+	{
+		return chunkSize;
+	}
+	
+	public int getChunkWidth()
+	{
+		return chunkWidth;
+	}
+	
+	public int getChunkHeight()
+	{
+		return chunkHeight;
+	}
+	
+	public int[] getChunkPos()
+	{
+		return chunkPos;
+	}
+	
+	public int getChunkPos(int chunkID)
+	{
+		return chunkPos[chunkID];
+	}
+	
+	public void setChunkPos(int chunkID, int start)
+	{
+		chunkPos[chunkID] = start;
+	}
+	
+	public int[] getChunkEntityCount()
+	{
+		return chunkEntityCount;
+	}
+	
+	public int getChunkEntityCount(int chunkID)
+	{
+		return chunkEntityCount[chunkID];
+	}
+	
+	public void setChunkEntityCount(int chunkID, int count)
+	{
+		chunkEntityCount[chunkID] = count;
+	}
+	
+	public double getDpdt()
+	{
+		return dpdt;
+	}
+	
+	public void setDpdt(double dpdt)
+	{
+		this.dpdt = dpdt;
+	}
+	
+	public int getCapacity()
+	{
+		return capacity;
 	}
 }

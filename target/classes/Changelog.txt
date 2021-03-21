@@ -1,17 +1,2 @@
-Change Log (Report #17):
-Added a pursuit camera
-Added a keybind to follow a random birb
-Added a keybind to toggle UI
-Made it easier to exit pursuit camera
-
-Change Log (Report #18):
-Added a UI fade whenever the mouse is idle
-Made the mouse disappear whenever the mouse is idle
-Fixed code to allow for custom world sizes rather than just 19200 x 10800
-
-Change Log (Report #19):
-Added a pursuit birb history list
-Added keybinds to navigate the pursuit birb history list
-Added a visual list for the pursuit birb history list
-
-Change Log (Report #20):
+Change Log (Report #24)
+Added Logistics Equation for modeling population growth

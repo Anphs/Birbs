@@ -5,25 +5,25 @@ import java.awt.geom.Point2D;
 
 public class Birb extends Entity
 {
-	private static final int baseWidth = 70, baseHeight = 70;
-	private final static double maxTurnSpeed = .1;
+	private static final int baseWidth = 70, baseHeight = 70, baseSpeed = 1000;
+	private final static float maxTurnSpeed = (float) .1, interactionRange = baseWidth;
 	private final String name;
-	private Point2D.Double formationPoint;
-	private double speedMultiplier = 1;
+	private Point2D.Float formationPoint;
 	
-	public Birb(String ID, String name, Point2D.Double worldPoint)
+	public Birb(BirbsContainer bc, int entityID, String name, float xWorld, float yWorld, float scale)
 	{
-		super(ID, worldPoint);
+		super(bc, entityID, xWorld, yWorld, scale);
 		this.name = name;
 		
-		double velMag = 20;
-		setVelocity(new Vector(velMag, Math.random() * 2 * Math.PI));
-//		vel = new Vector(0, 3 * Math.PI / 2);
-		setColor(new Color(0, 0, 0, 0));
-		setScale(Math.random() + .5 + .25);
+		setSpeed(baseSpeed);
+		setDirection((float) (Math.random() * 2 * Math.PI));
+//		setDirection((float) (3 * Math.PI / 2));
+		
+//		setColor(new Color((int)(255 * Math.random()), (int)(255 * Math.random()), (int)(255 * Math.random()), 255));
+		setScale((float) (Math.random() + .5 + .25));
 	}
 	
-	public static double getMaxTurnSpeed()
+	public static float getMaxTurnSpeed()
 	{
 		return maxTurnSpeed;
 	}
@@ -40,25 +40,20 @@ public class Birb extends Entity
 		return (int) getSpeed() * 15 + 150;
 	}
 	
-	public Point2D.Double getFormationPoint()
+	public Point2D.Float getFormationPoint()
 	{
 		return formationPoint;
 	}
 	
-	public void setFormationPoint(Point2D.Double seekPoint)
+	public void setFormationPoint(Point2D.Float seekPoint)
 	{
 		this.formationPoint = seekPoint;
 	}
 	
 	public String getName() { return name; }
 	
-	public double getSpeedMultiplier()
+	public static float getInteractionRange()
 	{
-		return speedMultiplier;
-	}
-	
-	public void setSpeedMultiplier(double speedMultiplier)
-	{
-		this.speedMultiplier = speedMultiplier;
+		return interactionRange;
 	}
 }
