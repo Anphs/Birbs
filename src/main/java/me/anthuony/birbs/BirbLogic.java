@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+@Deprecated
 public class BirbLogic extends Thread
 {
 	private final ArrayList<Birb> logicBirbsList;
@@ -74,7 +75,7 @@ public class BirbLogic extends Thread
 		ArrayList<Birb> birbsInRadius = getBirbsInRadius(deleteRange);
 		for (Birb otherBirb : birbsInRadius)
 		{
-			bc.removeBirb(otherBirb);
+			bc.removeEntity(otherBirb);
 		}
 	}
 	
@@ -184,14 +185,14 @@ public class BirbLogic extends Thread
 	public ArrayList<Birb> getBirbsInRadius(double radius)
 	{
 		ArrayList<Birb> birbsInRadius = new ArrayList<>();
-		for (Birb otherBirb : bc.getBirbsList())
+		for (Entity otherBirb : bc.getEntityList())
 		{
 			if (otherBirb != birb)
 			{
-				double distance = getBirbDistance(otherBirb);
+				double distance = getBirbDistance((Birb) otherBirb);
 				if (distance <= radius)
 				{
-					birbsInRadius.add(otherBirb);
+					birbsInRadius.add((Birb) otherBirb);
 				}
 //				System.out.println(distance);
 			}

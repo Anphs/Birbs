@@ -14,10 +14,12 @@ public class Renderer
 	
 	public void drawBackground(Graphics2D g2d)
 	{
-		g2d.setPaint(new Color(50, 50, 50, 255));
+		//Background
+		g2d.setPaint(bc.getWindowBackgroundColor());
 		g2d.fillRect(0, 0, bc.getWindowWidth(), bc.getWindowHeight());
 		
-		g2d.setPaint(new Color(0, 0, 0, 255));
+		//World
+		g2d.setPaint(bc.getWorldBackgroundColor());
 		g2d.fillRect((int) (bc.getCameraOffsetX() * bc.getScale()), (int) (bc.getCameraOffsetY() * bc.getScale()), (int) (bc.getWorldWidth() * bc.getScale()), (int) (bc.getWorldHeight() * bc.getScale()));
 	}
 	
@@ -121,8 +123,8 @@ public class Renderer
 		}
 		if (bc.isDrawName())
 		{
-//			String name = b.getChunkID() + " " + b.getName() + " " + b.getEntityID();
-			String name = b.getName();
+			String name = b.getChunk() + " " + b.getName() + " " + b.getEntityID();
+//			String name = b.getName();
 			Font nameTagFont = new Font("Courier New", Font.BOLD, (int) (bc.getScale() * 40));
 			g2d.setPaint(bColor.brighter());
 			FontMetrics metrics = g2d.getFontMetrics(nameTagFont);

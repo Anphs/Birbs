@@ -1,2 +1,5 @@
-Change Log (Report #24)
-Added Logistics Equation for modeling population growth
+Change Log (Report #28)
+Synchronized Chunk methods to fix Birb duplicate bug
+Make it so that birbs cannot be created with negative world coordinates that results in errors
+Added apply force methods
+Moved more variables over to a container class

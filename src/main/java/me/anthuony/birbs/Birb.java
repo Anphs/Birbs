@@ -10,9 +10,9 @@ public class Birb extends Entity
 	private final String name;
 	private Point2D.Float formationPoint;
 	
-	public Birb(BirbsContainer bc, int entityID, String name, float xWorld, float yWorld, float scale)
+	public Birb(BirbsContainer bc, int entityID, int type, String name, float xWorld, float yWorld, float scale)
 	{
-		super(bc, entityID, xWorld, yWorld, scale);
+		super(bc, entityID, type, xWorld, yWorld, scale);
 		this.name = name;
 		
 		setSpeed(baseSpeed);

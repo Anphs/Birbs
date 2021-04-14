@@ -3,24 +3,14 @@ package me.anthuony.birbs;
 import com.aparapi.Kernel;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class EntityKernel extends Kernel
 {
-	private final byte[] eType;
-	private final float[] eXWorld;
-	private final float[] eYWorld;
-	private final float[] eXScreen;
-	private final float[] eYScreen;
-	private final float[] eSpeed;
-	private final float[] eDirection;
-	private final float[] eAngularAcceleration;
-	private final float[] eScale;
-	private final int[] eChunk;
-	private final Color[] eColor;
-	private final boolean[] eOnScreen;
-	
-	private final int[] chunkPos;
-	private final int[] chunkEntityCount;
+	private final BirbsContainer bc;
+	private final ArrayList<Entity> entityList;
+	private ArrayList<Chunk> chunkList;
 	
 	private boolean paused;
 	private int windowWidth, windowHeight, worldWidth, worldHeight, chunkSize, chunkWidth, chunkHeight;
@@ -30,21 +20,8 @@ public class EntityKernel extends Kernel
 	
 	EntityKernel(BirbsContainer bc)
 	{
-		this.eType = bc.geteType();
-		this.eXWorld = bc.geteXWorld();
-		this.eYWorld = bc.geteYWorld();
-		this.eXScreen = bc.geteXScreen();
-		this.eYScreen = bc.geteYScreen();
-		this.eSpeed = bc.geteSpeed();
-		this.eDirection = bc.geteDirection();
-		this.eAngularAcceleration = bc.geteAngularAcceleration();
-		this.eScale = bc.geteScale();
-		this.eChunk = bc.geteChunk();
-		this.eColor = bc.geteColor();
-		this.eOnScreen = bc.geteOnScreen();
-		
-		this.chunkPos = bc.getChunkPos();
-		this.chunkEntityCount = bc.getChunkEntityCount();
+		this.bc = bc;
+		this.entityList = bc.getEntityList();
 		
 		updateVars(bc);
 	}
@@ -71,12 +48,13 @@ public class EntityKernel extends Kernel
 	public void run()
 	{
 		int entityID = getGlobalId();
+		Entity entity = entityList.get(entityID);
 		
-		float xW = eXWorld[entityID];
-		float yW = eYWorld[entityID];
-		float speed = eSpeed[entityID];
-		float direction = eDirection[entityID];
-		float scale = eScale[entityID];
+		float xW = entity.getXWorld();
+		float yW = entity.getYWorld();
+		float speed = entity.getSpeed();
+		float direction = entity.getDirection();
+		float scale = entity.getScale();
 
 		//Find New Position
 		if(!paused)
@@ -94,60 +72,62 @@ public class EntityKernel extends Kernel
 		float sY = (yW + cameraOffsetY) * cameraScale;
 
 		//Update Entity Location
-		eXWorld[entityID] = xW;
-		eYWorld[entityID] = yW;
+		entity.setXWorld(xW);
+		entity.setYWorld(yW);
 
-		eXScreen[entityID] = sX;
-		eYScreen[entityID] = sY;
+		entity.setXScreen(sX);
+		entity.setYScreen(sY);
 		
 		//Find if Entity Should be Rendered
-		eOnScreen[entityID] = sX > -birbWidth * cameraScale && sX < windowWidth + birbWidth * cameraScale && sY > -birbHeight * cameraScale && sY < windowHeight + birbHeight * cameraScale;
+		entity.setOnScreen(sX > -birbWidth * cameraScale && sX < windowWidth + birbWidth * cameraScale && sY > -birbHeight * cameraScale && sY < windowHeight + birbHeight * cameraScale);
 		
 		//If on Screen
-		if(eOnScreen[entityID])
+		if(entity.isOnScreen())
 		{
 			//Update Birb Color
 			int b = (int) Math.abs((xW / worldWidth) * 255);
 			int g = (int) Math.abs((yW / worldHeight) * 255);
 			int r = 255 - b;
 			
-			eColor[entityID] = new Color(r, g, b, 255);
+			entity.setColor(new Color(r, g, b, 255));
 		}
 		
 		//Calculate Chunk
-		int previousChunk = eChunk[entityID];
+//		int previousChunk = entity.getChunk().getID();
 		
-		int xC = (int) (xW / chunkSize);
-		int yC = (int) (yW / chunkSize);
-		int currentChunk = xC + yC * chunkWidth;
+//		int xC = (int) (xW / chunkSize);
+//		int yC = (int) (yW / chunkSize);
+//		int currentChunk = xC + yC * chunkWidth;
+		int currentChunk = Chunk.calculateChunk(xW, yW, chunkSize, chunkWidth);
+//		int currentChunk = 1;
 		
 		if(currentChunk < 0)
 		{
 			System.out.println("error chunk is negative?!");
 		}
 		
-		eChunk[entityID] = currentChunk;
+		entity.setChunk(currentChunk);
 		
-		//If There Is Previous Assigned Chunk
-		if(previousChunk != -100)
-		{
-			if(previousChunk != currentChunk)
-			{
-				chunkEntityCount[previousChunk] -= 1;
-				chunkEntityCount[currentChunk] += 1;
-			}
-		}
-		else
-		{
-			chunkEntityCount[currentChunk] += 1;
-		}
-		
-		int sum = 0;
-		//Calculate Chunk Positions
-		for(int i=0; i<chunkWidth * chunkHeight; i++)
-		{
-			chunkPos[i] = sum;
-			sum += chunkEntityCount[i];
-		}
+//		//If There Is Previous Assigned Chunk
+//		if(previousChunk != -1)
+//		{
+//			if(previousChunk != currentChunk)
+//			{
+//				chunkEntityCount[previousChunk] -= 1;
+//				chunkEntityCount[currentChunk] += 1;
+//			}
+//		}
+//		else
+//		{
+//			chunkEntityCount[currentChunk] += 1;
+//		}
+//
+//		int sum = 0;
+//		//Calculate Chunk Positions
+//		for(int i=0; i<chunkWidth * chunkHeight; i++)
+//		{
+//			chunkPos[i] = sum;
+//			sum += chunkEntityCount[i];
+//		}
 	}
 }
