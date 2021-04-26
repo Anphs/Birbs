@@ -7,6 +7,7 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class BirbsContainer implements Runnable
@@ -42,10 +43,15 @@ public class BirbsContainer implements Runnable
 	private final ArrayList<Birb> birbsList = new ArrayList<Birb>();
 	private final ArrayList<Birb> pursuitBirbHistoryList = new ArrayList<Birb>();
 	
+	private final ArrayList<Chunk> chunkList = new ArrayList<Chunk>();
+	private final int chunkSize = (int) Birb.getInteractionRange() * 9;
+	private final int chunkWidth, chunkHeight;
+	
 	private final double cameraPanningInterval = 5000 * UPDATE_CAP;
 	private final double minScale = .1;
 	private final double maxScale = 1.5;
-	private int worldWidth = windowWidth * 1, worldHeight = windowHeight * 1;
+	private int worldWidth = windowWidth * 10, worldHeight = windowHeight * 10;
+//	private int worldWidth = chunkSize * 3, worldHeight = chunkSize * 3;
 	private double cameraOffsetX = (worldWidth - windowWidth * 10) / -2.0;
 	private double cameraOffsetY = (worldHeight - windowHeight * 10) / -2.0;
 	private double cameraTempOffsetX = 0;
@@ -58,11 +64,6 @@ public class BirbsContainer implements Runnable
 	private boolean paused = false, drawHitbox = false, drawName = false, drawUI = true;
 	private Birb pursuitBirb;
 	private int pursuitBirbHistoryIndex = 0;
-	
-	private final ArrayList<Chunk> chunkList = new ArrayList<Chunk>();
-	private final ArrayList<Chunk> chunkBufferedList = new ArrayList<Chunk>();
-	private final int chunkSize = (int) Birb.getInteractionRange() * 9;
-	private final int chunkWidth, chunkHeight;
 	
 	private final boolean avoidOthers = true;
 	private final boolean doAlignment = true;
@@ -630,5 +631,35 @@ public class BirbsContainer implements Runnable
 	public Color getWindowBackgroundColor()
 	{
 		return windowBackgroundColor;
+	}
+	
+	public ArrayList<Entity> getNearbyEntities(BirbsContainer bc, Chunk c, int radius)
+	{
+		ArrayList<Chunk> chunkList = bc.getChunkList();
+		int chunkWidth = bc.getChunkWidth();
+		
+		ArrayList<Entity> nearby = new ArrayList<>();
+		
+		int startPos = c.getID() - (radius * (chunkWidth + 1));
+		for(int i = 0; i < radius * 2 + 1; i++)
+		{
+			for(int j = 0; j < radius * 2 + 1; j++)
+			{
+				int currentPos = startPos + i * chunkWidth + j;
+				if(currentPos < 0)
+				{
+					currentPos += chunkList.size();
+				}
+				if(currentPos >= chunkList.size())
+				{
+					currentPos -= chunkList.size();
+				}
+				Chunk currentChunk = chunkList.get(currentPos);
+//				System.out.println("c: " + c + " chunk: " + currentChunk);
+				nearby.addAll(currentChunk.getEntityList());
+//				System.out.println("c: " + currentChunk + nearby.toString());
+			}
+		}
+		return nearby;
 	}
 }

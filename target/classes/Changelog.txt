@@ -1,5 +1,3 @@
-Change Log (Report #28)
-Synchronized Chunk methods to fix Birb duplicate bug
-Make it so that birbs cannot be created with negative world coordinates that results in errors
-Added apply force methods
-Moved more variables over to a container class
+Change Log (Report #30)
+Adjusted separation, alignment, and cohesion rules to promote flocking behavior
+Fixed issue where clicking on the screen caused the world to flicker

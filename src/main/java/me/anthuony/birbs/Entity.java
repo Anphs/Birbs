@@ -38,7 +38,7 @@ public abstract class Entity implements Comparable<Entity>
 	
 	public void setDirection(float direction)
 	{
-		this.direction = direction;
+		this.direction = ExtraMath.boundNumber(direction, 0, (float) (2 * Math.PI), (float) (2 * Math.PI));
 	}
 	
 	public void setScale(float scale)
@@ -142,9 +142,94 @@ public abstract class Entity implements Comparable<Entity>
 		this.yForce = 0;
 	}
 	
-	public void applyForce(Entity e)
+	public void applyForceTo(Entity e)
 	{
-	
+		if(e != null)
+		{
+			float distanceX;
+			float distanceY;
+			float distance;
+			
+			float distanceX1 = e.getXWorld() - this.getXWorld();
+			float distanceX2;
+			if(e.getXWorld() > this.getXWorld())
+			{
+				distanceX2 = bc.getWorldWidth() - e.getXWorld() + this.getXWorld();
+			}
+			else
+			{
+				distanceX2 = bc.getWorldWidth() - this.getXWorld() + e.getXWorld();
+			}
+			if(Math.abs(distanceX1) < Math.abs(distanceX2))
+			{
+				distanceX = distanceX1;
+			}
+			else
+			{
+				distanceX = distanceX2;
+			}
+			
+			float distanceY1 = e.getYWorld() - this.getYWorld();
+			float distanceY2;
+			if(e.getYWorld() > this.getYWorld())
+			{
+				distanceY2 = bc.getWorldHeight() - e.getYWorld() + this.getYWorld();
+			}
+			else
+			{
+				distanceY2 = bc.getWorldHeight() - this.getYWorld() + e.getYWorld();
+			}
+			if(Math.abs(distanceY1) < Math.abs(distanceY2))
+			{
+				distanceY = distanceY1;
+			}
+			else
+			{
+				distanceY = distanceY2;
+			}
+			
+//			float distanceY1 = e.getYWorld() - this.getYWorld();
+//			float distanceY2;
+//			if(e.getYWorld() > this.getYWorld())
+//			{
+//				distanceY2 = bc.getWorldHeight() - e.getYWorld() + this.getYWorld();
+//			}
+//			else
+//			{
+//				distanceY2 = bc.getWorldHeight() - this.getYWorld() + e.getYWorld();
+//			}
+//			if(Math.abs(distanceY1) < Math.abs(distanceY2))
+//			{
+//				distanceY = distanceY1;
+//			}
+//			else
+//			{
+//				distanceY = distanceY2;
+//			}
+			
+			distance = (float) Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
+			if(e.getType() == 1 && this.getType() == 1)
+			{
+				if(distance < Birb.getInteractionRange())
+				{
+					float cohesionForceMagnitude = (Birb.getInteractionRange() * (distance / 100000));
+					float separationForceMagnitude = (Birb.getInteractionRange() / (distance * 4));
+					
+					if(Float.isFinite(cohesionForceMagnitude))
+					{
+						//Brings entities closer
+						e.addXForce(-distanceX * cohesionForceMagnitude);
+						e.addYForce(-distanceY * cohesionForceMagnitude);
+					}
+					if(Float.isFinite(separationForceMagnitude))
+					{
+						//Makes sure they don't get too close
+						e.addXForce(distanceX * separationForceMagnitude);
+						e.addYForce(distanceY * separationForceMagnitude);
+					}
+				}
+			}
+		}
 	}
 	
 	public int getType()
@@ -187,5 +272,15 @@ public abstract class Entity implements Comparable<Entity>
 			return 1;
 		}
 		return 0;
+	}
+	
+	public float getXForce()
+	{
+		return xForce;
+	}
+	
+	public float getYForce()
+	{
+		return yForce;
 	}
 }

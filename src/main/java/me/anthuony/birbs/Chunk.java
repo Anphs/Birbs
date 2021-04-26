@@ -24,6 +24,7 @@ public class Chunk
 		}
 		else
 		{
+			System.out.println("Chunk is negative");
 			return -1;
 		}
 	}
@@ -39,7 +40,6 @@ public class Chunk
 			previousChunk.removeEntity(e);
 			newChunk.addEntity(e);
 		}
-//		System.out.println(e + " Previous Chunk: " + previousChunk + " Current Chunk: " + currentChunk);
 	}
 	
 	public int getID() { return this.ID; }

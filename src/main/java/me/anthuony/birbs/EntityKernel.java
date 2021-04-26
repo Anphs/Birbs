@@ -52,29 +52,47 @@ public class EntityKernel extends Kernel
 		
 		float xW = entity.getXWorld();
 		float yW = entity.getYWorld();
+		float deltaXW;
+		float deltaYW;
+		float xF = entity.getXForce();
+		float yF = entity.getYForce();
 		float speed = entity.getSpeed();
 		float direction = entity.getDirection();
+		float avgHeading = entity.getDirection();
+		float count = 1;
+		float forceDirection;
+		float newDirection;
 		float scale = entity.getScale();
-
-		//Find New Position
+		
 		if(!paused)
 		{
-			xW = (float) (xW + speed * Math.cos(direction) * deltaTime);
-			yW = (float) (yW + speed * Math.sin(direction) * deltaTime);
+			//Find New Position
+			deltaXW = (float) (speed * Math.cos(direction) * deltaTime);
+			deltaYW = (float) (speed * Math.sin(direction) * deltaTime);
+			xW += deltaXW;
+			yW += deltaYW;
+			
+			//Adjust for World Boundaries
+			xW = (float) ((Math.abs((xW + worldWidth + birbWidth / 2.0) % worldWidth)) - birbWidth / 2.0);
+			yW = (float) ((Math.abs((yW + worldHeight + birbHeight / 2.0) % worldHeight)) - birbHeight / 2.0);
+			
+			//Update Entity World Location
+			entity.setXWorld(xW);
+			entity.setYWorld(yW);
+			
+			//Reset Forces
+			entity.resetForces();
+			
+			//Add momentum
+			entity.addXForce(deltaXW * 10);
+			entity.addYForce(deltaYW * 10);
 		}
-		
-		//Adjust for World Boundaries
-		xW = (float) ((Math.abs((xW + worldWidth + birbWidth / 2.0) % worldWidth)) - birbWidth / 2.0);
-		yW = (float) ((Math.abs((yW + worldHeight + birbHeight / 2.0) % worldHeight)) - birbHeight / 2.0);
 
 		//Calculate Screen Position
 		float sX = (xW + cameraOffsetX) * cameraScale;
 		float sY = (yW + cameraOffsetY) * cameraScale;
 
-		//Update Entity Location
-		entity.setXWorld(xW);
-		entity.setYWorld(yW);
-
+		//Update Entity Screen Location
 		entity.setXScreen(sX);
 		entity.setYScreen(sY);
 		
@@ -93,41 +111,67 @@ public class EntityKernel extends Kernel
 		}
 		
 		//Calculate Chunk
-//		int previousChunk = entity.getChunk().getID();
-		
-//		int xC = (int) (xW / chunkSize);
-//		int yC = (int) (yW / chunkSize);
-//		int currentChunk = xC + yC * chunkWidth;
 		int currentChunk = Chunk.calculateChunk(xW, yW, chunkSize, chunkWidth);
-//		int currentChunk = 1;
-		
-		if(currentChunk < 0)
-		{
-			System.out.println("error chunk is negative?!");
-		}
-		
 		entity.setChunk(currentChunk);
 		
-//		//If There Is Previous Assigned Chunk
-//		if(previousChunk != -1)
-//		{
-//			if(previousChunk != currentChunk)
-//			{
-//				chunkEntityCount[previousChunk] -= 1;
-//				chunkEntityCount[currentChunk] += 1;
-//			}
-//		}
-//		else
-//		{
-//			chunkEntityCount[currentChunk] += 1;
-//		}
-//
-//		int sum = 0;
-//		//Calculate Chunk Positions
-//		for(int i=0; i<chunkWidth * chunkHeight; i++)
-//		{
-//			chunkPos[i] = sum;
-//			sum += chunkEntityCount[i];
-//		}
+		if(entity.getType() == 1)
+		{
+			Birb birb = (Birb) entity;
+//			birb.applyMouseForce(true);
+			for(Entity e: bc.getNearbyEntities(bc, entity.getChunk(), 1))
+			{
+				if(e != entity)
+				{
+					entity.applyForceTo(e);
+					avgHeading += entity.getDirection();
+					count++;
+				}
+				else
+				{
+//					System.out.println("me");
+				}
+			}
+		}
+		
+		//Do alignment
+		avgHeading /= count;
+		entity.addXForce((float) (100 * Math.cos(avgHeading)));
+		entity.addYForce((float) (100 * Math.sin(avgHeading)));
+		
+		
+		
+		if(xF != 0 || yF != 0)
+		{
+			//Find The Direction of The Net Force
+			forceDirection = (float) Math.atan2(yF, xF);
+			
+			float adjustment = (forceDirection - direction);
+			float change = (float) (adjustment % (2 * Math.PI));
+			
+			if (change > Math.PI && direction < Math.PI)
+			{
+				change -= 2 * Math.PI;
+			}
+			else if (change < -Math.PI && direction > Math.PI)
+			{
+				change += 2 * Math.PI;
+			}
+			
+			if(Math.abs(change) > Birb.getMaxTurnSpeed())
+			{
+				if (change > 0)
+				{
+					change = Birb.getMaxTurnSpeed();
+				} else
+				{
+					change = -Birb.getMaxTurnSpeed();
+				}
+			}
+			
+			newDirection = (float) ((direction + change) % (2 * Math.PI));
+			
+			//Set new direction
+			entity.setDirection(newDirection);
+		}
 	}
 }

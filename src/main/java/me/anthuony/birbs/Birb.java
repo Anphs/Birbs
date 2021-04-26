@@ -5,14 +5,16 @@ import java.awt.geom.Point2D;
 
 public class Birb extends Entity
 {
-	private static final int baseWidth = 70, baseHeight = 70, baseSpeed = 1000;
-	private final static float maxTurnSpeed = (float) .1, interactionRange = baseWidth;
+	private final BirbsContainer bc;
+	private static final int baseWidth = 70, baseHeight = 70, baseSpeed = 750;
+	private final static float maxTurnSpeed = (float) .025, interactionRange = baseWidth * 4;
 	private final String name;
 	private Point2D.Float formationPoint;
 	
 	public Birb(BirbsContainer bc, int entityID, int type, String name, float xWorld, float yWorld, float scale)
 	{
 		super(bc, entityID, type, xWorld, yWorld, scale);
+		this.bc = bc;
 		this.name = name;
 		
 		setSpeed(baseSpeed);
@@ -55,5 +57,21 @@ public class Birb extends Entity
 	public static float getInteractionRange()
 	{
 		return interactionRange;
+	}
+	
+	public void applyMouseForce(boolean seek)
+	{
+		float distanceX = (float) (bc.getInput().getScaledMousePoint().getX() - this.getXWorld());
+		float distanceY = (float) (bc.getInput().getScaledMousePoint().getY() - this.getYWorld());
+		if(seek)
+		{
+			this.addXForce(distanceX);
+			this.addYForce(distanceY);
+		}
+		else
+		{
+			this.addXForce(-distanceX);
+			this.addYForce(-distanceY);
+		}
 	}
 }

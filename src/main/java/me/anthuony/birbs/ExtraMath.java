@@ -27,4 +27,25 @@ public class ExtraMath
 		}
 		return num;
 	}
+	
+//	public static double boundNumber(double num, double lower, double upper, double step)
+//	{
+//		if(upper - lower < step)
+//		{
+//			System.out.println("Step size too big");
+//		}
+//		if(upper < lower)
+//		{
+//			System.out.println("Upper is smaller than lower bound");
+//		}
+//		while(num < lower)
+//		{
+//			num += step;
+//		}
+//		while(num > upper)
+//		{
+//			num -= step;
+//		}
+//		return num;
+//	}
 }
