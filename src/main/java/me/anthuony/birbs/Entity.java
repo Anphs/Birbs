@@ -213,15 +213,15 @@ public abstract class Entity implements Comparable<Entity>
 				if(distance < Birb.getInteractionRange())
 				{
 					float cohesionForceMagnitude = (Birb.getInteractionRange() * (distance / 100000));
-					float separationForceMagnitude = (Birb.getInteractionRange() / (distance * 4));
+					float separationForceMagnitude = (Birb.getInteractionRange() / (distance * 5));
 					
-					if(Float.isFinite(cohesionForceMagnitude))
+					if(bc.isDoCohesion() && Float.isFinite(cohesionForceMagnitude))
 					{
 						//Brings entities closer
 						e.addXForce(-distanceX * cohesionForceMagnitude);
 						e.addYForce(-distanceY * cohesionForceMagnitude);
 					}
-					if(Float.isFinite(separationForceMagnitude))
+					if(bc.isAvoidOthers() && Float.isFinite(separationForceMagnitude))
 					{
 						//Makes sure they don't get too close
 						e.addXForce(distanceX * separationForceMagnitude);
@@ -282,5 +282,15 @@ public abstract class Entity implements Comparable<Entity>
 	public float getYForce()
 	{
 		return yForce;
+	}
+	
+	public float getDistance(Entity e)
+	{
+		float x1 = this.getXWorld();
+		float y1 = this.getYWorld();
+		float x2 = e.getXWorld();
+		float y2 = e.getYWorld();
+		
+		return (float) Point2D.distance(x1, y1, x2, y2);
 	}
 }

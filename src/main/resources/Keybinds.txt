@@ -1,9 +1,13 @@
+
 ESC to Close
 R to Reset
 P to Pause
 F1 to Toggle UI
 N to Toggle Names
 H to Toggle Hitboxes
+1 to Toggle Cohesion
+2 to Toggle Alignment
+3 to Toggle Separation
 > to go to the Next Birb
 < to go to the Previous Birb
 Space to Follow A Random Birb

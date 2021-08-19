@@ -35,10 +35,23 @@ public class InputBinds
 				bc.setPursuitBirb(bc.getRandomUniqueBirb(bc.getBirbsList(), bc.getPursuitBirbHistoryList()));
 			}
 		}
-		
 		if (bc.getInput().isKeyDown(KeyEvent.VK_F1))
 		{
 			bc.toggleUI();
+		}
+		
+		//Rules
+		if (bc.getInput().isKeyDown(KeyEvent.VK_1))
+		{
+			bc.toggleCohesion();
+		}
+		if (bc.getInput().isKeyDown(KeyEvent.VK_2))
+		{
+			bc.toggleAlignment();
+		}
+		if (bc.getInput().isKeyDown(KeyEvent.VK_3))
+		{
+			bc.toggleSeparation();
 		}
 		
 		//Middle Click Pursuit Camera
@@ -150,7 +163,7 @@ public class InputBinds
 		//Birb spawning
 		if (bc.getInput().isButtonDown(MouseEvent.BUTTON3))
 		{
-			bm.addBirb(bc, bc.getInput().getScaledMousePoint(), 1);
+			bm.addBirb(bc, bc.getInput().getScaledMousePoint(), 100);
 //			updateFormations(bc);
 		}
 		

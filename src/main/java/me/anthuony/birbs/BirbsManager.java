@@ -102,8 +102,8 @@ public class BirbsManager extends AbstractBirbsManager
 		
 		ArrayList<String> topLeftText = new ArrayList<>(Arrays.asList(
 				"" + bc.getEntityList().size() + " Birbs in the World",
-				"" + onScreenCount + " Birbs on Screen",
-				"" + (int) bc.getDpdt() + " birbs/update Rate of Spawning"
+				"" + onScreenCount + " Birbs on Screen"/*,
+				"" + (int) bc.getDpdt() + " birbs/update Rate of Spawning"*/
 		));
 		
 		int xMouse = (int) (bc.getInput().getMousePoint().getX() * bc.getScale());

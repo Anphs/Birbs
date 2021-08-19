@@ -61,18 +61,19 @@ public class BirbsContainer implements Runnable
 	int capacity = /*getWindowWidth() * getWindowHeight() / 1000;*/ 10;
 	private double dpdt = 0;
 	
-	private boolean paused = false, drawHitbox = false, drawName = false, drawUI = true;
+	private boolean paused = false, drawHitbox = false, drawName = true, drawUI = true;
 	private Birb pursuitBirb;
 	private int pursuitBirbHistoryIndex = 0;
 	
-	private final boolean avoidOthers = true;
-	private final boolean doAlignment = true;
-	private final boolean doCohesion = true;
+	private boolean avoidOthers = true;
+	private boolean doAlignment = true;
+	private boolean doCohesion = true;
 	private final boolean deleteClose = false;
 	
 	private final Color worldBackgroundColor = new Color(0, 0,0, 255);
 	private final Color windowBackgroundColor = new Color(50, 50, 50, 255);
-	private final Color textUIColor = new Color(255, 105, 3, 255);
+//	private final Color textUIColor = new Color(255, 105, 3, 255);
+	private final Color textUIColor = new Color(0, 128, 128, 255);
 	
 	public BirbsContainer(AbstractBirbsManager world)
 	{
@@ -661,5 +662,18 @@ public class BirbsContainer implements Runnable
 			}
 		}
 		return nearby;
+	}
+	
+	public void toggleAlignment()
+	{
+		doAlignment = !doAlignment;
+	}
+	public void toggleCohesion()
+	{
+		doCohesion = !doCohesion;
+	}
+	public void toggleSeparation()
+	{
+		avoidOthers = !avoidOthers;
 	}
 }

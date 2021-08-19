@@ -7,7 +7,7 @@ public class Birb extends Entity
 {
 	private final BirbsContainer bc;
 	private static final int baseWidth = 70, baseHeight = 70, baseSpeed = 750;
-	private final static float maxTurnSpeed = (float) .025, interactionRange = baseWidth * 4;
+	private final static float maxTurnSpeed = (float) .025, interactionRange = baseWidth * 3;
 	private final String name;
 	private Point2D.Float formationPoint;
 	

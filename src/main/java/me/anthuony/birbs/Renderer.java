@@ -123,8 +123,8 @@ public class Renderer
 		}
 		if (bc.isDrawName())
 		{
-			String name = b.getChunk() + " " + b.getName() + " " + b.getEntityID();
-//			String name = b.getName();
+//			String name = b.getChunk() + " " + b.getName() + " " + b.getEntityID();
+			String name = b.getName();
 			Font nameTagFont = new Font("Courier New", Font.BOLD, (int) (bc.getScale() * 40));
 			g2d.setPaint(bColor.brighter());
 			FontMetrics metrics = g2d.getFontMetrics(nameTagFont);
@@ -137,6 +137,6 @@ public class Renderer
 		}
 		g2d.setPaint(bColor);
 		g2d.rotate(b.getDirection());
-		g2d.drawPolygon(getTriangle(bc, b.getScale()));
+		g2d.fillPolygon(getTriangle(bc, b.getScale()));
 	}
 }

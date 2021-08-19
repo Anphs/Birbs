@@ -1,3 +1,4 @@
-Change Log (Report #30)
-Adjusted separation, alignment, and cohesion rules to promote flocking behavior
-Fixed issue where clicking on the screen caused the world to flicker
+Change Log (Report #33)
+Finalized Project
+Adjusted Default Values
+Fill Birbs Instead of Outline

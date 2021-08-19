@@ -107,6 +107,17 @@ public class EntityKernel extends Kernel
 			int g = (int) Math.abs((yW / worldHeight) * 255);
 			int r = 255 - b;
 			
+//			float mouseDistance = (float) Point.distance(xW, yW, bc.getInput().getScaledMousePoint().getX(), bc.getInput().getScaledMousePoint().getY());
+			int brighter = 0;
+//			if(mouseDistance < 10000)
+//			{
+//				brighter = - (int) (120000 / (mouseDistance));
+//			}
+			
+			b = ExtraMath.boundNumber(b + brighter, 0, 255);
+			g = ExtraMath.boundNumber(g + brighter, 0, 255);
+			r = ExtraMath.boundNumber(r + brighter, 0, 255);
+			
 			entity.setColor(new Color(r, g, b, 255));
 		}
 		
@@ -120,7 +131,7 @@ public class EntityKernel extends Kernel
 //			birb.applyMouseForce(true);
 			for(Entity e: bc.getNearbyEntities(bc, entity.getChunk(), 1))
 			{
-				if(e != entity)
+				if(e != null && e != entity && entity.getDistance(e) < Birb.getInteractionRange())
 				{
 					entity.applyForceTo(e);
 					avgHeading += entity.getDirection();
@@ -134,11 +145,12 @@ public class EntityKernel extends Kernel
 		}
 		
 		//Do alignment
-		avgHeading /= count;
-		entity.addXForce((float) (100 * Math.cos(avgHeading)));
-		entity.addYForce((float) (100 * Math.sin(avgHeading)));
-		
-		
+		if(bc.isDoAlignment())
+		{
+			avgHeading /= count;
+			entity.addXForce((float) (1000 * Math.cos(avgHeading)));
+			entity.addYForce((float) (1000 * Math.sin(avgHeading)));
+		}
 		
 		if(xF != 0 || yF != 0)
 		{
