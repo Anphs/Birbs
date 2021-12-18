@@ -5,30 +5,21 @@ import java.util.ArrayList;
 
 public class Renderer
 {
-	private static final int d = 7 / 2;
-	private static final int dd = (int) (d / 1.5);
-	private static final int ddd = d / 2;
-	private static final int[] triangleX = new int[]{dd, -dd, -ddd, -dd};
-	private static final int[] triangleY = new int[]{0, ddd, 0, -ddd};
-	BirbsContainer bc;
+	private final BirbsContainer bc;
 	
 	public Renderer(BirbsContainer bc)
 	{
 		this.bc = bc;
 	}
 	
-	public void drawRect(Graphics2D g2d)
-	{
-		g2d.setColor(Color.ORANGE);
-		g2d.fillRect(bc.getWindowWidth() / 2, bc.getWindowHeight() / 2, 1, 1);
-	}
-	
 	public void drawBackground(Graphics2D g2d)
 	{
-		g2d.setPaint(new Color(50, 50, 50, 255));
+		//Background
+		g2d.setPaint(bc.getWindowBackgroundColor());
 		g2d.fillRect(0, 0, bc.getWindowWidth(), bc.getWindowHeight());
 		
-		g2d.setPaint(new Color(0, 0, 0, 255));
+		//World
+		g2d.setPaint(bc.getWorldBackgroundColor());
 		g2d.fillRect((int) (bc.getCameraOffsetX() * bc.getScale()), (int) (bc.getCameraOffsetY() * bc.getScale()), (int) (bc.getWorldWidth() * bc.getScale()), (int) (bc.getWorldHeight() * bc.getScale()));
 	}
 	
@@ -123,17 +114,19 @@ public class Renderer
 	public void drawBirb(Graphics2D g2d, Birb b)
 	{
 		int hitboxWidth = (int) (Birb.getBaseWidth() * bc.getScale() * b.getScale() / 2);
+		Color bColor = b.getColor();
 		
 		if (bc.isHitboxVisible())
 		{
-			g2d.setPaint(b.getBirbColor().darker());
+			g2d.setPaint(bColor.darker());
 			g2d.drawRect(-hitboxWidth, -hitboxWidth, 2 * hitboxWidth, 2 * hitboxWidth);
 		}
 		if (bc.isDrawName())
 		{
+//			String name = b.getChunk() + " " + b.getName() + " " + b.getEntityID();
 			String name = b.getName();
 			Font nameTagFont = new Font("Courier New", Font.BOLD, (int) (bc.getScale() * 40));
-			g2d.setPaint(b.getBirbColor().brighter());
+			g2d.setPaint(bColor.brighter());
 			FontMetrics metrics = g2d.getFontMetrics(nameTagFont);
 			
 			double x = -metrics.stringWidth(name) / 2.0;
@@ -142,8 +135,8 @@ public class Renderer
 			g2d.setFont(nameTagFont);
 			g2d.drawString(name, (int) x, (int) (y + 1.25 * hitboxWidth));
 		}
-		g2d.setPaint(b.getBirbColor());
-		g2d.rotate(b.getVel().getDirection());
-		g2d.drawPolygon(getTriangle(bc, b.getScale()));
+		g2d.setPaint(bColor);
+		g2d.rotate(b.getDirection());
+		g2d.fillPolygon(getTriangle(bc, b.getScale()));
 	}
 }

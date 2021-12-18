@@ -2,8 +2,12 @@ me\anthuony\birbs\Birb.class
 me\anthuony\birbs\Renderer.class
 me\anthuony\birbs\Input.class
 me\anthuony\birbs\BirbLogic.class
+me\anthuony\birbs\Formation.class
+me\anthuony\birbs\ExtraMath.class
 me\anthuony\birbs\AbstractBirbsManager.class
 me\anthuony\birbs\Vector.class
 me\anthuony\birbs\BirbsContainer.class
+me\anthuony\birbs\Entity.class
+me\anthuony\birbs\EntityKernel.class
 me\anthuony\birbs\BirbsManager.class
 me\anthuony\birbs\Window.class

@@ -32,8 +32,8 @@ public class Formation
 			for (int i = 0; i < birbsList.size(); i++)
 			{
 				Birb currentBirb = birbsList.get(i);
-				double x = (bc.getWorldWidth() - 1000) * ((double) i / birbsList.size()) + 500;
-				Point2D.Double formationPoint = new Point2D.Double(x, bc.getWorldHeight() / 2.0);
+				float x = (float) ((bc.getWorldWidth() - 1000) * ((double) i / birbsList.size()) + 500);
+				Point2D.Float formationPoint = new Point2D.Float(x, (float) (bc.getWorldHeight() / 2.0));
 				currentBirb.setFormationPoint(formationPoint);
 			}
 		} else if (type.equalsIgnoreCase("Circle"))
@@ -41,12 +41,12 @@ public class Formation
 			for (int i = 0; i < birbsList.size(); i++)
 			{
 				Birb currentBirb = birbsList.get(i);
-				double radius = 0.4 * Math.min(bc.getWorldWidth(), bc.getWorldHeight());
-				double degree = 360 * ((double) i / birbsList.size());
-				double radian = Math.toRadians(degree);
-				double x = radius * Math.cos(radian) + bc.getWorldWidth() / 2.0;
-				double y = radius * Math.sin(radian) + bc.getWorldHeight() / 2.0;
-				Point2D.Double formationPoint = new Point2D.Double(x, y);
+				float radius = (float) (0.4 * Math.min(bc.getWorldWidth(), bc.getWorldHeight()));
+				float degree = (float) (360 * ((double) i / birbsList.size()));
+				float radian = (float) Math.toRadians(degree);
+				float x = (float) (radius * Math.cos(radian) + bc.getWorldWidth() / 2.0);
+				float y = (float) (radius * Math.sin(radian) + bc.getWorldHeight() / 2.0);
+				Point2D.Float formationPoint = new Point2D.Float(x, y);
 				currentBirb.setFormationPoint(formationPoint);
 			}
 		} else if (type.equalsIgnoreCase("Circle2"))
@@ -54,12 +54,12 @@ public class Formation
 			for (int i = 0; i < birbsList.size(); i++)
 			{
 				Birb currentBirb = birbsList.get(i);
-				double radius = 0.2 * Math.min(bc.getWorldWidth(), bc.getWorldHeight());
-				double degree = 360 * ((double) i / birbsList.size());
-				double radian = Math.toRadians(degree);
-				double x = radius * Math.cos(radian) + bc.getWorldWidth() / 2.0;
-				double y = radius * Math.sin(radian) + bc.getWorldHeight() / 2.0;
-				Point2D.Double formationPoint = new Point2D.Double(x, y);
+				float radius = (float) (0.2 * Math.min(bc.getWorldWidth(), bc.getWorldHeight()));
+				float degree = (float) (360 * ((double) i / birbsList.size()));
+				float radian = (float) Math.toRadians(degree);
+				float x = (float) (radius * Math.cos(radian) + bc.getWorldWidth() / 2.0);
+				float y = (float) (radius * Math.sin(radian) + bc.getWorldHeight() / 2.0);
+				Point2D.Float formationPoint = new Point2D.Float(x, y);
 				currentBirb.setFormationPoint(formationPoint);
 			}
 		} else if (type.equalsIgnoreCase("Cubic"))
@@ -67,12 +67,12 @@ public class Formation
 			for (int i = 0; i < birbsList.size(); i++)
 			{
 				Birb currentBirb = birbsList.get(i);
-				double maxY = Math.pow(birbsList.size() / 2, 3);
-				double temp = (bc.getWorldHeight() - 1000) / maxY / 2;
-				double x = (bc.getWorldWidth() - 1000) * ((double) i / birbsList.size());
+				float maxY = (float) Math.pow(birbsList.size() / 2, 3);
+				float temp = (bc.getWorldHeight() - 1000) / maxY / 2;
+				float x = (float) ((bc.getWorldWidth() - 1000) * ((double) i / birbsList.size()));
 				x = bc.getWorldWidth() - x - 500;
-				double y = bc.getWorldHeight() / 2.0 + (Math.pow(i - birbsList.size() / 2, 3) * temp);
-				Point2D.Double formationPoint = new Point2D.Double(x, y);
+				float y = (float) (bc.getWorldHeight() / 2.0 + (Math.pow(i - birbsList.size() / 2, 3) * temp));
+				Point2D.Float formationPoint = new Point2D.Float(x, y);
 				currentBirb.setFormationPoint(formationPoint);
 			}
 		} else if (type.equalsIgnoreCase("Cubic2"))
@@ -80,13 +80,13 @@ public class Formation
 			for (int i = 0; i < birbsList.size(); i++)
 			{
 				Birb currentBirb = birbsList.get(i);
-				double maxY = Math.pow(birbsList.size() / 2.0, 3);
-				double temp = (bc.getWorldHeight() - 1000) / maxY / 2;
-				double x = (bc.getWorldWidth() - 1000) * ((double) i / birbsList.size());
+				float maxY = (float) Math.pow(birbsList.size() / 2.0, 3);
+				float temp = (bc.getWorldHeight() - 1000) / maxY / 2;
+				float x = (float) ((bc.getWorldWidth() - 1000) * ((double) i / birbsList.size()));
 				x = bc.getWorldWidth() - x - 500;
-				double y = (Math.pow(i - birbsList.size() / 2, 3) * -temp) + bc.getWorldHeight() / 2.0;
+				float y = (float) ((Math.pow(i - birbsList.size() / 2, 3) * -temp) + bc.getWorldHeight() / 2.0);
 				
-				Point2D.Double formationPoint = new Point2D.Double(x, y);
+				Point2D.Float formationPoint = new Point2D.Float(x, y);
 				currentBirb.setFormationPoint(formationPoint);
 			}
 		}

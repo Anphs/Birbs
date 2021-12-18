@@ -3,40 +3,31 @@ package me.anthuony.birbs;
 import java.awt.*;
 import java.awt.geom.Point2D;
 
-public class Birb
+public class Birb extends Entity
 {
-	private static final int baseWidth = 70, baseHeight = 70;
-	private final static double maxTurnSpeed = .1;
-	private final static double turnNoise = 0;
-	private final String ID, name;
-	private double scale = 1;
-	private Vector vel, acc;
-	private Point2D.Double worldPoint, screenPoint, formationPoint;
-	private Color birbColor;
-	private boolean onScreen;
-	private double speedMultiplier = 1;
+	private final BirbsContainer bc;
+	private static final int baseWidth = 70, baseHeight = 70, baseSpeed = 750;
+	private final static float maxTurnSpeed = (float) .025, interactionRange = baseWidth * 3;
+	private final String name;
+	private Point2D.Float formationPoint;
 	
-	public Birb(String ID, String name, Point2D.Double worldPoint)
+	public Birb(BirbsContainer bc, int entityID, int type, String name, float xWorld, float yWorld, float scale)
 	{
-		this.ID = ID;
+		super(bc, entityID, type, xWorld, yWorld, scale);
+		this.bc = bc;
 		this.name = name;
-		this.worldPoint = worldPoint;
 		
-		double velMag = 20;
-		this.vel = new Vector(velMag, Math.random() * 2 * Math.PI);
-//		vel = new Vector(0, 3 * Math.PI / 2);
-		this.birbColor = new Color(0, 0, 0, 0);
-		this.scale = Math.random() + .5 + .25;
+		setSpeed(baseSpeed);
+		setDirection((float) (Math.random() * 2 * Math.PI));
+//		setDirection((float) (3 * Math.PI / 2));
+		
+//		setColor(new Color((int)(255 * Math.random()), (int)(255 * Math.random()), (int)(255 * Math.random()), 255));
+		setScale((float) (Math.random() + .5 + .25));
 	}
 	
-	public static double getMaxTurnSpeed()
+	public static float getMaxTurnSpeed()
 	{
 		return maxTurnSpeed;
-	}
-	
-	public static double getTurnNoise()
-	{
-		return turnNoise;
 	}
 	
 	public static int getBaseWidth()
@@ -44,108 +35,43 @@ public class Birb
 		return baseWidth;
 	}
 	
-	public static int getBaseHeight()
-	{
-		return baseHeight;
-	}
-	
-	public Vector getVel()
-	{
-		return vel;
-	}
-	
-	public void setVel(Vector vel)
-	{
-		this.vel = vel;
-	}
-	
-	public Vector getAcc()
-	{
-		return acc;
-	}
-	
-	public void setAcc(Vector acc)
-	{
-		this.acc = acc;
-	}
-	
-	public Point2D.Double getWorldPoint()
-	{
-		return worldPoint;
-	}
-	
-	public void setWorldPoint(Point2D.Double p)
-	{
-		this.worldPoint = p;
-	}
-	
-	public Point2D.Double getScreenPoint()
-	{
-		return screenPoint;
-	}
-	
-	public void setScreenPoint(Point2D.Double screenPoint)
-	{
-		this.screenPoint = screenPoint;
-	}
+	public static int getBaseHeight() { return baseHeight; }
 	
 	public double getAvoidRadius()
 	{
-		return (int) vel.getMagnitude() * 15 + 150;
+		return (int) getSpeed() * 15 + 150;
 	}
 	
-	public Color getBirbColor()
-	{
-		return birbColor;
-	}
-	
-	public void setBirbColor(Color birbColor)
-	{
-		this.birbColor = birbColor;
-	}
-	
-	public String getID()
-	{
-		return ID;
-	}
-	
-	public double getSpeedMultiplier()
-	{
-		return speedMultiplier;
-	}
-	
-	public void setSpeedMultiplier(double speedMultiplier)
-	{
-		this.speedMultiplier = speedMultiplier;
-	}
-	
-	public Point2D.Double getFormationPoint()
+	public Point2D.Float getFormationPoint()
 	{
 		return formationPoint;
 	}
 	
-	public void setFormationPoint(Point2D.Double seekPoint)
+	public void setFormationPoint(Point2D.Float seekPoint)
 	{
 		this.formationPoint = seekPoint;
 	}
 	
-	public boolean isOnScreen()
+	public String getName() { return name; }
+	
+	public static float getInteractionRange()
 	{
-		return onScreen;
+		return interactionRange;
 	}
 	
-	public void setOnScreen(boolean onScreen)
+	public void applyMouseForce(boolean seek)
 	{
-		this.onScreen = onScreen;
-	}
-	
-	public double getScale()
-	{
-		return scale;
-	}
-	
-	public String getName()
-	{
-		return name;
+		float distanceX = (float) (bc.getInput().getScaledMousePoint().getX() - this.getXWorld());
+		float distanceY = (float) (bc.getInput().getScaledMousePoint().getY() - this.getYWorld());
+		if(seek)
+		{
+			this.addXForce(distanceX);
+			this.addYForce(distanceY);
+		}
+		else
+		{
+			this.addXForce(-distanceX);
+			this.addYForce(-distanceY);
+		}
 	}
 }

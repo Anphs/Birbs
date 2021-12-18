@@ -183,11 +183,11 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 		return mousePoint;
 	}
 	
-	public Point2D.Double getScaledMousePoint()
+	public Point2D.Float getScaledMousePoint()
 	{
-		double x = (getMousePoint().getX() - bc.getCameraOffsetX());
-		double y = (getMousePoint().getY() - bc.getCameraOffsetY());
-		return new Point2D.Double(x, y);
+		float x = (float) (getMousePoint().getX() - bc.getCameraOffsetX());
+		float y = (float) (getMousePoint().getY() - bc.getCameraOffsetY());
+		return new Point2D.Float(x, y);
 	}
 	
 	public void updateMousePoint()
