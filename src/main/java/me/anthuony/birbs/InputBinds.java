@@ -3,6 +3,7 @@ package me.anthuony.birbs;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.util.ListIterator;
 
 public class InputBinds
 {
@@ -32,7 +33,7 @@ public class InputBinds
 		{
 			if (bc.getEntityList().size() > 0)
 			{
-				bc.setPursuitBirb(bc.getRandomUniqueBirb(bc.getBirbsList(), bc.getPursuitBirbHistoryList()));
+				bc.setPursuitEntity(bc.getRandomUniqueEntity(bc.getBirbsList(), bc.getPursuitList()));
 			}
 		}
 		if (bc.getInput().isKeyDown(KeyEvent.VK_F1))
@@ -57,7 +58,7 @@ public class InputBinds
 		//Middle Click Pursuit Camera
 		if (bc.getInput().isButtonDown(MouseEvent.BUTTON2))
 		{
-			if (bc.getEntityList().size() > 0 && bc.getPursuitBirb() == null)
+			if (bc.getEntityList().size() > 0 && bc.getPursuitEntity() == null)
 			{
 				Birb closest = (Birb) bc.getEntityList().get(0);
 				Point2D.Float mousePoint = bc.getInput().getScaledMousePoint();
@@ -72,40 +73,31 @@ public class InputBinds
 						}
 					}
 				}
-				bc.setPursuitBirb(closest);
+				bc.setPursuitEntity(closest);
 			} else
 			{
-				bc.setPursuitBirb(null);
+				bc.setPursuitEntity(null);
 			}
 		}
 		
 		// < > Navigate Pursuit Birb List
 		if (bc.getInput().isKeyDown(KeyEvent.VK_COMMA))
 		{
-			if(bc.getEntityList().size() > 0)
+			if(bc.hasPreviousPursuit())
 			{
-				if (bc.getPursuitBirbHistoryList().size() > 1 && bc.getPursuitBirbHistoryIndex() > 0)
-				{
-					bc.setPursuitBirb(bc.getPursuitBirbHistoryList().get(bc.decrementBirbHistoryIndex()));
-				}
+				bc.setPursuitEntity(bc.previousPursuit());
 			}
 		}
 		if (bc.getInput().isKeyDown(KeyEvent.VK_PERIOD))
 		{
-			if(bc.getEntityList().size() > 0)
+			if(bc.hasNextPursuit())
 			{
-				if (bc.getPursuitBirbHistoryList().size() - 1 > bc.getPursuitBirbHistoryIndex())
-				{
-					bc.setPursuitBirb(bc.getPursuitBirbHistoryList().get(bc.incrementBirbHistoryIndex()));
-				} else
-				{
-					bc.setPursuitBirb(bc.getRandomUniqueBirb(bc.getBirbsList(), bc.getPursuitBirbHistoryList()));
-				}
+				bc.setPursuitEntity(bc.nextPursuit());
 			}
 		}
 		
 		//Arrow Key Panning
-		if (bc.getPursuitBirb() == null)
+		if (bc.getPursuitEntity() == null)
 		{
 			if (bc.getInput().isKey(KeyEvent.VK_UP) || bc.getInput().isKey(KeyEvent.VK_W))
 			{
@@ -133,23 +125,23 @@ public class InputBinds
 		{
 			if (bc.getInput().isKey(KeyEvent.VK_UP) || bc.getInput().isKey(KeyEvent.VK_W))
 			{
-				bc.setPursuitBirb(null);
+				bc.setPursuitEntity(null);
 			}
 			if (bc.getInput().isKey(KeyEvent.VK_DOWN) || bc.getInput().isKey(KeyEvent.VK_S))
 			{
-				bc.setPursuitBirb(null);
+				bc.setPursuitEntity(null);
 			}
 			if (bc.getInput().isKey(KeyEvent.VK_LEFT) || bc.getInput().isKey(KeyEvent.VK_A))
 			{
-				bc.setPursuitBirb(null);
+				bc.setPursuitEntity(null);
 			}
 			if (bc.getInput().isKey(KeyEvent.VK_RIGHT) || bc.getInput().isKey(KeyEvent.VK_D))
 			{
-				bc.setPursuitBirb(null);
+				bc.setPursuitEntity(null);
 			}
 			if (bc.getInput().isButtonDown(MouseEvent.BUTTON1))
 			{
-				bc.setPursuitBirb(null);
+				bc.setPursuitEntity(null);
 				bc.setCameraTempOffsetX(bc.getCameraOffsetX());
 				bc.setCameraTempOffsetY(bc.getCameraOffsetY());
 			}

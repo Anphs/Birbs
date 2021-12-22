@@ -4,7 +4,6 @@ import com.aparapi.Range;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.*;
@@ -35,9 +34,9 @@ public class BirbsManager extends AbstractBirbsManager
 		
 		bc.setKernelTime(t2 - t1);
 		
-		if (bc.getPursuitBirb() != null)
+		if (bc.getPursuitEntity() != null)
 		{
-			Point2D.Float pursuitBirbPoint = bc.getPursuitBirb().getWorldPoint();
+			Point2D.Float pursuitBirbPoint = bc.getPursuitEntity().getWorldPoint();
 			bc.setCameraOffsetX(bc.getWindowWidth() / bc.getScale() / 2 - pursuitBirbPoint.getX());
 			bc.setCameraOffsetY(bc.getWindowHeight() / bc.getScale() / 2 - pursuitBirbPoint.getY());
 		}
@@ -129,13 +128,13 @@ public class BirbsManager extends AbstractBirbsManager
 			System.out.println("Tally: " + entityTally + " Actual Count: " + bc.getEntityList().size());
 		}
 		
-		LinkedList<String> pursuitBirbHistoryListNames = new LinkedList<>();
-		for(Birb b: bc.getPursuitBirbHistoryList())
+		List<String> pursuitBirbHistoryListNames = new LinkedList<>();
+		for(Entity e: bc.getPursuitList())
 		{
-			if(b != null)
+			if(e instanceof Birb)
 			{
-				String name = b.getName();
-				if (b == bc.getPursuitBirb())
+				String name = ((Birb) e).getName();
+				if (e == bc.getPursuitEntity())
 				{
 					name += "   <<<";
 				}
@@ -234,8 +233,8 @@ public class BirbsManager extends AbstractBirbsManager
 		bc.setCameraOffsetX((bc.getWorldWidth() - bc.getWindowWidth() * 10) / -2.0);
 		bc.setCameraOffsetY((bc.getWorldHeight() - bc.getWindowHeight() * 10) / -2.0);
 		bc.setScale(0.1);
-		bc.setPursuitBirb(null);
-		bc.getPursuitBirbHistoryList().clear();
+		bc.setPursuitEntity(null);
+		bc.getPursuitList().clear();
 		updateScale(bc);
 	}
 	

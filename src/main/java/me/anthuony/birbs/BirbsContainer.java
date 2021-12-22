@@ -7,10 +7,8 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Scanner;
 
 public class BirbsContainer implements Runnable
 {
@@ -42,7 +40,6 @@ public class BirbsContainer implements Runnable
 	
 	private final ArrayList<Entity> entityList = new ArrayList<>();
 	private final ArrayList<Birb> birbsList = new ArrayList<>();
-	private final LinkedList<Birb> pursuitBirbHistoryList = new LinkedList<>();
 	
 	private final double cameraPanningInterval = 5000 * UPDATE_CAP;
 	private final double minScale = .1;
@@ -60,8 +57,10 @@ public class BirbsContainer implements Runnable
 	private final int chunkHeight = (worldHeight % chunkSize == 0) ? worldHeight/chunkSize : worldHeight/chunkSize + 1;
 	
 	private boolean paused = false, drawHitbox = false, drawName = true, drawUI = true;
-	private Birb pursuitBirb;
-	private int pursuitBirbHistoryIndex = 0;
+
+	private final List<Entity> pursuitList = new LinkedList<>();
+	private int pursuitIndex = -1;
+	private Entity pursuitEntity;
 	
 	private boolean avoidOthers = true;
 	private boolean doAlignment = true;
@@ -242,11 +241,6 @@ public class BirbsContainer implements Runnable
 		return title;
 	}
 	
-	public void setTitle(String title)
-	{
-		this.title = title;
-	}
-	
 	public double getUPDATE_CAP()
 	{
 		return UPDATE_CAP;
@@ -282,19 +276,9 @@ public class BirbsContainer implements Runnable
 		return renderTime;
 	}
 	
-	public void setRenderTime(long renderTime)
-	{
-		this.renderTime = renderTime;
-	}
-	
 	public ArrayList<Entity> getEntityList()
 	{
 		return entityList;
-	}
-	
-	public int getFrames()
-	{
-		return frames;
 	}
 	
 	public void removeEntity(Entity entity)
@@ -306,11 +290,6 @@ public class BirbsContainer implements Runnable
 	{
 		entityList.clear();
 		birbsList.clear();
-	}
-	
-	public AbstractBirbsManager getWorld()
-	{
-		return world;
 	}
 	
 	public double getCameraOffsetX()
@@ -418,11 +397,6 @@ public class BirbsContainer implements Runnable
 		return drawName;
 	}
 	
-	public void setDrawName(boolean drawName)
-	{
-		this.drawName = drawName;
-	}
-	
 	public String getRandomName()
 	{
 		return names.get((int) (Math.random() * names.size()));
@@ -433,29 +407,49 @@ public class BirbsContainer implements Runnable
 		return paused;
 	}
 	
-	public Birb getPursuitBirb()
+	public Entity getPursuitEntity()
 	{
-		return pursuitBirb;
+		return pursuitEntity;
 	}
 	
-	public void setPursuitBirb(Birb pursuitBirb)
+	public void setPursuitEntity(Entity pursuitEntity)
 	{
-		this.pursuitBirb = pursuitBirb;
-		if(!pursuitBirbHistoryList.contains(pursuitBirb))
+		this.pursuitEntity = pursuitEntity;
+		if(!pursuitList.contains(pursuitEntity))
 		{
-			pursuitBirbHistoryList.add(pursuitBirb);
-			pursuitBirbHistoryIndex = pursuitBirbHistoryList.size() - 1;
+			pursuitList.add(pursuitEntity);
+			pursuitIndex = pursuitList.size() - 1;
 		}
 	}
-	
-	public Birb getRandomUniqueBirb(ArrayList<Birb> birbsList, List<Birb> exclusionList)
+
+	public boolean hasNextPursuit()
 	{
-		Birb randomBirb = (Birb) birbsList.get((int) (Math.random() * birbsList.size()));
-		while(exclusionList.contains(randomBirb) && randomBirb.getType() == 1)
+		return pursuitIndex < pursuitList.size() - 1;
+	}
+
+	public boolean hasPreviousPursuit()
+	{
+		return pursuitIndex > 0;
+	}
+
+	public Entity nextPursuit()
+	{
+		return pursuitList.get(++pursuitIndex);
+	}
+
+	public Entity previousPursuit()
+	{
+		return pursuitList.get(--pursuitIndex);
+	}
+	
+	public Entity getRandomUniqueEntity(ArrayList<Birb> birbsList, List<Entity> exclusionList)
+	{
+		Entity randomEntity = birbsList.get((int) (Math.random() * birbsList.size()));
+		while(exclusionList.contains(randomEntity) && randomEntity.getType() == 1)
 		{
-			randomBirb = (Birb) birbsList.get((int) (Math.random() * birbsList.size()));
+			randomEntity = (Birb) birbsList.get((int) (Math.random() * birbsList.size()));
 		}
-		return randomBirb;
+		return randomEntity;
 	}
 	
 	public boolean isDrawUI()
@@ -463,26 +457,9 @@ public class BirbsContainer implements Runnable
 		return drawUI;
 	}
 	
-	public List<Birb> getPursuitBirbHistoryList()
+	public List<Entity> getPursuitList()
 	{
-		return pursuitBirbHistoryList;
-	}
-
-	public int incrementBirbHistoryIndex()
-	{
-		pursuitBirbHistoryIndex++;
-		return pursuitBirbHistoryIndex;
-	}
-
-	public int decrementBirbHistoryIndex()
-	{
-		pursuitBirbHistoryIndex--;
-		return pursuitBirbHistoryIndex;
-	}
-
-	public int getPursuitBirbHistoryIndex()
-	{
-		return pursuitBirbHistoryIndex;
+		return pursuitList;
 	}
 	
 	public boolean isAvoidOthers()
