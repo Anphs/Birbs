@@ -3,14 +3,12 @@ package me.anthuony.birbs;
 import com.aparapi.Kernel;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 
 public class EntityKernel extends Kernel
 {
 	private final BirbsContainer bc;
-	private final ArrayList<Entity> entityList;
-	private ArrayList<Chunk> chunkList;
+	private final List<Entity> entityList;
 	
 	private boolean paused;
 	private int windowWidth, windowHeight, worldWidth, worldHeight, chunkSize, chunkWidth, chunkHeight;

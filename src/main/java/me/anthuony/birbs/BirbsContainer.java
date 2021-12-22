@@ -36,10 +36,8 @@ public class BirbsContainer implements Runnable
 	private final List<String> keybindsHint = new LinkedList<>();
 	private final List<String> names = new LinkedList<>();
 	
-//	private int entityCount = 0;
-	
-	private final ArrayList<Entity> entityList = new ArrayList<>();
-	private final ArrayList<Birb> birbsList = new ArrayList<>();
+	private final List<Entity> entityList = new LinkedList<>();
+	private final List<Birb> birbsList = new LinkedList<>();
 	
 	private final double cameraPanningInterval = 5000 * UPDATE_CAP;
 	private final double minScale = .1;
@@ -51,7 +49,7 @@ public class BirbsContainer implements Runnable
 	private double cameraTempOffsetY = 0;
 	private double scale = .1;
 
-	private final ArrayList<Chunk> chunkList = new ArrayList<>();
+	private final List<Chunk> chunkList = new LinkedList<>();
 	private final int chunkSize = (int) Birb.getInteractionRange() * 9;
 	private final int chunkWidth = (worldWidth % chunkSize == 0) ? worldWidth/chunkSize : worldWidth/chunkSize + 1;
 	private final int chunkHeight = (worldHeight % chunkSize == 0) ? worldHeight/chunkSize : worldHeight/chunkSize + 1;
@@ -78,24 +76,6 @@ public class BirbsContainer implements Runnable
 		for(int i=0; i<numChunks; i++)
 		{
 			chunkList.add(new Chunk(i));
-		}
-	}
-
-	private void fileToStringList(String fileName, List<String> list)
-	{
-		ClassLoader classLoader = getClass().getClassLoader();
-
-		try (InputStream inputStream = classLoader.getResourceAsStream(fileName))
-		{
-			assert inputStream != null;
-			Scanner scan = new Scanner(inputStream);
-			while (scan.hasNext())
-			{
-				list.add(scan.nextLine());
-			}
-		} catch (IOException e)
-		{
-			e.printStackTrace();
 		}
 	}
 	
@@ -184,6 +164,24 @@ public class BirbsContainer implements Runnable
 		}
 		dispose();
 		System.exit(0);
+	}
+
+	private void fileToStringList(String fileName, List<String> list)
+	{
+		ClassLoader classLoader = getClass().getClassLoader();
+
+		try (InputStream inputStream = classLoader.getResourceAsStream(fileName))
+		{
+			assert inputStream != null;
+			Scanner scan = new Scanner(inputStream);
+			while (scan.hasNext())
+			{
+				list.add(scan.nextLine());
+			}
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public void dispose()
@@ -276,7 +274,7 @@ public class BirbsContainer implements Runnable
 		return renderTime;
 	}
 	
-	public ArrayList<Entity> getEntityList()
+	public List<Entity> getEntityList()
 	{
 		return entityList;
 	}
@@ -442,12 +440,12 @@ public class BirbsContainer implements Runnable
 		return pursuitList.get(--pursuitIndex);
 	}
 	
-	public Entity getRandomUniqueEntity(ArrayList<Birb> birbsList, List<Entity> exclusionList)
+	public Entity getRandomUniqueEntity(List<Birb> list, List<Entity> exclusionList)
 	{
-		Entity randomEntity = birbsList.get((int) (Math.random() * birbsList.size()));
+		Entity randomEntity = list.get((int) (Math.random() * list.size()));
 		while(exclusionList.contains(randomEntity) && randomEntity.getType() == 1)
 		{
-			randomEntity = (Birb) birbsList.get((int) (Math.random() * birbsList.size()));
+			randomEntity = (Birb) list.get((int) (Math.random() * list.size()));
 		}
 		return randomEntity;
 	}
@@ -497,12 +495,12 @@ public class BirbsContainer implements Runnable
 		return chunkHeight;
 	}
 	
-	public ArrayList<Birb> getBirbsList()
+	public List<Birb> getBirbsList()
 	{
 		return birbsList;
 	}
 	
-	public ArrayList<Chunk> getChunkList()
+	public List<Chunk> getChunkList()
 	{
 		return chunkList;
 	}
@@ -530,12 +528,12 @@ public class BirbsContainer implements Runnable
 		return windowBackgroundColor;
 	}
 	
-	public ArrayList<Entity> getNearbyEntities(BirbsContainer bc, Chunk c, int radius)
+	public List<Entity> getNearbyEntities(BirbsContainer bc, Chunk c, int radius)
 	{
-		ArrayList<Chunk> chunkList = bc.getChunkList();
+		List<Chunk> chunkList = bc.getChunkList();
 		int chunkWidth = bc.getChunkWidth();
 		
-		ArrayList<Entity> nearby = new ArrayList<>();
+		List<Entity> nearby = new LinkedList<>();
 		
 		int startPos = c.getID() - (radius * (chunkWidth + 1));
 		for(int i = 0; i < radius * 2 + 1; i++)

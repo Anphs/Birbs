@@ -106,14 +106,14 @@ public class BirbsManager extends AbstractBirbsManager
 				"FPS: " + bc.getFps()
 		));
 		
-		ArrayList<String> entityStringList = new ArrayList<>();
+		List<String> entityStringList = new LinkedList<>();
 		for(Entity e: bc.getEntityList())
 		{
 			String str = e.getEntityID()+" "+e.getChunk();
 			entityStringList.add(str);
 		}
 		
-		ArrayList<String> chunkInfo = new ArrayList<>();
+		LinkedList<String> chunkInfo = new LinkedList<>();
 		int entityTally = 0;
 		for(int i=0; i<bc.getChunkList().size(); i++)
 		{
