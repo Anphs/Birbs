@@ -2,12 +2,14 @@ package me.anthuony.birbs;
 
 import com.aparapi.Kernel;
 
+
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 
 public class BirbsContainer implements Runnable
@@ -32,34 +34,30 @@ public class BirbsContainer implements Runnable
 	private int frames = 0;
 	private int fps = 0;
 	private long kernelTime = 0, renderTime = 0;
-	
-	private final ArrayList<String> changelog = new ArrayList<>();
-	private final ArrayList<String> keybindsHint = new ArrayList<>();
-	private final ArrayList<String> names = new ArrayList<>();
+
+	private final List<String> keybindsHint = new LinkedList<>();
+	private final List<String> names = new LinkedList<>();
 	
 //	private int entityCount = 0;
 	
-	private final ArrayList<Entity> entityList = new ArrayList<Entity>();
-	private final ArrayList<Birb> birbsList = new ArrayList<Birb>();
-	private final ArrayList<Birb> pursuitBirbHistoryList = new ArrayList<Birb>();
-	
-	private final ArrayList<Chunk> chunkList = new ArrayList<Chunk>();
-	private final int chunkSize = (int) Birb.getInteractionRange() * 9;
-	private final int chunkWidth, chunkHeight;
+	private final ArrayList<Entity> entityList = new ArrayList<>();
+	private final ArrayList<Birb> birbsList = new ArrayList<>();
+	private final LinkedList<Birb> pursuitBirbHistoryList = new LinkedList<>();
 	
 	private final double cameraPanningInterval = 5000 * UPDATE_CAP;
 	private final double minScale = .1;
 	private final double maxScale = 1.5;
-	private int worldWidth = windowWidth * 10, worldHeight = windowHeight * 10;
-//	private int worldWidth = chunkSize * 3, worldHeight = chunkSize * 3;
+	private final int worldWidth = windowWidth * 10, worldHeight = windowHeight * 10;
 	private double cameraOffsetX = (worldWidth - windowWidth * 10) / -2.0;
 	private double cameraOffsetY = (worldHeight - windowHeight * 10) / -2.0;
 	private double cameraTempOffsetX = 0;
 	private double cameraTempOffsetY = 0;
 	private double scale = .1;
-	
-	int capacity = /*getWindowWidth() * getWindowHeight() / 1000;*/ 10;
-	private double dpdt = 0;
+
+	private final ArrayList<Chunk> chunkList = new ArrayList<>();
+	private final int chunkSize = (int) Birb.getInteractionRange() * 9;
+	private final int chunkWidth = (worldWidth % chunkSize == 0) ? worldWidth/chunkSize : worldWidth/chunkSize + 1;
+	private final int chunkHeight = (worldHeight % chunkSize == 0) ? worldHeight/chunkSize : worldHeight/chunkSize + 1;
 	
 	private boolean paused = false, drawHitbox = false, drawName = true, drawUI = true;
 	private Birb pursuitBirb;
@@ -68,39 +66,38 @@ public class BirbsContainer implements Runnable
 	private boolean avoidOthers = true;
 	private boolean doAlignment = true;
 	private boolean doCohesion = true;
-	private final boolean deleteClose = false;
 	
 	private final Color worldBackgroundColor = new Color(0, 0,0, 255);
 	private final Color windowBackgroundColor = new Color(50, 50, 50, 255);
-//	private final Color textUIColor = new Color(255, 105, 3, 255);
 	private final Color textUIColor = new Color(0, 128, 128, 255);
 	
 	public BirbsContainer(AbstractBirbsManager world)
 	{
 		this.world = world;
-		
-		if(worldWidth % chunkSize == 0)
-		{
-			chunkWidth = worldWidth/chunkSize;
-		}
-		else
-		{
-			chunkWidth = worldWidth/chunkSize + 1;
-		}
-		if(worldHeight % chunkSize == 0)
-		{
-			chunkHeight = worldHeight/chunkSize;
-		}
-		else
-		{
-			chunkHeight = worldHeight/chunkSize + 1;
-		}
+
 		int numChunks = chunkWidth * chunkHeight;
 		for(int i=0; i<numChunks; i++)
 		{
 			chunkList.add(new Chunk(i));
 		}
-//		Arrays.fill(eChunk, -100);
+	}
+
+	private void fileToStringList(String fileName, List<String> list)
+	{
+		ClassLoader classLoader = getClass().getClassLoader();
+
+		try (InputStream inputStream = classLoader.getResourceAsStream(fileName))
+		{
+			assert inputStream != null;
+			Scanner scan = new Scanner(inputStream);
+			while (scan.hasNext())
+			{
+				list.add(scan.nextLine());
+			}
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public void start()
@@ -111,50 +108,13 @@ public class BirbsContainer implements Runnable
 		kernel = new EntityKernel(this);
 		
 		kernel.setExecutionMode(Kernel.EXECUTION_MODE.JTP);
-		
-		String changelogFile = "Changelog.txt";
+
 		String keybindsFile = "Keybinds.txt";
 		String namesFile = "Names.txt";
 		ClassLoader classLoader = getClass().getClassLoader();
-		
-		try (InputStream inputStream = classLoader.getResourceAsStream(changelogFile))
-		{
-			assert inputStream != null;
-			Scanner scan = new Scanner(inputStream);
-			while (scan.hasNext())
-			{
-				changelog.add(scan.nextLine());
-			}
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		
-		try (InputStream inputStream = classLoader.getResourceAsStream(keybindsFile))
-		{
-			assert inputStream != null;
-			Scanner scan = new Scanner(inputStream);
-			while (scan.hasNext())
-			{
-				keybindsHint.add(scan.nextLine());
-			}
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		
-		try (InputStream inputStream = classLoader.getResourceAsStream(namesFile))
-		{
-			assert inputStream != null;
-			Scanner scan = new Scanner(inputStream);
-			while (scan.hasNext())
-			{
-				names.add(scan.nextLine());
-			}
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+
+		fileToStringList(keybindsFile, keybindsHint);
+		fileToStringList(namesFile, names);
 		
 		Thread thread = new Thread(this);
 		thread.start();
@@ -242,19 +202,9 @@ public class BirbsContainer implements Runnable
 		return worldWidth;
 	}
 	
-	public void setWorldWidth(int worldWidth)
-	{
-		this.worldWidth = worldWidth;
-	}
-	
 	public int getWorldHeight()
 	{
 		return worldHeight;
-	}
-	
-	public void setWorldHeight(int worldHeight)
-	{
-		this.worldHeight = worldHeight;
 	}
 	
 	public double getScale()
@@ -428,12 +378,7 @@ public class BirbsContainer implements Runnable
 		return cameraPanningInterval;
 	}
 	
-	public ArrayList<String> getChangelog()
-	{
-		return changelog;
-	}
-	
-	public ArrayList<String> getKeybindsHint()
+	public List<String> getKeybindsHint()
 	{
 		return keybindsHint;
 	}
@@ -503,12 +448,7 @@ public class BirbsContainer implements Runnable
 		}
 	}
 	
-	public Birb getRandomBirb(ArrayList<Birb> birbsList)
-	{
-		return birbsList.get((int) (Math.random() * birbsList.size()));
-	}
-	
-	public Birb getRandomUniqueBirb(ArrayList<Birb> birbsList, ArrayList<Birb> exclusionList)
+	public Birb getRandomUniqueBirb(ArrayList<Birb> birbsList, List<Birb> exclusionList)
 	{
 		Birb randomBirb = (Birb) birbsList.get((int) (Math.random() * birbsList.size()));
 		while(exclusionList.contains(randomBirb) && randomBirb.getType() == 1)
@@ -523,23 +463,23 @@ public class BirbsContainer implements Runnable
 		return drawUI;
 	}
 	
-	public ArrayList<Birb> getPursuitBirbHistoryList()
+	public List<Birb> getPursuitBirbHistoryList()
 	{
 		return pursuitBirbHistoryList;
 	}
-	
+
 	public int incrementBirbHistoryIndex()
 	{
 		pursuitBirbHistoryIndex++;
 		return pursuitBirbHistoryIndex;
 	}
-	
+
 	public int decrementBirbHistoryIndex()
 	{
 		pursuitBirbHistoryIndex--;
 		return pursuitBirbHistoryIndex;
 	}
-	
+
 	public int getPursuitBirbHistoryIndex()
 	{
 		return pursuitBirbHistoryIndex;
@@ -560,12 +500,6 @@ public class BirbsContainer implements Runnable
 		return doCohesion;
 	}
 	
-	public boolean isDeleteClose()
-	{
-		return deleteClose;
-	}
-	
-	
 	public int getEntityCount()
 	{
 		return entityList.size();
@@ -584,21 +518,6 @@ public class BirbsContainer implements Runnable
 	public int getChunkHeight()
 	{
 		return chunkHeight;
-	}
-	
-	public double getDpdt()
-	{
-		return dpdt;
-	}
-	
-	public void setDpdt(double dpdt)
-	{
-		this.dpdt = dpdt;
-	}
-	
-	public int getCapacity()
-	{
-		return capacity;
 	}
 	
 	public ArrayList<Birb> getBirbsList()

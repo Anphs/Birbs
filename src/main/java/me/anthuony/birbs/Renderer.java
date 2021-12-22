@@ -1,7 +1,7 @@
 package me.anthuony.birbs;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.List;
 
 public class Renderer
 {
@@ -59,17 +59,17 @@ public class Renderer
 		g2d.drawString(str, (int) x, (int) y);
 	}
 	
-	public void drawRightAlignedList(Graphics2D g2d, Font f, ArrayList<String> list, double x, double y)
+	public void drawRightAlignedList(Graphics2D g2d, Font f, List<String> list, double x, double y)
 	{
 		FontMetrics metrics = g2d.getFontMetrics(f);
-		
+
 		for (int i = 0; i < list.size(); i++)
 		{
 			drawRightAlignedString(g2d, f, list.get(i), x, y + i * metrics.getAscent());
 		}
 	}
 	
-	public void drawLeftAlignedList(Graphics2D g2d, Font f, ArrayList<String> list, double x, double y)
+	public void drawLeftAlignedList(Graphics2D g2d, Font f, List<String> list, double x, double y)
 	{
 		FontMetrics metrics = g2d.getFontMetrics(f);
 		
@@ -78,29 +78,7 @@ public class Renderer
 			drawLeftAlignedString(g2d, f, list.get(i), x, y + i * metrics.getAscent());
 		}
 	}
-	
-	public void drawMousePosition(Graphics2D g2d, Font f)
-	{
-		g2d.setFont(f);
-		try
-		{
-			int x = (int) (bc.getInput().getMousePoint().getX() * bc.getScale());
-			int y = (int) (bc.getInput().getMousePoint().getY() * bc.getScale());
-			String str = "x: " + x + " y: " + y;
-			drawRightAlignedString(g2d, f, str, bc.getWindowWidth() - 10, 0);
-		} catch (NullPointerException e)
-		{
-			//Do nothing since the mouse is not over the window
-		}
-	}
-	
-	public void drawFPS(Graphics2D g2d, Font f)
-	{
-		g2d.setFont(f);
-		String str = "FPS: " + bc.getFps();
-		drawRightAlignedString(g2d, f, str, bc.getWindowWidth() - 10, 20);
-	}
-	
+
 	public Polygon getTriangle(BirbsContainer bc, double scale)
 	{
 		int x = (int) (Birb.getBaseWidth() * bc.getScale() * scale / 2);
@@ -130,7 +108,7 @@ public class Renderer
 			FontMetrics metrics = g2d.getFontMetrics(nameTagFont);
 			
 			double x = -metrics.stringWidth(name) / 2.0;
-			double y = +metrics.getAscent() / 2.0;
+			double y = metrics.getAscent() / 2.0;
 			
 			g2d.setFont(nameTagFont);
 			g2d.drawString(name, (int) x, (int) (y + 1.25 * hitboxWidth));

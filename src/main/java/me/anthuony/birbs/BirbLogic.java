@@ -40,10 +40,6 @@ public class BirbLogic extends Thread
 			this.birb = birb;
 			if (!bc.isPaused())
 			{
-				if (bc.isDeleteClose())
-				{
-					doDeleteClose();
-				}
 				if (doAvoidOthers())
 				{
 					if (doAvoidOthers() && bc.isDoAlignment())

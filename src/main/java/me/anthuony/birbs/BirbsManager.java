@@ -26,13 +26,6 @@ public class BirbsManager extends AbstractBirbsManager
 	{
 		InputBinds.doInputBinds(bc, this);
 		
-		//Logistics Equation
-//		if(bc.getInput().isMouseIdle(.1))
-//		{
-//			bc.setDpdt((1 / 1000.0) * (bc.getCapacity() - bc.getEntityCount()));
-//			addBirb(bc, new Point2D.Float((float) (bc.getWorldWidth() / 2.0),(float) (bc.getWorldHeight() / 2.0)), (int) Math.ceil(bc.getDpdt()));
-//		}
-		
 		long t1 = System.currentTimeMillis();
 		
 //		doBirbLogic(bc);
@@ -100,15 +93,14 @@ public class BirbsManager extends AbstractBirbsManager
 		g2d.setFont(interfaceFont);
 		FontMetrics interfaceFontMetrics = g2d.getFontMetrics();
 		
-		ArrayList<String> topLeftText = new ArrayList<>(Arrays.asList(
+		List<String> topLeftText = new LinkedList<>(Arrays.asList(
 				"" + bc.getEntityList().size() + " Birbs in the World",
-				"" + onScreenCount + " Birbs on Screen"/*,
-				"" + (int) bc.getDpdt() + " birbs/update Rate of Spawning"*/
+				"" + onScreenCount + " Birbs on Screen"
 		));
 		
 		int xMouse = (int) (bc.getInput().getMousePoint().getX() * bc.getScale());
 		int yMouse = (int) (bc.getInput().getMousePoint().getY() * bc.getScale());
-		ArrayList<String> topRightText = new ArrayList<>(Arrays.asList(
+		List<String> topRightText = new LinkedList<>(Arrays.asList(
 				"Kernel Processing Time: " + bc.getKernelTime() + "ms",
 				"Render Time: " + bc.getRenderTime() + "ms",
 				"x: " + xMouse + " y: " + yMouse,
@@ -137,7 +129,7 @@ public class BirbsManager extends AbstractBirbsManager
 			System.out.println("Tally: " + entityTally + " Actual Count: " + bc.getEntityList().size());
 		}
 		
-		ArrayList<String> pursuitBirbHistoryListNames = new ArrayList<>();
+		LinkedList<String> pursuitBirbHistoryListNames = new LinkedList<>();
 		for(Birb b: bc.getPursuitBirbHistoryList())
 		{
 			if(b != null)
@@ -155,7 +147,6 @@ public class BirbsManager extends AbstractBirbsManager
 		{
 			r.drawLeftAlignedList(g2d, interfaceFont, topLeftText, 10, 0);
 			r.drawRightAlignedList(g2d, interfaceFont, topRightText, bc.getWindowWidth() - 10, 0);
-			r.drawLeftAlignedList(g2d, interfaceFont, bc.getChangelog(), 10, bc.getWindowHeight() - (bc.getChangelog().size() * interfaceFontMetrics.getAscent()) - 10);
 			r.drawRightAlignedList(g2d, interfaceFont, bc.getKeybindsHint(), bc.getWindowWidth() - 10, bc.getWindowHeight() - (bc.getKeybindsHint().size() * interfaceFontMetrics.getAscent()) - 10);
 			r.drawLeftAlignedList(g2d, interfaceFont, pursuitBirbHistoryListNames, 10, 100);
 			
