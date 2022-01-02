@@ -21,7 +21,6 @@ public abstract class Entity {
         this.xWorld = ExtraMath.boundNumber(xWorld, 0, bc.getWorldWidth(), bc.getWorldWidth());
         this.yWorld = ExtraMath.boundNumber(yWorld, 0, bc.getWorldHeight(), bc.getWorldHeight());
         this.scale = scale;
-        this.setChunk(Chunk.calculateChunk(this.xWorld, this.yWorld, bc.getChunkSize(), bc.getChunkWidth()));
     }
 
     public float getSpeed() {
@@ -172,19 +171,6 @@ public abstract class Entity {
 
     public int getType() {
         return type;
-    }
-
-    public Chunk getChunk() {
-        return chunk;
-    }
-
-    public void setChunk(int chunk) {
-        if (chunk >= 0) {
-            Chunk.assignChunk(this, this.chunk, bc.getChunkList().get(chunk));
-            this.chunk = bc.getChunkList().get(chunk);
-        } else {
-            System.out.println("Negative chunk x:" + xWorld + " y: " + yWorld);
-        }
     }
 
     public float getXForce() {
