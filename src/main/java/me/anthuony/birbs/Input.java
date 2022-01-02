@@ -29,7 +29,7 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 		mouseX = 0;
 		mouseY = 0;
 		scroll = 0;
-		changeMouseY = 0;
+		changeMouseX = 0;
 		changeMouseY = 0;
 		
 		bc.getWindow().getCanvas().addKeyListener(this);
@@ -226,10 +226,5 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 	public int getScroll()
 	{
 		return scroll;
-	}
-	
-	public Point2D.Double getMouseDownPoint()
-	{
-		return mouseDownPoint;
 	}
 }

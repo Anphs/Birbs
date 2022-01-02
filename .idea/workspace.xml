@@ -3,12 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="b4acf68e-1dff-46a6-9d8f-bc788ecfb7f2" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/anthuony/birbs/AbstractBirbsManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/anthuony/birbs/AbstractBirbsManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/anthuony/birbs/BirbsContainer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/anthuony/birbs/BirbsContainer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/anthuony/birbs/BirbsManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/anthuony/birbs/BirbsManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/anthuony/birbs/Entity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/anthuony/birbs/Entity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/anthuony/birbs/ExtraMath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/anthuony/birbs/ExtraMath.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/anthuony/birbs/InputBinds.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/anthuony/birbs/InputBinds.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/anthuony/birbs/Input.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/anthuony/birbs/Input.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
