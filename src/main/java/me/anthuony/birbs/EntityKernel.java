@@ -1,7 +1,5 @@
 package me.anthuony.birbs;
 
-import com.aparapi.Kernel;
-
 import java.awt.*;
 import java.util.List;
 
@@ -41,8 +39,7 @@ public class EntityKernel extends Kernel
 		this.chunkWidth = bc.getChunkWidth();
 		this.chunkHeight = bc.getChunkHeight();
 	}
-	
-	@Override
+
 	public void run()
 	{
 		int entityID = getGlobalId();

@@ -3,7 +3,6 @@ package me.anthuony.birbs;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
-import java.util.ListIterator;
 
 public class InputBinds
 {
@@ -67,7 +66,7 @@ public class InputBinds
 					if(e.getType() == 1)
 					{
 						Birb b = (Birb) e;
-						if (BirbLogic.getPointDistance(closest.getWorldPoint(), mousePoint) > BirbLogic.getPointDistance(b.getWorldPoint(), mousePoint))
+						if (BirbLogicOld.getPointDistance(closest.getWorldPoint(), mousePoint) > BirbLogicOld.getPointDistance(b.getWorldPoint(), mousePoint))
 						{
 							closest = b;
 						}

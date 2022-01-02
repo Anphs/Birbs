@@ -1,7 +1,5 @@
 package me.anthuony.birbs;
 
-import com.aparapi.Range;
-
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
@@ -11,8 +9,6 @@ import java.util.List;
 
 public class BirbsManager extends AbstractBirbsManager
 {
-	
-	private Comparator<Entity> Entity;
 	
 	public static void main(String[] args)
 	{
@@ -27,8 +23,7 @@ public class BirbsManager extends AbstractBirbsManager
 		
 		long t1 = System.currentTimeMillis();
 		
-//		doBirbLogic(bc);
-		doEntityLogic(bc);
+		doBirbLogic(bc);
 		
 		long t2 = System.currentTimeMillis();
 		
@@ -165,17 +160,20 @@ public class BirbsManager extends AbstractBirbsManager
 		ThreadGroup tg = new ThreadGroup("Update Locations");
 		int np = Runtime.getRuntime().availableProcessors();
 		
-		ArrayList<ArrayList<Birb>> birbGroups = new ArrayList<>();
-		ArrayList<BirbLogic> logics = new ArrayList<>();
-		
-		for (int i = 0; i < bc.getEntityList().size(); i++)
+		List<List<Birb>> birbGroups = new LinkedList<>();
+		List<BirbLogic> logics = new LinkedList<>();
+
+		//Create group lists
+		for(int i = 0; i < np; i++)
 		{
-			if (i < np)
-			{
-				birbGroups.add(new ArrayList<>());
-			}
-			ArrayList<Birb> current = birbGroups.get(i % np);
-			current.add((Birb) bc.getEntityList().get(i));
+			birbGroups.add(new LinkedList<>());
+		}
+
+		//For all birbs
+		for (int i = 0; i < bc.getBirbsList().size(); i++)
+		{
+			List<Birb> current = birbGroups.get(i % np);
+			current.add(bc.getBirbsList().get(i));
 		}
 		
 		for (int i = 0; i < birbGroups.size(); i++)
@@ -194,14 +192,14 @@ public class BirbsManager extends AbstractBirbsManager
 		}
 	}
 	
-	private void doEntityLogic(BirbsContainer bc)
+	/*private void doEntityLogic(BirbsContainer bc)
 	{
 		EntityKernel kernel = bc.getKernel();
 		kernel.updateVars(bc);
 
 		Range range = Range.create(bc.getEntityCount());
 		kernel.execute(range);
-	}
+	}*/
 	
 	private void addBirb(BirbsContainer bc, float worldX, float worldY)
 	{

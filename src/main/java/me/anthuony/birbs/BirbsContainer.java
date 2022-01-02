@@ -1,8 +1,5 @@
 package me.anthuony.birbs;
 
-import com.aparapi.Kernel;
-
-
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.IOException;
@@ -17,7 +14,6 @@ public class BirbsContainer implements Runnable
 	private Window window;
 	private Renderer renderer;
 	private Input input;
-	private EntityKernel kernel;
 	
 	private String title = "Birbs";
 	GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -84,13 +80,9 @@ public class BirbsContainer implements Runnable
 		window = new Window(this);
 		renderer = new Renderer(this);
 		input = new Input(this);
-		kernel = new EntityKernel(this);
-		
-		kernel.setExecutionMode(Kernel.EXECUTION_MODE.JTP);
 
 		String keybindsFile = "Keybinds.txt";
 		String namesFile = "Names.txt";
-		ClassLoader classLoader = getClass().getClassLoader();
 
 		fileToStringList(keybindsFile, keybindsHint);
 		fileToStringList(namesFile, names);
@@ -162,7 +154,6 @@ public class BirbsContainer implements Runnable
 				}
 			}
 		}
-		dispose();
 		System.exit(0);
 	}
 
@@ -182,11 +173,6 @@ public class BirbsContainer implements Runnable
 		{
 			e.printStackTrace();
 		}
-	}
-	
-	public void dispose()
-	{
-		kernel.dispose();
 	}
 	
 	public void setRunning(boolean running)
@@ -252,11 +238,6 @@ public class BirbsContainer implements Runnable
 	public Input getInput()
 	{
 		return input;
-	}
-	
-	public EntityKernel getKernel()
-	{
-		return kernel;
 	}
 	
 	public long getKernelTime()
